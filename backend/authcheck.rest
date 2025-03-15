@@ -1,0 +1,37 @@
+### GET http://localhost:5000/
+GET http://127.0.0.1:5000/
+
+
+### POST on Auth sign up feature 
+POST http://localhost:5000/auth/signup
+Content-Type: application/json
+
+{
+  "email": "bryanli@temple.edu",
+  "password": "1234567",
+  "username": "hello_user"
+}
+
+### POST login user
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "bryan111@gmail.com",
+  "password": "1234567"
+}
+
+
+
+### POST login user
+POST http://localhost:5000/auth/login
+Content-Type: application/json
+
+{
+  "email": "hello@gmail.com",
+  "password": "1234567"
+}
+
+###GET Sign out
+POST http://localhost:5000/auth/logout
+Content-Type: application/json
