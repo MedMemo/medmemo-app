@@ -1,8 +1,15 @@
 # import flast module
 from flask import Flask
+from flask_cors import CORS
+from auth import auth_bp  # Import the auth blueprint
 
-# instance of flask application
 app = Flask(__name__)
+CORS(app)  # Enable CORS for frontend communication (middleware)
+
+app = Flask(__name__)
+
+# Register auth routes
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
 # home route that returns below text when root url is accessed
 @app.route("/")
