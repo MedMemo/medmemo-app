@@ -26,6 +26,7 @@ def signup():
     email = data.get('email')
     password = data.get('password')
     username = data.get('username')
+    password = data.get('password')
     
 
     # Validate that both email and password are provided
@@ -33,15 +34,43 @@ def signup():
         return jsonify({"error": "Email and password are required"}), 400
 
     try:
+
+        # Check if the email already exists in the USER table
+        existing_user = supabase.table("USER").select("*").eq("Email", email).execute()
+
+        if existing_user.data:
+            return jsonify({"error": "Email already exists"}), 409  # 409 Conflict
+
         # Attempt to sign up the user
         response = supabase.auth.sign_up({"email": email, "password": password})
+
+        # Extract the user ID from the auth response
+        user_id = response.user.id
+
+       # Insert user data into the database
+        user_data = {
+            "user_id": user_id,
+            "created_at": response.user.created_at.isoformat(),  # Convert datetime to string
+            "Username": username,
+            "Email": email,
+            "Password": password
+            
+        }
+         # Insert the user data into the 'users' table
+        db_response = supabase.table("USER").insert(user_data).execute()
+
+        # Check if the database insertion was successful
+        if not db_response.data:
+            # If database insertion fails, delete the user from auth (optional cleanup)
+            supabase.auth.admin.delete_user(user_id)
+            return jsonify({"error": "Failed to create user in database"}), 500
         
         # Extract only the necessary data from the response
         user_data = {
             "user": {
                 "id": response.user.id,
                 "email": response.user.email,
-                "created_at": response.user.created_at,
+                "created_at": response.user.created_at.isoformat(),
             },
             "session": {
                 "access_token": response.session.access_token if response.session else None,

@@ -7,8 +7,9 @@ POST http://localhost:5000/auth/signup
 Content-Type: application/json
 
 {
-  "email": "bryanli200283@gmail.com",
-  "password": "1234567"
+  "email": "bryanli@temple.edu",
+  "password": "1234567",
+  "username": "hello_user"
 }
 
 ### POST login user
