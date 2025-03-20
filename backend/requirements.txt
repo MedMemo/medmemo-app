@@ -8,3 +8,4 @@ Werkzeug==3.0.1
 flask-cors==4.0.0
 supabase==1.0.3
 python-dotenv==1.0.1
+watchdog==2.3.1
