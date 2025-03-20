@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from transformers import AutoTokenizer, AutoModel, pipeline # To use BERT model
 import openai
+import os
 from dotenv import load_dotenv
 
 # load environment variables
@@ -16,7 +17,7 @@ bert_model = AutoModel.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
 ner_pipeline = pipeline("ner", model=bert_model, tokenizer=tokenizer)
 
 # set OpenAI API key
-openai.api_key = 'key-goes-here'
+openai.api_key = os.getenv("OPENAI_KEY")
 
 @summarize_bp.route('/summarize', methods=['POST'])
 # specify transcript's medical entities using BERT model
