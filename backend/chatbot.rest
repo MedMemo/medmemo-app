@@ -3,6 +3,5 @@ POST http://localhost:3000/chatbot/chat
 Content-Type: application/json
 
 {
-    "prompt": "do you think eric is the goat he got fired from SAP and this year 
-    he was able to land a 6 fig job at SAP again"
+    "prompt": "what is medmemo"
 }

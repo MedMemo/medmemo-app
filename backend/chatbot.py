@@ -23,7 +23,7 @@ def chat():
         )
         #get the response
         bot_response = response.choices[0].message.content
-        return jsonify({'response': bot_response})
+        return jsonify({'response': bot_response}), 200
 
     except Exception as e:
         # Handle errors and return them
