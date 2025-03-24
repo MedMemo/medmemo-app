@@ -133,3 +133,26 @@ def logout():
     except Exception as e:
         # Handle any errors that occur during the sign-out process
         return jsonify({"error": str(e)}), 400
+
+# get user session
+@auth_bp.route('/get_user', methods=['GET'])
+def get_user():
+    try:
+        # Get the currently authenticated user directly from the session
+        user = supabase.auth.get_user()
+
+        if not user or not user.user:
+            return jsonify({"error": "No active session or user not found"}), 401
+
+        # Return the user data
+        user_data = {
+            "id": user.user.id,
+            "email": user.user.email,
+            "created_at": user.user.created_at.isoformat(),
+            "last_sign_in_at": user.user.last_sign_in_at.isoformat(),
+        }
+
+        return jsonify({"user": user_data}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
