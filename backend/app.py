@@ -4,6 +4,7 @@ from flask_cors import CORS
 import os
 from supabase_client import env_file
 from auth import auth_bp  # Import the auth blueprint
+from upload import upload_bp
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication (middleware)
@@ -12,6 +13,7 @@ app = Flask(__name__)
 
 # Register auth routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
+app.register_blueprint(upload_bp, url_prefix='/upload')
 
 # home route that returns below text when root url is accessed
 @app.route("/")
