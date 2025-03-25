@@ -2,15 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // If you're using Next.js 13 or later
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client with URL and API Key.
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseApiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
+console.log("Supabase URL:", supabaseUrl);
+console.log("Supabase Key:", supabaseApiKey);
+
+const supabase = createClient(supabaseUrl, supabaseApiKey);
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -18,9 +28,31 @@ export default function SignUp() {
       return;
     }
 
-    // Add sign-up logic here (e.g., send data to your API)
     setError(null);
-    router.push("/welcome"); // Example: Redirect to a welcome page or dashboard
+
+    try {
+      // Use Supabase Auth API to sign up the user
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError(error.message);
+      } else {
+        setSuccess("Sign Up Success!");
+        console.log("User created:", data);
+        router.push("/"); // Redirect to main page
+      }
+
+      // Reset form data
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      console.error("Error signing up:", err);
+      setError("An unexpected error occurred.");
+    }
   };
 
   return (
@@ -67,6 +99,7 @@ export default function SignUp() {
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}
+          {success && <p className="text-green-500 text-sm">{success}</p>}
 
           <button
             type="submit"
