@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from transformers import AutoTokenizer, AutoModel, pipeline # To use BERT model
-import openai
+from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
@@ -17,7 +17,7 @@ bert_model = AutoModel.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
 ner_pipeline = pipeline("ner", model=bert_model, tokenizer=tokenizer)
 
 # set OpenAI API key
-openai.api_key = os.getenv("OPENAI_KEY")
+client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 
 @summarize_bp.route('/summarize', methods=['POST'])
 # specify transcript's medical entities using BERT model
@@ -64,20 +64,18 @@ def structure_prompt(transcript):
 # send transcript + prompt to OpenAI API to get the summary
 def generate_summary(transcript):
     prompt = structure_prompt(transcript)
-    
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
-        message={"role": "user", "content": prompt}, # send prompt as user input
-        temperature=0.5
-    )
 
-    # extract summary from OpenAI response
-    summary = response["choices"][0]["message"]["content"].strip()
-    return summary
+    try:
+        data = request.get_json()
+        response = client.chat.completions.create(
+            model="gpt-4",
+            message={"role": "user", "content": prompt}, # send prompt as user input
+            max_tokens = 100,
+            temperature = 0.5
+        )
 
-# summarize the transcript
-def summarize_transcript():
-    data = request.json
-    transcript = data.get("transcript", "")
-    summary = generate_summary(transcript)
-    return jsonify({"summary": summary})
+        # extract summary from OpenAI response
+        summary = response["choices"][0].message.content
+        return jsonify({"response": summary}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
