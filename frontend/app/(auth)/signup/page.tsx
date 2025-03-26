@@ -42,7 +42,7 @@ export default function SignUp() {
       } else {
         setSuccess("Sign Up Success!");
         console.log("User created:", data);
-        router.push("/");  // Redirect to home page or login page after successful sign-up
+        router.push("/home");  // Redirect to home page or login page after successful sign-up
       }
 
       // Reset form data
