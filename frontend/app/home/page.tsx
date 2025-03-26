@@ -37,7 +37,7 @@ export default function Home() {
               <div className="absolute right-0 mt-2 w-40 bg-white font-bold rounded-md shadow-lg">
                 <a href="/" className={defaultButtonStyle}>Home</a>
                 <a href="/about" className={defaultButtonStyle}>About</a>
-                <a href="/Account" className={defaultButtonStyle}>Account</a>
+                <a href="/account" className={defaultButtonStyle}>Account</a>
               </div>
             )}
           </div>
