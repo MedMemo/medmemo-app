@@ -2,15 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // If you're using Next.js 13 or later
-import { createClient } from "@supabase/supabase-js";
-
-// Initialize Supabase client with URL and API Key.
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseApiKey = process.env.NEXT_PUBLIC_SUPABASE_KEY!;
-console.log("Supabase URL:", supabaseUrl);
-console.log("Supabase Key:", supabaseApiKey);
-
-const supabase = createClient(supabaseUrl, supabaseApiKey);
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -31,18 +22,27 @@ export default function SignUp() {
     setError(null);
 
     try {
-      // Use Supabase Auth API to sign up the user
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
+      // Make the fetch request to your Flask API's sign-up endpoint
+      const response = await fetch("http://localhost:5000/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",  // Ensure credentials are included
+        body: JSON.stringify({
+          email,
+          password, // Send email and password to the backend
+        }),
       });
 
-      if (error) {
-        setError(error.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Something went wrong.");
       } else {
         setSuccess("Sign Up Success!");
         console.log("User created:", data);
-        router.push("/"); // Redirect to main page
+        router.push("/");  // Redirect to home page or login page after successful sign-up
       }
 
       // Reset form data
