@@ -10,14 +10,11 @@ export default function Home() {
   const defaultButtonStyle =
     "block px-4 py-2 text-gray-700 hover:bg-gray-200 transition";
 
-  const handleLogin = () => {
-    router.push("/login"); // Redirects to the login page
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
+
       {/* Navbar */}
-      <nav style={{ backgroundColor: "#d93d3d" }} className="text-white p-4">
+      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
         <div className="flex justify-between items-center w-full">
           {/* Logo and Title */}
           <div className="flex items-center space-x-8">
@@ -30,22 +27,17 @@ export default function Home() {
             </div>
             <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
           </div>
-
           {/* Dropdown Menu */}
           <div className="relative">
             <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-            className="px-4 py-2 bg-white text-red-500 font-bold rounded-md hover:bg-gray-200 transition">
+            className="px-4 py-2 bg-white text-[#D93D3D] font-bold rounded-lg hover:bg-gray-200 transition">
               Menu ▼
             </button>
-
             {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg">
+              <div className="absolute right-0 mt-2 w-40 bg-white font-bold rounded-md shadow-lg">
                 <a href="/" className={defaultButtonStyle}>Home</a>
                 <a href="/about" className={defaultButtonStyle}>About</a>
-                <a href="/Account" className={defaultButtonStyle}>Account</a>
-                <button onClick={handleLogin} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200 transition">
-                  Login
-                </button>
+                <a href="/account" className={defaultButtonStyle}>Account</a>
               </div>
             )}
           </div>
@@ -65,7 +57,6 @@ export default function Home() {
             This is a scrollable sidebar.
           </p>
         </div>
-
         {/* Main Content */}
         <main className="flex-1 p-8">
           <div className="text-center">
@@ -78,6 +69,7 @@ export default function Home() {
           </div>
         </main>
       </div>
+
     </div>
   );
 }
