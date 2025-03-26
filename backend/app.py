@@ -9,8 +9,6 @@ from upload import upload_bp
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend communication (middleware)
 
-app = Flask(__name__)
-
 # Register auth routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(upload_bp, url_prefix='/upload')

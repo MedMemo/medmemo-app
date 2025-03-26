@@ -7,6 +7,8 @@ export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false)
   const [files, setFiles] = useState<File[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null) // Add state for success message
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -40,7 +42,6 @@ export default function FileUpload() {
   }
 
   const validateAndSetFiles = (selectedFiles: File[]) => {
-    // Check file size (5MB limit)
     const oversizedFiles = selectedFiles.filter((file) => file.size > 5 * 1024 * 1024)
 
     if (oversizedFiles.length > 0) {
@@ -55,6 +56,39 @@ export default function FileUpload() {
   const handleBrowseClick = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click()
+    }
+  }
+
+  const uploadFiles = async () => {
+    if (files.length === 0) return
+
+    setUploading(true)
+    setError(null)
+    setSuccessMessage(null) // Reset success message before uploading
+
+    try {
+      const formData = new FormData()
+      files.forEach((file) => {
+        formData.append("file", file)
+      })
+
+      const response = await fetch("http://localhost:8080/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || "File upload failed")
+      }
+
+      const data = await response.json()
+      setSuccessMessage(data.message) // Set success message on successful upload
+      setFiles([]) // Clear files after upload
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setUploading(false)
     }
   }
 
@@ -107,6 +141,15 @@ export default function FileUpload() {
         </div>
       )}
 
+      {successMessage && (
+        <div className="flex items-center mt-4 text-green-500">
+          <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center mr-2">
+            <span className="text-green-500 font-bold">✓</span>
+          </div>
+          <p className="text-sm">{successMessage}</p> {/* Display success message */}
+        </div>
+      )}
+
       {files.length > 0 && (
         <div className="mt-4">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Selected files:</h3>
@@ -117,9 +160,15 @@ export default function FileUpload() {
               </li>
             ))}
           </ul>
+          <button
+            onClick={uploadFiles}
+            disabled={uploading}
+            className="mt-4 inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-200"
+          >
+            {uploading ? "Uploading..." : "Upload Files"}
+          </button>
         </div>
       )}
     </div>
   )
 }
-

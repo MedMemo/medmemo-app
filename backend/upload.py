@@ -11,15 +11,18 @@ def upload_file():
         return jsonify({"error": "No file provided"}), 400
 
     file = request.files['file']
-    file_path = file.filename 
+    file_path = file.filename
 
     try:
         file_bytes = file.read()
 
+        # Upload file to Supabase storage
         response = supabase.storage.from_(BUCKET_NAME).upload(file_path, file_bytes)
 
-        return jsonify({"message": "File uploaded successfully"})
+        if response.status_code == 200:
+            return jsonify({"message": "File uploaded successfully"})
+        else:
+            return jsonify({"error": "File upload failed"}), 500
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
