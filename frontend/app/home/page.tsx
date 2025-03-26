@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Navbar */}
-      <nav style={{ backgroundColor: "#d93d3d" }} className="text-white p-4">
+      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
         <div className="flex justify-between items-center w-full">
           {/* Logo and Title */}
           <div className="flex items-center space-x-8">

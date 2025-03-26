@@ -14,10 +14,14 @@ export default function Home() {
     router.push("/login"); // Redirects to the login page
   };
 
+  const handleSignUp = () => {
+    router.push("signup")
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Navbar */}
-      <nav style={{ backgroundColor: "#d93d3d" }} className="text-white p-4">
+      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
         <div className="flex justify-between items-center w-full">
           {/* Logo and Title */}
           <div className="flex items-center space-x-8">
@@ -29,6 +33,19 @@ export default function Home() {
               />
             </div>
             <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
+          </div>
+          {/* Sign In and Sign Up Buttons */}
+          <div className="flex space-x-4">
+            <button
+              onClick={handleLogin}
+              className="bg-white text-[#D93D3D] px-4 py-2 rounded-2xl font-bold border-3 border-[#80000f] cursor-pointer hover:bg-[#D93D3D] hover:border-white hover:text-white transition"
+              >Sign In
+            </button>
+            <button
+              onClick={handleSignUp}
+              className="bg-white text-[#D93D3D] px-4 py-2 rounded-2xl font-bold border-3 border-[#80000f] cursor-pointer hover:bg-[#D93D3D] hover:border-white hover:text-white transition"
+              >Sign Up
+            </button>
           </div>
         </div>
       </nav>
