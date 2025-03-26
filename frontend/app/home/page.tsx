@@ -10,10 +10,6 @@ export default function Home() {
   const defaultButtonStyle =
     "block px-4 py-2 text-gray-700 hover:bg-gray-200 transition";
 
-  const handleLogin = () => {
-    router.push("/login"); // Redirects to the login page
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
 
@@ -42,9 +38,6 @@ export default function Home() {
                 <a href="/" className={defaultButtonStyle}>Home</a>
                 <a href="/about" className={defaultButtonStyle}>About</a>
                 <a href="/Account" className={defaultButtonStyle}>Account</a>
-                <button onClick={handleLogin} className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-200 transition">
-                  Login
-                </button>
               </div>
             )}
           </div>

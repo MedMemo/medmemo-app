@@ -1,20 +1,48 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // If you're using Next.js 13 or later
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
   const handleRedirect = () => {
     router.push('/');
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    try {
+      const response = await fetch("http://localhost:8080/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // Ensure credentials are included
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Invalid login credentials.");
+      } else {
+        setSuccess("Login successful!");
+        console.log("Logged in:", data);
+        router.push("/home"); // Redirect to home page or wherever after successful login
+      }
+
+      // Reset form data
+      setEmail("");
+      setPassword("");
+    } catch (err) {
+      console.error("Error logging in:", err);
+      setError("An unexpected error occurred.");
+    }
   };
 
   return (
@@ -29,7 +57,8 @@ export default function Login() {
               <img
                 src="/images/medmemo_logo.png"
                 alt="MedMemo Logo"
-                className="h-20 w-20"/>
+                className="h-20 w-20"
+              />
             </div>
             <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
           </div>
@@ -64,6 +93,10 @@ export default function Login() {
               />
             </div>
 
+            {/* Error and Success Messages */}
+            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+            {success && <p className="text-green-500 text-center mb-4">{success}</p>}
+
             <button
               type="submit"
               className="w-full py-2 bg-[#D93D3D] text-white font-bold text-lg rounded-lg hover:bg-[#FF5757] transition">
@@ -78,9 +111,5 @@ export default function Login() {
         </div>
       </div>
     </div>
-    
-
-
   );
 }
-
