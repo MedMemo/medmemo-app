@@ -82,7 +82,7 @@ export default function SignUp() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-3xl font-bold text-center text-black-800 mb-6">Sign Up</h2>
+        <h2 className="text-3xl font-bold text-center text-black mb-6">Sign Up</h2>
 
         {/* Sign-Up Form */}
         <form onSubmit={handleSubmit}>
@@ -91,7 +91,7 @@ export default function SignUp() {
             <input
               type="text"
               id="username"
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 placeholder-gray-500"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
@@ -103,7 +103,7 @@ export default function SignUp() {
             <input
               type="email"
               id="email"
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 placeholder-gray-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -115,7 +115,7 @@ export default function SignUp() {
             <input
               type="password"
               id="password"
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 placeholder-gray-500"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -128,7 +128,7 @@ export default function SignUp() {
             <input
               type="password"
               id="confirmPassword"
-              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-gray-900 placeholder-gray-500"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
