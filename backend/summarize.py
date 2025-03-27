@@ -21,7 +21,14 @@ client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 
 @summarize_bp.route('', methods=['POST'])
 # specify transcript's medical entities using BERT model
-def extract_med_entities(transcript):
+def extract_med_entities():
+    # get tramscript
+    transcript = request.json.get("transcript")
+
+    #####delete this
+    if not transcript:
+        return jsonify({"error": "No transcript provided"}), 400
+
     ner_results = ner_pipeline(transcript)
     entities = {"SYMPTOMS": [], "CONDITIONS": [], "MEDICATIONS": []}
 
@@ -66,7 +73,6 @@ def generate_summary(transcript):
     prompt = structure_prompt(transcript)
 
     try:
-        data = request.get_json()
         response = client.chat.completions.create(
             model="gpt-4",
             message={"role": "user", "content": prompt}, # send prompt as user input

@@ -11,3 +11,4 @@ python-dotenv==1.0.1
 transformers==4.50.2
 torch==2.6.0
 openai==1.68.2
+requests==2.32.3

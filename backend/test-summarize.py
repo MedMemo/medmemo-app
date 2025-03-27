@@ -16,10 +16,14 @@ data = {"transcript": transcript}
 #send a POST request to the /summarize route
 response = requests.post(url, json=data)
 
+#####can delete this
+# print the entire response to inspect its structure
+print("Response JSON:", response.json())
+
 #print result
 if response.status_code == 200:
     print("Summary:")
-    print(response.json()['response'])
+    print(response.json().get('response', 'No response key found'))
 else:
     print(f"Error: {response.status_code}")
     print(response.json())
