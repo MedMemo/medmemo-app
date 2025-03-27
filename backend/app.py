@@ -4,18 +4,16 @@ from flask_cors import CORS
 import os
 from supabase_client import env_file
 from auth import auth_bp  # Import the auth blueprint
-from summarize import summarize_bp # Import the summarize blueprint
+# from summarize import summarize_bp # Import the summarize blueprint
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for frontend communication (middleware)
-
-app = Flask(__name__)
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enable CORS for frontend communication (middleware)
 
 # Register auth routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
 # Register summarize route
-app.register_blueprint(summarize_bp, url_prefix='/summarize')
+# app.register_blueprint(summarize_bp, url_prefix='/summarize')
 
 # home route that returns below text when root url is accessed
 @app.route("/")
