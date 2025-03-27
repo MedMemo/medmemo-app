@@ -2,6 +2,7 @@
 
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react"
 import { Upload, FileText, X, CheckCircle2, AlertTriangle } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false)
@@ -10,6 +11,7 @@ export default function FileUpload() {
   const [uploading, setUploading] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter();
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -97,6 +99,7 @@ export default function FileUpload() {
       }
     } finally {
       setUploading(false)
+      router.push("/display");
     }
   }
 
