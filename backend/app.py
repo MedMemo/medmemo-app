@@ -15,6 +15,10 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 # Register summarize route
 app.register_blueprint(summarize_bp, url_prefix='/summarize')
 
+print("Registered routes:")
+for rule in app.url_map.iter_rules():
+    print(f"Route: {rule}, Methods: {rule.methods}")
+
 # home route that returns below text when root url is accessed
 @app.route("/")
 def hello_world():
@@ -23,5 +27,5 @@ def hello_world():
 
 if __name__ == '__main__':  
     debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
-    dev_port = int(os.getenv('PORT', 5000))  # Default to 5000 if DEV_PORT is not set
+    dev_port = int(os.getenv('PORT', 8080))  # Default to 5000 if DEV_PORT is not set
     app.run(debug=debug_mode, port=dev_port)

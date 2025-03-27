@@ -19,7 +19,7 @@ ner_pipeline = pipeline("ner", model=bert_model, tokenizer=tokenizer)
 # set OpenAI API key
 client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 
-@summarize_bp.route('/summarize', methods=['POST'])
+@summarize_bp.route('', methods=['POST'])
 # specify transcript's medical entities using BERT model
 def extract_med_entities(transcript):
     ner_results = ner_pipeline(transcript)
