@@ -1,4 +1,4 @@
-azure_storage==0.37.0
+azure-ai-documentintelligence
 Flask==3.1.0
 Flask_Cors==4.0.0
 pypdf==5.4.0
