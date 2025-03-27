@@ -38,6 +38,8 @@ export default function Home() {
                 <a href="/" className={defaultButtonStyle}>Home</a>
                 <a href="/about" className={defaultButtonStyle}>About</a>
                 <a href="/account" className={defaultButtonStyle}>Account</a>
+                <a href="/contact-us" className={defaultButtonStyle}>Contact Us</a>
+
               </div>
             )}
           </div>
