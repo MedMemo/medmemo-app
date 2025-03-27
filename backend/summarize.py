@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from transformers import AutoTokenizer, AutoModel, pipeline # To use BERT model
+from transformers import AutoTokenizer, AutoModelForTokenClassification, pipeline # To use BERT model
 from openai import OpenAI
 import os
 from dotenv import load_dotenv
@@ -11,7 +11,7 @@ summarize_bp = Blueprint('summarize', __name__)
 
 # load Bio_ClinicalBERT model: https://huggingface.co/emilyalsentzer/Bio_ClinicalBERT
 tokenizer = AutoTokenizer.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
-bert_model = AutoModel.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
+bert_model = AutoModelForTokenClassification.from_pretrained("emilyalsentzer/Bio_ClinicalBERT")
 
 # create NER pipeline to extract medical entities from transcript
 ner_pipeline = pipeline("ner", model=bert_model, tokenizer=tokenizer)
