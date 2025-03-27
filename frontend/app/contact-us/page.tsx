@@ -136,6 +136,7 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
                 <a href="/account" className={defaultButtonStyle}>
                   Account
                 </a>
+                <a href="/contact-us" className={defaultButtonStyle}>Contact Us</a>
               </div>
             )}
           </div>
