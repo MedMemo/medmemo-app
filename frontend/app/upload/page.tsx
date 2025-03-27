@@ -91,6 +91,7 @@ export default function FileUpload() {
       const data = await response.json()
       setSuccessMessage(data.message)
       setFiles([])
+      router.push("/display");
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message)
@@ -99,7 +100,6 @@ export default function FileUpload() {
       }
     } finally {
       setUploading(false)
-      router.push("/display");
     }
   }
 
