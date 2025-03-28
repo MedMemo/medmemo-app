@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 
 from pypdf import PdfReader, PdfWriter
 from pypdf.annotations import Rectangle
+from pypdf.generic import ArrayObject, FloatObject, NameObject
 
 import numpy as np
 from PIL import Image
@@ -15,7 +16,6 @@ from base64 import encodebytes
 
 import os
 import io
-from base64 import encodebytes
 
 # Load environment variables
 load_dotenv()
@@ -24,6 +24,20 @@ ocr_bp = Blueprint('ocr', __name__)
 
 AZURE_KEY = os.getenv("AZURE_KEY")
 AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
+
+def generate_table_from_region(kp_values):
+    """
+    Generate a table from the key-value pairs.
+    """
+    table = "<table>"
+    for pair in kp_values:
+        key = pair[0]
+        value = pair[1]
+        table += f"<tr><td>{key}</td><td>{value}</td></tr>"
+    table += "</table>"
+    return table
+
+
 
 @ocr_bp.route('/upload', methods=['POST'])
 def upload():
@@ -54,36 +68,25 @@ def upload():
         pass
 
 
-
+    kv_pairs = []
     if result['keyValuePairs']:
         for pair in result['keyValuePairs']:
 
             key = pair['key']
             value = pair['value']
 
-            polygon_in_inches = key['boundingRegions'][0]['polygon']
-            dpi = 200
-
-            polygon_in_pixels = [[int(x * dpi), int(y * dpi)] for x, y in zip(polygon_in_inches[::2], polygon_in_inches[1::2])]
-            polygon_in_pixelsd = np.array([polygon_in_pixels], np.int32).reshape((-1, 1, 2))
-
-            print(polygon_in_pixels)
-            print(polygon_in_pixelsd)
-
-            print(key["boundingRegions"][0]["polygon"])
+            kv_pairs.append((key["content"], value["content"]))
+            boundingBox = key['boundingRegions'][0]['polygon']
 
             key_annotation = Rectangle(
-                rect=( page.mediabox.width - key['boundingRegions'][0]['polygon'][6],
-                        page.mediabox.height - key['boundingRegions'][0]['polygon'][7],
-                        key['boundingRegions'][0]['polygon'][2],
-                        page.mediabox.height - key['boundingRegions'][0]['polygon'][3]),
-                interior_color="ffaac00"
-                )
+                rect=((50,55), (100,105), (200,205), (250, 255)),
+                interior_color="#FF0000",
+            )
 
-            # key_annotation = Rectangle(
-            #     rect=((50,55), (100,105), (200,205), (250, 255)),
-            #     interior_color="ffaac00",
-            # )
+            key_annotation[NameObject("/C")] = ArrayObject(
+                [FloatObject(1.0)]
+            )
+
             # print("key",(key['boundingRegions'][0]['polygon'][6],key['boundingRegions'][0]['polygon'][7]), # lower left
             #         (key['boundingRegions'][0]['polygon'][4],key['boundingRegions'][0]['polygon'][5]), # lower right
             #         (key['boundingRegions'][0]['polygon'][0], key['boundingRegions'][0]['polygon'][1]), # upper left
@@ -95,23 +98,20 @@ def upload():
             print("Key:", pair['key'])
             print("Value:", pair['value'])
             print("Confidence:", pair['confidence'])
-            # print("Text content:")
-            # for content in pair['content']:
-            #     print(content)
             print("--------------------------------------------------")
 
-    # with open("annotated-pdf.pdf", "wb") as fp:
-    #     writer.write(fp)
+    with open("annotated-pdf.pdf", "wb") as fp:
+        writer.write(fp)
 
-    pil_img = Image.open(request.files['file'], mode='r') # reads the PIL image
-    byte_arr = io.BytesIO()
-    pil_img.save(byte_arr, format='PNG') # convert the PIL image to byte array
+    table = generate_table_from_region(kv_pairs)
 
-    encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii') # encode as base64
+    # pil_img = Image.open(request.files['file'], mode='r') # reads the PIL image
+    # byte_arr = io.BytesIO()
+    # pil_img.save(byte_arr, format='PNG') # convert the PIL image to byte array
 
-    return jsonify({"image": encoded_img, "table":
-                    """
-                    <table>
+    # encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii') # encode as base64
+    encoded_img = "afeaf"
 
-                    <table/>
-                    """}), 200
+    return jsonify({"image": encoded_img, "table": table}), 200
+
+
