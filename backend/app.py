@@ -23,9 +23,7 @@ def hello_world():
     env_mode = "Production" if env_file == ".env.prod" else "Development"
     return f"<p>Hello, World! Running in {env_mode} mode.</p>"
 
-if __name__ == '__main__':
-   app.run(debug=True)
-if __name__ == '__main__':
+if __name__ == '__main__':  
     debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
     dev_port = int(os.getenv('PORT', 5000))  # Default to 5000 if DEV_PORT is not set
     app.run(debug=debug_mode, port=dev_port)

@@ -98,22 +98,6 @@ def login():
         # Attempt to sign in with the provided credentials
         response = supabase.auth.sign_in_with_password({"email": email, "password": password})
 
-        # Extract only the necessary data from the response
-        user_data = {
-            "user": {
-                "id": response.user.id,
-                "email": response.user.email,
-                "created_at": response.user.created_at,
-                "last_sign_in_at": response.user.last_sign_in_at,
-            },
-            "session": {
-                "access_token": response.session.access_token,
-                "refresh_token": response.session.refresh_token,
-                "expires_in": response.session.expires_in,
-                "expires_at": response.session.expires_at,
-            }
-        }
-
         # Check if response has user and session data
         if response.user and response.session:
             user_data = {
