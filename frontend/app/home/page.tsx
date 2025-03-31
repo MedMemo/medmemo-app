@@ -24,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:8000/auth/get_user", {
+        const response = await fetch("http://localhost:8080/auth/get_user", {
           credentials: "include"
         });
 
