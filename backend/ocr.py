@@ -11,7 +11,7 @@ from pypdf.annotations import Rectangle
 from pypdf.generic import ArrayObject, FloatObject, NameObject
 
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageDraw
 from base64 import encodebytes
 
 import os
@@ -25,6 +25,26 @@ ocr_bp = Blueprint('ocr', __name__)
 AZURE_KEY = os.getenv("AZURE_KEY")
 AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
 
+def check_file_type(file):
+    """
+    Check if the file is a valid image or PDF.
+    """
+    try:
+        # Try to open the file as an image
+        Image.open(file)
+        return "image"
+    except IOError:
+        pass
+
+    try:
+        # Try to read the file as a PDF
+        PdfReader(file)
+        return "pdf"
+    except Exception as e:
+        pass
+
+    return None
+
 def generate_table_from_region(kp_values):
     """
     Generate a table from the key-value pairs.
@@ -37,6 +57,37 @@ def generate_table_from_region(kp_values):
     table += "</table>"
     return table
 
+def annotate_bounding_box_on_image(image, annotations):
+    """
+    Annotate the bounding boxes on the image.
+    """
+
+    draw = ImageDraw.Draw(image)
+
+    for anno in annotations:
+
+        key = anno['key']
+
+        # Extract the bounding box coordinates
+        k_x1, k_y1 = key['boundingRegions'][0]['polygon'][0], key['boundingRegions'][0]['polygon'][1]
+        k_x2, k_y2 = key['boundingRegions'][0]['polygon'][4], key['boundingRegions'][0]['polygon'][5]
+
+        # Draw the bounding box for the key
+        draw.rectangle([(k_x1, k_y1), (k_x2, k_y2)], outline="red", width=3)
+
+        if "value" not in anno:
+            continue
+
+        value = anno['value']
+
+        # Extract the bounding box coordinates for the value
+        v_x1, v_y1 = value['boundingRegions'][0]['polygon'][0], value['boundingRegions'][0]['polygon'][1]
+        v_x2, v_y2 = value['boundingRegions'][0]['polygon'][4], value['boundingRegions'][0]['polygon'][5]
+
+        # Draw the bounding box for the value
+        draw.rectangle([(v_x1, v_y1), (v_x2, v_y2)], outline="blue", width=3)
+
+    return image
 
 
 @ocr_bp.route('/upload', methods=['POST'])
@@ -48,7 +99,17 @@ def upload():
 
     if request.files:
         file = request.files['file']
+
+        file_type = check_file_type(file)
+
+        if file_type is None:
+            return jsonify({"message": "Invalid file format"}), 400
+
+        is_pdf = file_type == "pdf"
+
+        file.seek(0)
         file_bytes = file.read()
+
         poller = document_intelligence_client.begin_analyze_document(
             "prebuilt-layout",
             file_bytes,
@@ -58,59 +119,70 @@ def upload():
     else:
         return jsonify({"message": "No file uploaded"}), 400
 
-    # Check for PDF
-    try:
-        reader = PdfReader(file)
-        page = reader.pages[0]
-        writer = PdfWriter()
-        writer.add_page(page)
-    except:
-        pass
+    if not result['keyValuePairs']:
+        return jsonify({"message": "No key-value pairs found"}), 400
 
+
+    if is_pdf:
+        # Process the PDF file
+        reader = PdfReader(file)
+        writer = PdfWriter()
+
+        for page in reader.pages:
+            writer.add_page(page)
+
+        # Save the PDF with annotations
+        with open("annotated-pdf.pdf", "wb") as fp:
+            writer.write(fp)
+
+    # Try to read the file as an image
+    else:
+        image = Image.open(file)
+
+        annotated_image = annotate_bounding_box_on_image(image, result['keyValuePairs'])
+
+        # Convert the annotated image to a byte array
+        byte_arr = io.BytesIO()
+        annotated_image.save(byte_arr, format='PNG')
+
+        # encode the byte array to base64
+        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')
 
     kv_pairs = []
-    if result['keyValuePairs']:
-        for pair in result['keyValuePairs']:
 
-            key = pair['key']
-            value = pair['value']
+    for pair in result['keyValuePairs']:
 
-            kv_pairs.append((key["content"], value["content"]))
-            boundingBox = key['boundingRegions'][0]['polygon']
+        key = pair['key']
 
-            key_annotation = Rectangle(
-                rect=((50,55), (100,105), (200,205), (250, 255)),
-                interior_color="#FF0000",
-            )
+        if "value" not in pair:
+            continue
 
-            key_annotation[NameObject("/C")] = ArrayObject(
-                [FloatObject(1.0)]
-            )
+        value = pair['value']
 
-            # print("key",(key['boundingRegions'][0]['polygon'][6],key['boundingRegions'][0]['polygon'][7]), # lower left
-            #         (key['boundingRegions'][0]['polygon'][4],key['boundingRegions'][0]['polygon'][5]), # lower right
-            #         (key['boundingRegions'][0]['polygon'][0], key['boundingRegions'][0]['polygon'][1]), # upper left
-            #         (key['boundingRegions'][0]['polygon'][2], key['boundingRegions'][0]['polygon'][3]))
+        kv_pairs.append((key["content"], value["content"]))
+        # boundingBox = key['boundingRegions'][0]['polygon']
 
-            writer.add_annotation(page_number=key['boundingRegions'][0]['pageNumber'] - 1,
-                                annotation=key_annotation)
+    #         key_annotation = Rectangle(
+    #             rect=((50,55), (100,105), (200,205), (250, 255)),
+    #             interior_color="#FF0000",
+    #         )
 
-            print("Key:", pair['key'])
-            print("Value:", pair['value'])
-            print("Confidence:", pair['confidence'])
-            print("--------------------------------------------------")
+    #         key_annotation[NameObject("/C")] = ArrayObject(
+    #             [FloatObject(1.0)]
+    #         )
 
-    with open("annotated-pdf.pdf", "wb") as fp:
-        writer.write(fp)
+    #         writer.add_annotation(page_number=key['boundingRegions'][0]['pageNumber'] - 1,
+    #                             annotation=key_annotation)
+
+    #         print("Key:", pair['key'])
+    #         print("Value:", pair['value'])
+    #         print("Confidence:", pair['confidence'])
+    #         print("--------------------------------------------------")
+
+    # with open("annotated-pdf.pdf", "wb") as fp:
+    #     writer.write(fp)
 
     table = generate_table_from_region(kv_pairs)
-
-    # pil_img = Image.open(request.files['file'], mode='r') # reads the PIL image
-    # byte_arr = io.BytesIO()
-    # pil_img.save(byte_arr, format='PNG') # convert the PIL image to byte array
-
-    # encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii') # encode as base64
-    encoded_img = "afeaf"
 
     return jsonify({"image": encoded_img, "table": table}), 200
 
