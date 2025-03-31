@@ -7,6 +7,9 @@ from auth import auth_bp  # Import the auth blueprint
 from upload import upload_bp  # Import the upload blueprint
 
 # from summarize import summarize_bp # Import the summarize blueprint
+from ocr import ocr_bp  # Import the ocr blueprint
+
+# from summarize import summarize_bp # Import the summarize blueprint
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enable CORS for frontend communication (middleware)
 
@@ -16,6 +19,7 @@ app.register_blueprint(upload_bp, url_prefix='/upload')
 
 # Register summarize route
 # app.register_blueprint(summarize_bp, url_prefix='/summarize')
+app.register_blueprint(ocr_bp, url_prefix='/ocr')
 
 # home route that returns below text when root url is accessed
 @app.route("/")
