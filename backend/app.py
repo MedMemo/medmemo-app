@@ -12,9 +12,6 @@ CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enabl
 # Register auth routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
 
-# Register summarize route
-# app.register_blueprint(summarize_bp, url_prefix='/summarize')
-
 # home route that returns below text when root url is accessed
 @app.route("/")
 def hello_world():
