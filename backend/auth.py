@@ -19,7 +19,7 @@ def signup():
     email = data.get('email')
     username = data.get('username')
     password = data.get('password')
-    
+
 
     # Validate that both email and password are provided
     if not email or not password:
@@ -46,7 +46,7 @@ def signup():
             "Username": username,
             "Email": email,
             "Password": password
-            
+
         }
          # Insert the user data into the 'users' table
         db_response = supabase.table("USER").insert(user_data).execute()
@@ -56,7 +56,7 @@ def signup():
             # If database insertion fails, delete the user from auth (optional cleanup)
             supabase.auth.admin.delete_user(user_id)
             return jsonify({"error": "Failed to create user in database"}), 500
-        
+
         # Extract only the necessary data from the response
         user_data = {
             "user": {
