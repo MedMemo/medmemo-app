@@ -4,17 +4,10 @@ import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
-
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+from supabase_client import supabase  # Import the Supabase client
 
 auth_bp = Blueprint('auth', __name__)
+
 
 @auth_bp.route('/signup', methods=['POST'])
 def signup():
@@ -24,7 +17,6 @@ def signup():
 
     data = request.get_json()
     email = data.get('email')
-    password = data.get('password')
     username = data.get('username')
     password = data.get('password')
 
@@ -122,12 +114,33 @@ def login():
             }
         }
 
-        # Return the extracted data as JSON
-        return jsonify(user_data), 200
+        # Check if response has user and session data
+        if response.user and response.session:
+            user_data = {
+                "user": {
+                    "id": response.user.id,
+                    "email": response.user.email,
+                    "created_at": response.user.created_at,
+                    "last_sign_in_at": response.user.last_sign_in_at,
+                },
+                "session": {
+                    "access_token": response.session.access_token,
+                    "refresh_token": response.session.refresh_token,
+                    "expires_in": response.session.expires_in,
+                    "expires_at": response.session.expires_at,
+                }
+            }
+            return jsonify(user_data), 200
+
+        # If the login fails (for example, invalid credentials), return a 401 error with a message
+        return jsonify({"error": "Invalid email or password"}), 401
 
     except Exception as e:
-        # Handle any errors that occur during the sign-in process
-        return jsonify({"error": str(e)}), 401
+        # Handle other errors and log them
+        print(f"Error during login: {str(e)}")
+        return jsonify({"error": f"{str(e)}"}), 500
+
+
 
 
 @auth_bp.route('/logout', methods=['POST'])
@@ -139,4 +152,27 @@ def logout():
 
     except Exception as e:
         # Handle any errors that occur during the sign-out process
+        return jsonify({"error": str(e)}), 400
+
+# get user session
+@auth_bp.route('/get_user', methods=['GET'])
+def get_user():
+    try:
+        # Get the currently authenticated user directly from the session
+        user = supabase.auth.get_user()
+
+        if not user or not user.user:
+            return jsonify({"error": "No active session or user not found"}), 401
+
+        # Return the user data
+        user_data = {
+            "id": user.user.id,
+            "email": user.user.email,
+            "created_at": user.user.created_at.isoformat(),
+            "last_sign_in_at": user.user.last_sign_in_at.isoformat(),
+        }
+
+        return jsonify({"user": user_data}), 200
+
+    except Exception as e:
         return jsonify({"error": str(e)}), 400

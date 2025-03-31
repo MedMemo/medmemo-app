@@ -1,9 +1,9 @@
 ### GET http://localhost:5000/
-GET http://127.0.0.1:5000/
+GET http://127.0.0.1:3000/
 
 
 ### POST on Auth sign up feature 
-POST http://localhost:5000/auth/signup
+POST http://localhost:3000/auth/signup
 Content-Type: application/json
 
 {
@@ -12,19 +12,19 @@ Content-Type: application/json
   "username": "hello_user"
 }
 
-### POST login user
-POST http://localhost:5000/auth/login
+### POST login user not confirmed email
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
-  "email": "bryan111@gmail.com",
+  "email": "bryanli@temple.edu",
   "password": "1234567"
 }
 
 
 
-### POST login user
-POST http://localhost:5000/auth/login
+### POST login user confirmed email
+POST http://localhost:3000/auth/login
 Content-Type: application/json
 
 {
@@ -33,5 +33,9 @@ Content-Type: application/json
 }
 
 ###GET Sign out
-POST http://localhost:5000/auth/logout
+POST  http://localhost:3000/auth/logout
 Content-Type: application/json
+
+
+###Get user session
+GET http://localhost:3000/auth/get_user
