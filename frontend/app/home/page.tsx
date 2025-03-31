@@ -12,7 +12,7 @@ export default function Home() {
     const visitId = 1; // Download summary based on visitID
     try {
       // download.py runs on port 5000
-        const response = await fetch(`http://127.0.0.1:5000/download/${visitId}`);
+        const response = await fetch(`http://127.0.0.1:8080/download/${visitId}`);
 
         if (!response.ok) {
             throw new Error("Download failed");

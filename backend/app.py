@@ -3,6 +3,7 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from supabase_client import env_file
+from download import download_bp #Import the download blueprint
 from auth import auth_bp  # Import the auth blueprint
 # from summarize import summarize_bp # Import the summarize blueprint
 
@@ -11,6 +12,8 @@ CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enabl
 
 # Register auth routes
 app.register_blueprint(auth_bp, url_prefix='/auth')
+# Register download routes
+app.register_blueprint(download_bp, url_prefix='/download')
 
 # Register summarize route
 # app.register_blueprint(summarize_bp, url_prefix='/summarize')
