@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import NavLogo from "../../components/NavLogo_Authenticated"
 
 export default function Home() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -25,7 +24,7 @@ export default function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch(process.env.BASE_URL + "/auth/get_user", {
+        const response = await fetch("http://localhost:8080/auth/get_user", {
           credentials: "include"
         });
 
@@ -98,7 +97,7 @@ export default function Home() {
     const visitId = 1; // Download summary based on visitID
     try {
       // download.py runs on port 5000
-        const response = await fetch(process.env.BASE_URL + `/download/${visitId}`);
+        const response = await fetch(`http://127.0.0.1:8080/download/${visitId}`);
 
         if (!response.ok) {
             throw new Error("Download failed");

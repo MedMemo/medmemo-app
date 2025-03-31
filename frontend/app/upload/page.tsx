@@ -3,6 +3,7 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react"
 import { Upload, FileText, X, CheckCircle2, AlertTriangle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import NavLogo from "../../components/NavLogo_Authenticated"
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false)
@@ -104,12 +105,16 @@ export default function FileUpload() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-      <div className="w-full max-w-md mx-auto bg-white shadow-lg rounded-xl p-6">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Upload Files</h2>
-          <p className="text-sm text-gray-500">Supported types: png, pdf, jpg (Max 5MB)</p>
-        </div>
+
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* Navbar */}
+      <NavLogo />
+      <div className="flex justify-center p-4 mt-8">
+        <div className="w-full max-w-md mx-auto bg-white shadow-lg rounded-xl p-6">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Upload Files</h2>
+            <p className="text-sm text-gray-500">Supported types: png, pdf, jpg (Max 5MB)</p>
+          </div>
 
         <div
           className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
@@ -139,6 +144,34 @@ export default function FileUpload() {
             multiple
           />
         </div>
+          <div
+            className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
+              isDragging
+                ? "border-blue-500 bg-blue-50 scale-105"
+                : "border-gray-300 hover:border-blue-400"
+            } flex flex-col items-center justify-center min-h-[200px]`}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
+            <Upload className="w-12 h-12 text-gray-400 mb-4" />
+            <p className="text-gray-700 font-medium mb-2">Drag and drop files here</p>
+            <p className="text-gray-500 mb-4">or</p>
+            <button
+              onClick={handleBrowseClick}
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center"
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Browse Files
+            </button>
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileInputChange}
+              className="hidden"
+              multiple
+            />
+          </div>
 
         {files.length > 0 && (
           <div className="bg-gray-50 rounded-lg p-4 mb-4">
@@ -170,19 +203,19 @@ export default function FileUpload() {
           </div>
         )}
 
-        {error && (
-          <div className="flex items-center bg-red-50 p-3 rounded-md mb-4">
-            <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
-            <p className="text-sm text-red-700">{error}</p>
-          </div>
-        )}
+          {error && (
+            <div className="flex items-center bg-red-50 p-3 rounded-md mb-4">
+              <AlertTriangle className="w-6 h-6 text-red-500 mr-3" />
+              <p className="text-sm text-red-700">{error}</p>
+            </div>
+          )}
 
-        {successMessage && (
-          <div className="flex items-center bg-green-50 p-3 rounded-md mb-4">
-            <CheckCircle2 className="w-6 h-6 text-green-500 mr-3" />
-            <p className="text-sm text-green-700">{successMessage}</p>
-          </div>
-        )}
+          {successMessage && (
+            <div className="flex items-center bg-green-50 p-3 rounded-md mb-4">
+              <CheckCircle2 className="w-6 h-6 text-green-500 mr-3" />
+              <p className="text-sm text-green-700">{successMessage}</p>
+            </div>
+          )}
 
         {files.length > 0 && (
           <button
