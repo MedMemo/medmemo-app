@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // If you're using Next.js 13 or later
+import NavLogo from "../../../components/NavLogo_LogoOnly"
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -64,20 +65,7 @@ export default function SignUp() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
 
       {/* Navbar */}
-      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
-        <div className="flex justify-between items-center w-full">
-          {/* Logo and Title */}
-          <div className="flex items-center cursor-pointer space-x-8" onClick={handleRedirect}>
-            <div className="bg-white p-1 rounded">
-              <img
-                src="/images/medmemo_logo.png"
-                alt="MedMemo Logo"
-                className="h-20 w-20"/>
-            </div>
-            <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
-          </div>
-        </div>
-      </nav>
+      <NavLogo />
 
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
         <div className="bg-white p-8 rounded-lg shadow-md w-96">
