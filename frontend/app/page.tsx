@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
 
+
   const handleRedirect = () => {
     router.push('/');
   };
 
   const handleLogin = () => {
-    router.push("/login"); 
+    router.push("/login");
   };
 
   const handleSignUp = () => {

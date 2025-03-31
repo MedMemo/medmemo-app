@@ -9,13 +9,13 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  
+
   const handleRedirect = () => {
     router.push("/");
   };
 
   const handleLogin = () => {
-    router.push("/login"); 
+    router.push("/login");
   };
 
   const handleSignUp = () => {
@@ -25,7 +25,7 @@ export default function Home() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch("http://localhost:8080/auth/get_user", {
+        const response = await fetch(process.env.BASE_URL + "/auth/get_user", {
           credentials: "include"
         });
 
@@ -98,7 +98,7 @@ export default function Home() {
     const visitId = 1; // Download summary based on visitID
     try {
       // download.py runs on port 5000
-        const response = await fetch(`http://127.0.0.1:8080/download/${visitId}`);
+        const response = await fetch(process.env.BASE_URL + `/download/${visitId}`);
 
         if (!response.ok) {
             throw new Error("Download failed");
@@ -139,7 +139,7 @@ export default function Home() {
           </div>
           {/* Dropdown Menu */}
           <div className="relative">
-            <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
+            <button onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="px-4 py-2 bg-white text-[#D93D3D] font-bold rounded-lg hover:bg-gray-200 transition">
               Menu ▼
             </button>
