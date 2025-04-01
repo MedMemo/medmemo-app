@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import NavLogoAuthenticated from "../../../components/NavLogo_Authenticated";
-import NavLogoLogoOnly from "../../../components/NavLogo_LogoOnly";
+import NavLogoAuthenticated from "../../components/NavLogo_Authenticated";
+import NavLogoLogoOnly from "../../components/NavLogo_LogoOnly";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -20,6 +20,8 @@ export default function Home() {
         const response = await fetch("http://localhost:8080/auth/get_user", {
           credentials: "include", // Include credentials to send cookies
         });
+
+        console.log("response:", response);
 
         if (!response.ok) {
           setError("User is not authenticated. Redirecting...");  // Set error if response is not OK
