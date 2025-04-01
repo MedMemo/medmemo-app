@@ -28,7 +28,7 @@ export default function SignUp() {
 
     try {
       // Make the fetch request to your Flask API's sign-up endpoint
-      const response = await fetch(process.env.BASE_URL + "/auth/signup", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

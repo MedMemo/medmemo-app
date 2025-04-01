@@ -79,7 +79,7 @@ export default function FileUpload() {
         formData.append("file", file)
       })
 
-      const response = await fetch(process.env.BASE_URL + "/upload", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
       })
@@ -116,34 +116,6 @@ export default function FileUpload() {
             <p className="text-sm text-gray-500">Supported types: png, pdf, jpg (Max 5MB)</p>
           </div>
 
-        <div
-          className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
-            isDragging
-              ? "border-blue-500 bg-blue-50 scale-105"
-              : "border-gray-300 hover:border-blue-400"
-          } flex flex-col items-center justify-center min-h-[200px]`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          <Upload className="w-12 h-12 text-gray-400 mb-4" />
-          <p className="text-gray-700 font-medium mb-2">Drag and drop files here</p>
-          <p className="text-gray-500 mb-4">or</p>
-          <button
-            onClick={handleBrowseClick}
-            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center"
-          >
-            <Upload className="w-4 h-4 mr-2" />
-            Browse Files
-          </button>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileInputChange}
-            className="hidden"
-            multiple
-          />
-        </div>
           <div
             className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
               isDragging
@@ -173,34 +145,34 @@ export default function FileUpload() {
             />
           </div>
 
-        {files.length > 0 && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Selected Files:</h3>
-            <div className="space-y-2">
-              {files.map((file, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-between bg-white p-3 rounded-md shadow-sm"
-                >
-                  <div className="flex items-center">
-                    <FileText className="w-5 h-5 text-blue-500 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-700">{file.name}</p>
-                      <p className="text-xs text-gray-500">
-                        {(file.size / 1024).toFixed(1)} KB
-                      </p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => removeFile(file)}
-                    className="text-red-500 hover:text-red-600"
+          {files.length > 0 && (
+            <div className="bg-gray-50 rounded-lg p-4 mb-4">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Selected Files:</h3>
+              <div className="space-y-2">
+                {files.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-white p-3 rounded-md shadow-sm"
                   >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex items-center">
+                      <FileText className="w-5 h-5 text-blue-500 mr-3" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">{file.name}</p>
+                        <p className="text-xs text-gray-500">
+                          {(file.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => removeFile(file)}
+                      className="text-red-500 hover:text-red-600"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
         )}
 
           {error && (
@@ -217,42 +189,43 @@ export default function FileUpload() {
             </div>
           )}
 
-        {files.length > 0 && (
-          <button
-            onClick={uploadFiles}
-            disabled={uploading}
-            className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors
-              disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center"
-          >
-            {uploading ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Uploading...
-              </>
-            ) : (
-              "Upload Files"
-            )}
-          </button>
-        )}
+          {files.length > 0 && (
+            <button
+              onClick={uploadFiles}
+              disabled={uploading}
+              className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors
+                disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              {uploading ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Uploading...
+                </>
+              ) : (
+                "Upload Files"
+              )}
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )
