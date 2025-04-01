@@ -66,7 +66,7 @@ export default function SignUp() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="p-8 rounded-lg w-fit">
 
-          <h1 className="text-7xl font-bold text-center text-black mb-6">MedMemo</h1>
+          <h1 className="font-merriweather text-7xl font-bold text-center text-black mb-6">MedMemo</h1>
           {/* Sign-Up Form */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

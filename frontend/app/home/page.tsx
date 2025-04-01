@@ -21,7 +21,6 @@ export default function Home() {
           credentials: "include", // Include credentials to send cookies
         });
 
-        console.log("response:", response);
 
         if (!response.ok) {
           setError("User is not authenticated. Redirecting...");  // Set error if response is not OK

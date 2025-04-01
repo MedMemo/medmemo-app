@@ -31,10 +31,10 @@ export default function Home() {
           <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
 
             <div className="flex flex-col w-2/5 justify-center align-middle items-start text-center md:text-left">
-              <h1 className="mb-2 text-5xl font-bold leading-tight">
+              <h1 className="font-merriweather mb-2 text-5xl font-bold leading-tight">
                 MedMemo
               </h1>
-              <p className="leading-normal text-lg mb-4">
+              <p className="font-open-sans leading-normal text-lg mb-4">
                 Keeping track of your medical visits shouldn’t be complicated.
                 MedMemo helps you create clear, structured notes from your healthcare
                 provider visits, ensuring you never miss important details
