@@ -7,11 +7,9 @@ from download import download_bp #Import the download blueprint
 from auth import auth_bp  # Import the auth blueprint
 from summarize import summarize_bp # Import the summarize blueprint
 from upload import upload_bp  # Import the upload blueprint
-
-# from summarize import summarize_bp # Import the summarize blueprint
+from summarize import summarize_bp # Import the summarize blueprint
 from ocr import ocr_bp  # Import the ocr blueprint
 
-# from summarize import summarize_bp # Import the summarize blueprint
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enable CORS for frontend communication (middleware)
 
@@ -19,11 +17,11 @@ CORS(app, origins=["http://localhost:3000"], supports_credentials=True)  # Enabl
 app.register_blueprint(auth_bp, url_prefix='/auth')
 # Register download routes
 app.register_blueprint(download_bp, url_prefix='/download')
+# Register upload routes
 app.register_blueprint(upload_bp, url_prefix='/upload')
-
-# Register summarize route
+# Register summarize routes
 app.register_blueprint(summarize_bp, url_prefix='/summarize')
-# app.register_blueprint(summarize_bp, url_prefix='/summarize')
+# Register OCR routes
 app.register_blueprint(ocr_bp, url_prefix='/ocr')
 
 # home route that returns below text when root url is accessed
@@ -34,5 +32,5 @@ def hello_world():
 
 if __name__ == '__main__':  
     debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
-    dev_port = int(os.getenv('PORT', 8080))  # Default to 5000 if DEV_PORT is not set
+    dev_port = int(os.getenv('PORT', 8080))  # Default to 8080 if DEV_PORT is not set
     app.run(debug=debug_mode, port=dev_port)

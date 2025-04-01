@@ -19,13 +19,11 @@ ner_pipeline = pipeline("ner", model=bert_model, tokenizer=tokenizer)
 # set OpenAI API key
 client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 
-@summarize_bp.route('', methods=['POST'])
 # specify transcript's medical entities using BERT model
-def extract_med_entities():
+def extract_med_entities(transcript):
     # get tramscript
     transcript = request.json.get("transcript")
 
-    #####delete this
     if not transcript:
         return jsonify({"error": "No transcript provided"}), 400
 
@@ -70,18 +68,47 @@ def structure_prompt(transcript):
 
 # send transcript + prompt to OpenAI API to get the summary
 def generate_summary(transcript):
-    prompt = structure_prompt(transcript)
+    ##prompt = structure_prompt(transcript)
 
     try:
         response = client.chat.completions.create(
             model="gpt-4",
-            message={"role": "user", "content": prompt}, # send prompt as user input
+            message={"role": "user", "content": transcript}, # send prompt as user input
             max_tokens = 100,
-            temperature = 0.5
+            temperature = 0.5,
+            response_format={"type": "json_object"}
         )
-
+        
+        return response.choices[0].message.content
+    
         # extract summary from OpenAI response
-        summary = response["choices"][0].message.content
-        return jsonify({"response": summary}), 200
+        ##summary = response.choices[0].message.content
+        
+        ##print(f"Summary type: {type(summary)}")
+
+        ##if isinstance(summary, str):
+        ##    return jsonify({"response": summary})
+        ##else:
+        ##    return jsonify({"error": "Summary is not a string"}), 500
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print(f"Error generating summary: {str(e)}")
+        # Make sure to return a proper error message in the JSON response
+        ##return jsonify({"error": "Failed to generate summary", "details": str(e)}), 500
+    
+@summarize_bp.route('', methods=['POST'])
+def summarize():
+    
+    
+    
+    
+    # get transcipt from request
+    ##transcript = request.json.get("transcript")
+    ##f not transcript:
+    ##    return jsonify({"error": "No transcript provided"}), 400
+
+    # call generate_summary() to get the summary from OpenAI
+    ##summary = generate_summary(transcript)
+
+    ##print(f"Response Status: 200, Summary: {summary}")
+
+    ##return jsonify({"response": summary}), 200
