@@ -6,13 +6,13 @@ cd backend
 ```
 
 ## Step 2: Create and Activate Virtual Environment
-- Mac/Linux
+**Mac/Linux**
 ```bash 
 python3 -m venv .venv
 . .venv/bin/activate
 ```
 
-- Window
+**Windows**
 ```bash 
 py -3 -m venv .venv
 .venv\Scripts\activate
@@ -25,6 +25,12 @@ pip install -r requirements.txt
 ```
 
 ## Step 4: Run Flask Application
+**Mac/Linux**
 ```bash 
 python3 app.py
+```
+
+**Windows**
+```bash
+py app.py
 ```

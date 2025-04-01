@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import NavBar from "@/components/Navbar";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -10,14 +11,11 @@ export default function Login() {
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
 
-  const handleRedirect = () => {
-    router.push('/');
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,21 +47,7 @@ export default function Login() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
 
       {/* Navbar */}
-      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
-        <div className="flex justify-between items-center w-full">
-          {/* Logo and Title */}
-          <div className="flex items-center cursor-pointer space-x-8" onClick={handleRedirect}>
-            <div className="bg-white p-1 rounded">
-              <img
-                src="/images/medmemo_logo.png"
-                alt="MedMemo Logo"
-                className="h-20 w-20"
-              />
-            </div>
-            <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
-          </div>
-        </div>
-      </nav>
+      <NavBar />
 
       <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-md w-96">
