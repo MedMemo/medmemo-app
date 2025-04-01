@@ -87,6 +87,7 @@ const NavLogoAuthenticated = () => {
               <a href="/about" className={defaultButtonStyle}>About</a>
               <a href="/upload" className={defaultButtonStyle}>Upload (Demo)</a>
               <a href="/display" className={defaultButtonStyle}>Display (Demo)</a>
+              <a href="/account" className={defaultButtonStyle}>Account (Demo)</a>
               
               <button onClick={handleDownload} className={defaultButtonStyle}>
                 Download File (Demo)
