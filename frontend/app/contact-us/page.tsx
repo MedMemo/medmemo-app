@@ -33,8 +33,8 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
     const formData = new FormData(e.target as HTMLFormElement);
 
     //Web3Form key
-    formData.append("access_key", "10401b94-9770-4647-827c-f13a280bb699");
-
+    formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "");
+    
     // convert to JSON 
     const object = Object.fromEntries(formData);
     const json = JSON.stringify(object);
