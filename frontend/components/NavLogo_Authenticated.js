@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 
-const NavLogo = () => {
+const NavLogoAuthenticated = () => {
 
   const router = useRouter();
 
@@ -42,6 +42,25 @@ const NavLogo = () => {
     }
   };
 
+  const handleLogOut = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await response.json ();
+
+      if (!response.ok) {
+        console.error("Logout error:", data.error || "An error occured during logout.");
+        return;
+      }
+
+      router.push("/")
+    } catch (error) {
+      console.error("Error during logout:", error);
+    }
+  };
+
   return (
     <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
       <div className="flex justify-between items-center w-full">
@@ -72,6 +91,9 @@ const NavLogo = () => {
               <button onClick={handleDownload} className={defaultButtonStyle}>
                 Download File (Demo)
               </button>
+              <button onClick={handleLogOut} className={defaultButtonStyle}>
+                Log Out
+              </button>
             </div>
           )}
         </div>
@@ -81,4 +103,4 @@ const NavLogo = () => {
     
 };
 
-export default NavLogo;
+export default NavLogoAuthenticated;

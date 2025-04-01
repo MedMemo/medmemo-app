@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const NavLogo = () => {
+const NavLogoLandingPage = () => {
 
   const router = useRouter();
 
@@ -50,4 +50,4 @@ const NavLogo = () => {
     
 };
 
-export default NavLogo;
+export default NavLogoLandingPage;
