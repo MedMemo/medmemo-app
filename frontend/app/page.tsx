@@ -6,6 +6,18 @@ import NavLogo from "../components/NavLogo_LandingPage"
 export default function Home() {
   const router = useRouter();
 
+  const handleRedirect = () => {
+    router.push('/');
+  };
+
+  const handleLogin = () => {
+    router.push("/login");
+  };
+
+  const handleSignUp = () => {
+    router.push("/signup")
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Navbar */}

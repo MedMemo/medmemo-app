@@ -11,7 +11,7 @@ export default function SignUp() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
-  
+
   const handleRedirect = () => {
     router.push('/');
   };
@@ -28,7 +28,7 @@ export default function SignUp() {
 
     try {
       // Make the fetch request to your Flask API's sign-up endpoint
-      const response = await fetch("http://localhost:8080/auth/signup", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

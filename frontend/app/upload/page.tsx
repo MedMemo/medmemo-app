@@ -79,7 +79,7 @@ export default function FileUpload() {
         formData.append("file", file)
       })
 
-      const response = await fetch("http://localhost:8080/upload", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/upload", {
         method: "POST",
         body: formData,
       })
@@ -118,8 +118,8 @@ export default function FileUpload() {
 
           <div
             className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
-              isDragging 
-                ? "border-blue-500 bg-blue-50 scale-105" 
+              isDragging
+                ? "border-blue-500 bg-blue-50 scale-105"
                 : "border-gray-300 hover:border-blue-400"
             } flex flex-col items-center justify-center min-h-[200px]`}
             onDragOver={handleDragOver}
@@ -136,12 +136,12 @@ export default function FileUpload() {
               <Upload className="w-4 h-4 mr-2" />
               Browse Files
             </button>
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              onChange={handleFileInputChange} 
-              className="hidden" 
-              multiple 
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileInputChange}
+              className="hidden"
+              multiple
             />
           </div>
 
@@ -150,8 +150,8 @@ export default function FileUpload() {
               <h3 className="text-sm font-semibold text-gray-700 mb-3">Selected Files:</h3>
               <div className="space-y-2">
                 {files.map((file, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className="flex items-center justify-between bg-white p-3 rounded-md shadow-sm"
                   >
                     <div className="flex items-center">
@@ -163,7 +163,7 @@ export default function FileUpload() {
                         </p>
                       </div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => removeFile(file)}
                       className="text-red-500 hover:text-red-600"
                     >
@@ -173,7 +173,7 @@ export default function FileUpload() {
                 ))}
               </div>
             </div>
-          )}
+        )}
 
           {error && (
             <div className="flex items-center bg-red-50 p-3 rounded-md mb-4">
@@ -193,28 +193,28 @@ export default function FileUpload() {
             <button
               onClick={uploadFiles}
               disabled={uploading}
-              className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors 
+              className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors
                 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center"
             >
               {uploading ? (
                 <>
-                  <svg 
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
+                  <svg
+                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
                     viewBox="0 0 24 24"
                   >
-                    <circle 
-                      className="opacity-25" 
-                      cx="12" 
-                      cy="12" 
-                      r="10" 
-                      stroke="currentColor" 
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
                       strokeWidth="4"
                     ></circle>
-                    <path 
-                      className="opacity-75" 
-                      fill="currentColor" 
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
@@ -228,7 +228,5 @@ export default function FileUpload() {
         </div>
       </div>
     </div>
-    
-
   )
 }
