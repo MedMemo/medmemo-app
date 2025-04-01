@@ -11,3 +11,4 @@ python-dotenv==1.1.0
 azure-ai-documentintelligence
 pypdf==5.4.0
 pillow
+openai
