@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 
-const NavLogo = () => {
+const NavLogoLogoOnly = () => {
 
   const router = useRouter();
 
@@ -29,4 +29,4 @@ const NavLogo = () => {
     
 };
 
-export default NavLogo;
+export default NavLogoLogoOnly;
