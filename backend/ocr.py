@@ -7,10 +7,7 @@ from azure.ai.documentintelligence.models import DocumentAnalysisFeature, Analyz
 from dotenv import load_dotenv
 
 from pypdf import PdfReader, PdfWriter
-from pypdf.annotations import Rectangle
-from pypdf.generic import ArrayObject, FloatObject, NameObject
 
-import numpy as np
 from PIL import Image, ImageDraw
 from base64 import encodebytes
 
