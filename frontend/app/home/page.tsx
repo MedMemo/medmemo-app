@@ -17,7 +17,7 @@ export default function Home() {
       setError(null);  // Reset the error state before making the request
 
       try {
-        const response = await fetch("http://localhost:8080/auth/get_user", {
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/get_user", {
           credentials: "include", // Include credentials to send cookies
         });
 

@@ -20,8 +20,8 @@ const NavLogoAuthenticated = () => {
   const handleDownload = async () => {
     const visitId = 1; // Download summary based on visitID
     try {
-      // download.py runs on port 5000
-        const response = await fetch(`http://127.0.0.1:8080/download/${visitId}`);
+
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + `/download/${visitId}`);
 
         if (!response.ok) {
             throw new Error("Download failed");
@@ -44,7 +44,7 @@ const NavLogoAuthenticated = () => {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/logout", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/logout", {
         method: "POST",
         credentials: "include",
       });
