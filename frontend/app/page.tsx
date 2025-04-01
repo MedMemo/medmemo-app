@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import NavLogo from "../components/NavLogo_LandingPage"
+import NavBar from "@/components/Navbar";
+import landing_page_image from "../public/images/landing_page_image.svg";
 
 export default function Home() {
   const router = useRouter();
@@ -19,22 +21,40 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-[#FFECE5] flex-col text-black">
       {/* Navbar */}
-      <NavLogo />
-      <div className="flex flex-grow">
-        {/* Main Content */}
-        <main className="flex-1 p-8">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-black">
-              Welcome to the Landing Page
-            </h1>
-            <p className="mt-2 text-gray-800">
-              This is a simple Landing Page with a navbar
-            </p>
-          </div>
-        </main>
-      </div>
+      <NavBar/>
+      {/* <NavLogo /> */}
+
+      <main className="flex flex-col-reverse md:flex-row md:justify-center md:items-center flex-grow align-middle pt-12">
+
+          <div className="container px-3 mx-auto flex flex-wrap flex-col md:flex-row items-center">
+
+            <div className="flex flex-col w-2/5 justify-center align-middle items-start text-center md:text-left">
+              <h1 className="mb-2 text-5xl font-bold leading-tight">
+                MedMemo
+              </h1>
+              <p className="leading-normal text-lg mb-4">
+                Keeping track of your medical visits shouldn’t be complicated.
+                MedMemo helps you create clear, structured notes from your healthcare
+                provider visits, ensuring you never miss important details
+              </p>
+              <button className="text-sm rounded-md lg:mx-0 hover:underline text-white bg-[#DB5972] font-bold py-2 px-6 focus:outline-none focus:shadow-outline transform transition hover:scale-105 duration-300 ease-in-out"
+              onClick={handleSignUp}>
+                Try Now
+              </button>
+            </div>
+
+            <div className=" w-3/5 py-6 text-center">
+              <img
+                src={landing_page_image.src}
+                alt="Landing Page"
+                className="w-full h-auto object-cover"
+              />
+            </div>
+
+        </div>
+      </main>
     </div>
   );
 }
