@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import NavLogo from "../../../components/NavLogo_LogoOnly"
+import NavBar from "@/components/Navbar";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -47,7 +47,7 @@ export default function Login() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
 
       {/* Navbar */}
-      <NavLogo />
+      <NavBar />
 
       <div className="min-h-screen flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-md w-96">

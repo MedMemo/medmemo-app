@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation"; // If you're using Next.js 13 or later
-import NavLogo from "../../../components/NavLogo_LogoOnly"
+import NavBar from "../../../components/Navbar";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -62,47 +62,47 @@ export default function SignUp() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-[#ffffff] flex flex-col">
 
       {/* Navbar */}
-      <NavLogo />
+      <NavBar />
 
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="bg-white p-8 rounded-lg shadow-md w-96">
-          <h2 className="text-3xl font-bold text-center text-black mb-6">Sign Up</h2>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="p-8 rounded-lg w-fit">
 
+          <h1 className="text-7xl font-bold text-center text-black mb-6">MedMemo</h1>
           {/* Sign-Up Form */}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-800">Email</label>
-              <input
-                type="email"
-                id="email"
-                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+              <input type="email"
+              id="email"
+              aria-describedby="helper-text-explanation"
+              className="w-full px-4 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black
+              placeholder:text-center"
+              placeholder="email address*"></input>
             </div>
 
             <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-800">Password</label>
               <input
                 type="password"
                 id="password"
-                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black"
+                className="w-full px-4 py-2 mt-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black
+                placeholder:text-center"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                placeholder="password*"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="confirmPassword" className="block text-gray-800">Confirm Password</label>
+              {/* <label htmlFor="confirmPassword" className="block text-gray-800">Confirm Password</label> */}
               <input
                 type="password"
                 id="confirmPassword"
-                className="w-full px-4 py-2 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black"
+                className="w-full px-4 py-2 mt-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black
+                placeholder:text-center"
+                placeholder="confirm password*"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
