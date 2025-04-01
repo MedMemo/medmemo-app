@@ -6,11 +6,16 @@ import NavLogoAuthenticated from "../../components/NavLogo_Authenticated";
 import NavLogoLogoOnly from "../../components/NavLogo_LogoOnly";
 
 export default function Home() {
-  const [user, setUser] = useState(null);
+const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [accountAge, setAccountAge] = useState<string>("Calculating...");
   const router = useRouter();
+
+  type User = {
+    email: string;
+    created_at: string;
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
