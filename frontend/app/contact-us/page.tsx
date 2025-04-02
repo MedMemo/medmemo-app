@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import './styles.css';
+import NavLogoAuthenticated from '../../components/NavLogo_Authenticated'; 
+import Image from 'next/image';
 
 export default function ContactPage() {
 const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);//dropdown menu visible or invisible
@@ -74,7 +76,25 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-white flex flex-col">
+    {/* Navbar */}
+    <NavLogoAuthenticated />
+
+    <div className="flex flex-grow">
+      {/* Sidebar */}
+      <div
+        className="w-64 text-white p-4 overflow-y-auto h-screen"
+        style={{ backgroundColor: '#E0DFDF' }}
+      >
+        <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
+          Sidebar Title
+        </h2>
+        <p className="mb-4 text-center text-gray-600">
+          This is a scrollable sidebar.
+        </p>
+        
+      </div>
+
     {/* Toast Notif*/}
     {showToast && (
   <div
@@ -103,53 +123,92 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
   </div>
 )}
 
-      {/* Navbar */}
-      <nav style={{ backgroundColor: "#CF4051" }} className="text-white p-4">
-        <div className="flex justify-between items-center w-full">
-          {/* Logo and Title */}
-          <div className="flex items-center space-x-8">
-            <div className="bg-white p-1 rounded">
-              <img
-                src="/images/medmemo_logo.png"
-                alt="MedMemo Logo"
-                className="h-20 w-20"
-              />
-            </div>
-            <h1 className="text-5xl font-bold font-mono">MedMemo</h1>
-          </div>
-          {/* Dropdown Menu */}
-          <div className="relative">
-            <button
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="px-4 py-2 bg-white text-[#D93D3D] font-bold rounded-lg hover:bg-gray-200 transition"
-            >
-              Menu ▼
-            </button>
-            {isDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white font-bold rounded-md shadow-lg">
-                <a href="/" className={defaultButtonStyle}>
-                  Home
-                </a>
-                <a href="/about" className={defaultButtonStyle}>
-                  About
-                </a>
-                <a href="/account" className={defaultButtonStyle}>
-                  Account
-                </a>
-                <a href="/contact-us" className={defaultButtonStyle}>Contact Us</a>
-              </div>
-            )}
-          </div>
-        </div>
-      </nav>
-
       {/* Contact Form */}
-      <div className="contact-container">
-        <form onSubmit={handleSubmit} className="contact-left">
+      <div className="contact-container flex items-start justify-center gap-x-70">
+      <div className="flex flex-col items-center gap-4 w-full max-w-4xl">
+
+      {/* Image on the left */}
+  <div className="contact-image-container w-full max-w-[650px]">
+    <Image
+      src="/images/contact-us.png"
+      alt="Contact Us"
+      width={650}
+      height={300}
+      className="contact-image"
+    />
+  </div>
+
+ {/* Three boxes under the image */}
+ <div className="flex justify-center gap-7 w-full">
+      {/* Box 1 */}
+      <a href="https://instagram.com" className="block ">
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"
+      style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
+      >
+      <p className="text-gray-800 text-xl font-bold">Instagram</p>
+        <p className="text-gray-800 text-xl">@medmemo</p>
+        <div className="flex justify-center items-center mt-2">
+          <Image 
+            src="/images/instagram.png" 
+            alt="Instagram Logo" 
+            width={40} 
+            height={40} 
+          />
+        </div>
+      </div>
+      </a>
+
+      {/* Box 2 */}
+      <a href="https://x.com" className="block">
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"        style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
+
+      >
+      <p className="text-gray-800 text-xl font-bold">Twitter</p>
+        <p className="text-gray-800 text-xl">@medTweets</p>
+        <div className="flex justify-center items-center mt-2">
+          <Image 
+            src="/images/twitter.png" 
+            alt="Instagram Logo" 
+            width={40} 
+            height={40} 
+          />
+        </div>
+      </div>
+      </a>
+      
+      {/* Box 3 */}
+      <a href="https://facebook.com" className="block">
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300 "        style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
+
+      >
+      <p className="text-gray-800 text-xl font-bold">Facebook</p>
+        <p className="text-gray-800 text-xl">@MedMemo</p>
+        <div className="flex justify-center items-center mt-2">
+          <Image 
+            src="/images/facebook.png" 
+            alt="Instagram Logo" 
+            width={40} 
+            height={40} 
+          />
+        </div>
+      </div>
+      </a>
+
+    </div>
+  </div>
+
+
+
+        <form onSubmit={handleSubmit} className="contact-left w-full max-w-md p-10 mt-33">
           <div className="contact-left-title">
+          <p className="text-xl font-semibold text-blue-800 -mt-3">  We'd love to hear from you!</p>
             <h2>Contact Us!</h2>
             <hr />
           </div>
+
+          <label htmlFor="name" className="text-gray-600 font-semibold text-xl -mb-6">
+    Your Name:
+  </label> 
           <input
             type="text"
             name="name"
@@ -157,6 +216,9 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
             className="contact-inputs"
             required
           />
+          <label htmlFor="name" className="text-gray-600 font-semibold text-xl -mb-6">
+    Your Email:
+  </label>
           <input
             type="email"
             name="email"
@@ -164,6 +226,9 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
             className="contact-inputs"
             required
           />
+          <label htmlFor="name" className="text-gray-600 font-semibold text-xl -mb-6">
+    Leave Your Message:
+  </label>
           <textarea
             name="message"
             placeholder="Message"
@@ -174,7 +239,9 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
             Submit
           </button>
         </form>
-      </div>
+      </div>      
     </div>
-  );
+    </div>
+ );
 }
+

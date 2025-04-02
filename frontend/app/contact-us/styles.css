@@ -1,18 +1,14 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: content-box;
-  }
-  
   body {
     font-family: 'Arial';
   }
   
   .contact-container {
-    height: 1000px;
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
+    padding-bottom: 400px;
+    padding-left: 180px;
   }
   
   .contact-left {
@@ -24,7 +20,7 @@
   .contact-left-title h2 {
     font-weight: 700;
     color: #433f3f;
-    font-size: 50px;
+    font-size: 60px;
   }
   
   .contact-left-title hr {
@@ -35,11 +31,13 @@
   
   .contact-inputs {
     width: 500px;
-    height: 60px;
+    height: 70px;
     padding-left: 25px;
     font-weight: 500;
     color: #000000;
     background-color: rgb(255, 255, 255);
+    border: 1px solid grey;
+    border-radius: 4px; 
   }
   
   .contact-left textarea {
