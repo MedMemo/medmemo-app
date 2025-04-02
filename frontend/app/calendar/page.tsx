@@ -43,6 +43,7 @@ export default function CalendarPage() {
     endDateTime: '',
   });
   const [status, setStatus] = useState<string>('');
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   //google api
   useEffect(() => {
@@ -61,6 +62,16 @@ export default function CalendarPage() {
 
     gapi.load('client:auth2', initializeGapi);
   }, []);
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+        setStatus(''); 
+      }, 9000); 
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   //google login function
   const login = useGoogleLogin({
@@ -103,7 +114,8 @@ export default function CalendarPage() {
     const start = new Date(startDateTime);
     const end = new Date(endDateTime);
     if (end <= start) {
-      setStatus('Start Time must be before End Time');
+      setStatus('Start Time Must Be Before End Time');
+      setShowToast(true)
       return;
     }
 
@@ -139,10 +151,11 @@ export default function CalendarPage() {
     
       //link to go to calendar
       if ('htmlLink' in response) {
-        setStatus(`Reminder Added! View Here: ${response.htmlLink}`);
+        setStatus(`Reminder Added!`);
       } else {
         setStatus('Reminder Added.');
       }
+      setShowToast(true)
       
       //clears input fields after submission
       setEventData({
@@ -154,6 +167,7 @@ export default function CalendarPage() {
     } catch (error: any) {
       console.error('Adding Reminder failed', error);
       setStatus(`Adding Reminder failed: ${error.message || 'Unknown Err'}`);
+      setShowToast(true)
     }
   };
 
@@ -271,16 +285,48 @@ export default function CalendarPage() {
                 >
                   Add to Calendar
                 </button>
-                {status && (
-                  <p className={`mt-4 text-center ${status.includes('successfully') ? 'text-green-600' : 'text-red-600'}`}>
-                    {status}
-                  </p>
-                )}
               </form>
             )}
           </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div
+          id="toast-simple"
+          className="fixed bottom-4 right-4 flex items-center min-w-[400px] max-w-[600px] min-h-[80px] px-10 py-6 text-gray-500 bg-white rounded-lg shadow-lg dark:text-gray-400 dark:bg-gray-800 text-xl"
+          role="alert"
+        >
+          <div className="flex items-center justify-center gap-4 w-full">
+          <svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="33"
+  height="33"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  strokeWidth="2"
+  strokeLinecap="round"
+  strokeLinejoin="round"
+>
+  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+  <path d="M4 7a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12z" />
+  <path d="M16 3v4" />
+  <path d="M8 3v4" />
+  <path d="M4 11h16" />
+  <path d="M7 14h.013" />
+  <path d="M10.01 14h.005" />
+  <path d="M13.01 14h.005" />
+  <path d="M16.015 14h.005" />
+  <path d="M13.015 17h.005" />
+  <path d="M7.01 17h.005" />
+  <path d="M10.01 17h.005" />
+</svg>
+            <div className="text-xl font-normal text-center">{status}</div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
