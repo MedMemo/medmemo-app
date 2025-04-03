@@ -16,8 +16,6 @@ data = {"transcript": transcript}
 #send a POST request to the /summarize route
 response = requests.post(url, json=data)
 
-# print the entire response to inspect its structure
-##print("response text: ", response.text)
 if response.status_code == 200:
     try:
         print("Response JSON:", response.json())
