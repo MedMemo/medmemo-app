@@ -12,6 +12,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "types": [
+      "node",
+      "gapi.client",
+      "gapi.auth2",
+      "gapi.client.calendar"
+    ],
     "incremental": true,
     "plugins": [
       {
