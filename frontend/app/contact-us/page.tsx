@@ -123,10 +123,11 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
   </div>
 )}
 
-      {/* Contact Form */}
-      <div className="contact-container flex items-start justify-center gap-x-70">
-      <div className="flex flex-col items-center gap-4 w-full max-w-4xl">
-
+   {/* Contact Us Page */}
+   <div className="contact-container flex flex-grow items-start justify-center gap-x-10">
+  
+     {/* img and boxes */}
+   <div className="left-section flex flex-col items-center gap-2">
       {/* Image on the left */}
   <div className="contact-image-container w-full max-w-[650px]">
     <Image
@@ -134,12 +135,12 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
       alt="Contact Us"
       width={650}
       height={300}
-      className="contact-image"
+      className="contact-image w-full h-auto"
     />
   </div>
 
- {/* Three boxes under the image */}
- <div className="flex justify-center gap-7 w-full">
+ {/* Three Boxes*/}
+ <div className="social-boxes flex justify-center gap-7 w-full">
       {/* Box 1 */}
       <a href="https://instagram.com" className="block ">
       <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"
@@ -160,8 +161,8 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
       {/* Box 2 */}
       <a href="https://x.com" className="block">
-      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"        style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
-
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"        
+      style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
       >
       <p className="text-gray-800 text-xl font-bold">Twitter</p>
         <p className="text-gray-800 text-xl">@medTweets</p>
@@ -178,8 +179,8 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
       
       {/* Box 3 */}
       <a href="https://facebook.com" className="block">
-      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300 "        style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
-
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300 "        
+      style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
       >
       <p className="text-gray-800 text-xl font-bold">Facebook</p>
         <p className="text-gray-800 text-xl">@MedMemo</p>
@@ -197,9 +198,7 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
     </div>
   </div>
 
-
-
-        <form onSubmit={handleSubmit} className="contact-left w-full max-w-md p-10 mt-33">
+        <form onSubmit={handleSubmit} className="contact-left w-full max-w-md p-10">
           <div className="contact-left-title">
           <p className="text-xl font-semibold text-blue-800 -mt-3">  We'd love to hear from you!</p>
             <h2>Contact Us!</h2>
@@ -244,4 +243,3 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
     </div>
  );
 }
-
