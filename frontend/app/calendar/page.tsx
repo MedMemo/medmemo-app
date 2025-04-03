@@ -224,7 +224,7 @@ export default function CalendarPage() {
               <form onSubmit={addReminder} className="space-y-4">
                 <div>
                   <label htmlFor="title" className="block text-gray-700 font-medium">
-                    Reminder
+                  <b>Medication </b>
                   </label>
                   <input
                     type="text"
@@ -239,7 +239,7 @@ export default function CalendarPage() {
                 </div>
                 <div>
                   <label htmlFor="description" className="block text-gray-700 font-medium">
-                    Details
+                  <b>Dosage</b>
                   </label>
                   <textarea
                     id="description"
@@ -253,7 +253,7 @@ export default function CalendarPage() {
                 </div>
                 <div>
                   <label htmlFor="startDateTime" className="block text-gray-700 font-medium">
-                    Start Date & Time
+                  <b>Start Date & Time </b>
                   </label>
                   <input
                     type="datetime-local"
@@ -267,7 +267,7 @@ export default function CalendarPage() {
                 </div>
                 <div>
                   <label htmlFor="endDateTime" className="block text-gray-700 font-medium">
-                    End Date & Time
+                  <b>End Date & Time</b>
                   </label>
                   <input
                     type="datetime-local"
