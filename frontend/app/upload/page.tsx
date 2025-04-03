@@ -79,20 +79,20 @@ export default function FileUpload() {
         formData.append("file", file)
       })
 
-      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/upload", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/ocr/upload", {
         method: "POST",
         body: formData,
       })
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || "File upload failed")
+        throw new Error(data.message || "File processing failed")
       }
 
       const data = await response.json()
-      setSuccessMessage(data.message)
-      setFiles([])
-      router.push("/display");
+      // Store the OCR data in localStorage to pass to the display page
+      localStorage.setItem('ocrResult', JSON.stringify(data))
+      router.push("/display")
     } catch (error) {
       if (error instanceof Error) {
         setError(error.message)

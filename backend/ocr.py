@@ -116,71 +116,40 @@ def upload():
     else:
         return jsonify({"message": "No file uploaded"}), 400
 
-    if not result['keyValuePairs']:
+    if not result.key_value_pairs:
         return jsonify({"message": "No key-value pairs found"}), 400
 
-
-    if is_pdf:
-        # Process the PDF file
-        reader = PdfReader(file)
-        writer = PdfWriter()
-
-        for page in reader.pages:
-            writer.add_page(page)
-
-        # Save the PDF with annotations
-        with open("annotated-pdf.pdf", "wb") as fp:
-            writer.write(fp)
-
-    # Try to read the file as an image
-    else:
-        image = Image.open(file)
-
-        annotated_image = annotate_bounding_box_on_image(image, result['keyValuePairs'])
-
-        # Convert the annotated image to a byte array
-        byte_arr = io.BytesIO()
-        annotated_image.save(byte_arr, format='PNG')
-
-        # encode the byte array to base64
-        encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')
-
+    # Process key-value pairs
     kv_pairs = []
+    for pair in result.key_value_pairs:
+        if pair.key and pair.value:
+            kv_pairs.append({
+                "key": pair.key.content,
+                "value": pair.value.content,
+                "confidence": pair.confidence
+            })
 
-    for pair in result['keyValuePairs']:
+    # Process paragraphs (for general content)
+    content = []
+    if result.paragraphs:
+        for paragraph in result.paragraphs:
+            content.append(paragraph.content)
 
-        key = pair['key']
+    response_data = {
+        "key_value_pairs": kv_pairs,
+        "content": content,
+        "file_type": file_type
+    }
 
-        if "value" not in pair:
-            continue
+    if not is_pdf:
+        try:
+            image = Image.open(file)
+            annotated_image = annotate_bounding_box_on_image(image, result.key_value_pairs)
+            byte_arr = io.BytesIO()
+            annotated_image.save(byte_arr, format='PNG')
+            encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')
+            response_data["annotated_image"] = encoded_img
+        except Exception as e:
+            print(f"Error processing image: {str(e)}")
 
-        value = pair['value']
-
-        kv_pairs.append((key["content"], value["content"]))
-        # boundingBox = key['boundingRegions'][0]['polygon']
-
-    #         key_annotation = Rectangle(
-    #             rect=((50,55), (100,105), (200,205), (250, 255)),
-    #             interior_color="#FF0000",
-    #         )
-
-    #         key_annotation[NameObject("/C")] = ArrayObject(
-    #             [FloatObject(1.0)]
-    #         )
-
-    #         writer.add_annotation(page_number=key['boundingRegions'][0]['pageNumber'] - 1,
-    #                             annotation=key_annotation)
-
-    #         print("Key:", pair['key'])
-    #         print("Value:", pair['value'])
-    #         print("Confidence:", pair['confidence'])
-    #         print("--------------------------------------------------")
-
-    # with open("annotated-pdf.pdf", "wb") as fp:
-    #     writer.write(fp)
-
-    table = generate_table_from_region(kv_pairs)
-
-    return jsonify({"image": encoded_img, "table": table}), 200
-
-
+    return jsonify(response_data), 200

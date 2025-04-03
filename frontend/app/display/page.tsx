@@ -1,27 +1,54 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save } from "lucide-react"
 import NavLogo from "../../components/NavLogo_Authenticated"
 
+interface OCRResult {
+  key_value_pairs: Array<{
+    key: string
+    value: string
+    confidence: number
+  }>
+  content: string[]
+  file_type: string
+  annotated_image?: string
+}
+
 export default function DocumentDisplayPage() {
   const router = useRouter()
-  // Placeholder data - this would come from your OCR model in reality
+  const [ocrResult, setOcrResult] = useState<OCRResult | null>(null)
   const [documentContent, setDocumentContent] = useState({
-    title: "Medical Report - Dr. Smith",
-    date: "2023-11-15",
-    doctor: "Dr. Sarah Smith",
-    patient: "John Doe",
-    content: [
-      "Patient presented with persistent headaches and dizziness.",
-      "Blood pressure: 130/85 mmHg",
-      "Diagnosis: Tension headaches",
-      "Prescribed: Ibuprofen 400mg as needed",
-      "Follow-up in 2 weeks if symptoms persist"
-    ],
+    title: "",
+    date: "",
+    content: [] as string[],
     notes: ""
   })
+
+  useEffect(() => {
+    // Get the OCR result from localStorage
+    const storedResult = localStorage.getItem('ocrResult')
+    if (storedResult) {
+      const result: OCRResult = JSON.parse(storedResult)
+      setOcrResult(result)
+      
+      // Process the key-value pairs to extract common fields
+      const kvPairs = result.key_value_pairs
+      const title = kvPairs.find(pair => pair.key.toLowerCase().includes('title'))?.value || "Document"
+      const date = kvPairs.find(pair => pair.key.toLowerCase().includes('date'))?.value || ""
+      
+      setDocumentContent({
+        title,
+        date,
+        content: result.content,
+        notes: ""
+      })
+    } else {
+      // No OCR result found, redirect back
+      router.push('/upload')
+    }
+  }, [router])
 
   const handleContentChange = (index: number, newText: string) => {
     const newContent = [...documentContent.content]
@@ -32,12 +59,22 @@ export default function DocumentDisplayPage() {
   const handleSave = () => {
     // In a real app, this would save the edited content
     alert("Changes saved successfully!")
-    router.push("/home") // Navigate back to home or upload page
+    router.push("/home")
+  }
+
+  if (!ocrResult) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex flex-col">
+        <NavLogo />
+        <div className="flex-1 flex items-center justify-center">
+          <p>Loading document...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Navbar */}
       <NavLogo />
       <div className="min-h-screen bg-gray-50 p-6">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-md p-8">
@@ -49,13 +86,24 @@ export default function DocumentDisplayPage() {
             Back to Upload
           </button>
 
+          {ocrResult.annotated_image && (
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4">Annotated Document</h2>
+              <img 
+                src={`data:image/png;base64,${ocrResult.annotated_image}`} 
+                alt="Annotated document"
+                className="max-w-full border border-gray-200 rounded-md"
+              />
+            </div>
+          )}
+
           <div className="mb-8">
             <h1 className="text-2xl font-bold text-gray-800 mb-2">{documentContent.title}</h1>
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
-              <p><span className="font-semibold">Date:</span> {documentContent.date}</p>
-              <p><span className="font-semibold">Doctor:</span> {documentContent.doctor}</p>
-              <p><span className="font-semibold">Patient:</span> {documentContent.patient}</p>
-            </div>
+            {documentContent.date && (
+              <p className="text-sm text-gray-600 mb-4">
+                <span className="font-semibold">Date:</span> {documentContent.date}
+              </p>
+            )}
           </div>
 
           <div className="border-t border-gray-200 pt-6">
@@ -93,9 +141,21 @@ export default function DocumentDisplayPage() {
               Save Changes
             </button>
           </div>
+
+          <div className="mt-8 border-t pt-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Key-Value Pairs</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {ocrResult.key_value_pairs.map((pair, index) => (
+                <div key={index} className="bg-gray-50 p-3 rounded-md">
+                  <p className="font-medium text-gray-700">{pair.key}</p>
+                  <p className="text-gray-600">{pair.value}</p>
+                  <p className="text-xs text-gray-500">Confidence: {Math.round(pair.confidence * 100)}%</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>
-
   )
 }
