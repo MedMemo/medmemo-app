@@ -1,0 +1,7 @@
+### POST login user not confirmed email
+POST http://localhost:3000/chatbot/chat
+Content-Type: application/json
+
+{
+    "prompt": "what is medmemo"
+}
