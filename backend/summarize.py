@@ -62,24 +62,26 @@ def structure_prompt(transcript):
     
     # append the original transcript at the end
     prompt += f"\nOriginal Notes:\n{transcript}\n\n"
-    prompt += "Summarize this in a clear, concise, and organized way."
+    prompt += "Summarize these notes in a clear, concise, and organized way, ensuring you include the specified symptoms, conditions, and medications. Please return a JSON output."
 
     return prompt
 
 # send transcript + prompt to OpenAI API to get the summary
 def generate_summary(transcript):
-    ##prompt = structure_prompt(transcript)
+    ##my_prompt = structure_prompt(transcript)
 
     try:
         response = client.chat.completions.create(
-            model="gpt-4",
-            message={"role": "user", "content": transcript}, # send prompt as user input
-            max_tokens = 100,
-            temperature = 0.5,
+            #model="gpt-4",
+            model="gpt-3.5-turbo-1106",
+            ##prompt=my_prompt,
+            prompt=transcript,
+            #message={"role": "user", "content": transcript}, # send prompt as user input
             response_format={"type": "json_object"}
         )
         
-        return response.choices[0].message.content
+        #return response.choices[0].message.content
+        return response
     
         # extract summary from OpenAI response
         ##summary = response.choices[0].message.content
@@ -95,10 +97,30 @@ def generate_summary(transcript):
         # Make sure to return a proper error message in the JSON response
         ##return jsonify({"error": "Failed to generate summary", "details": str(e)}), 500
     
-@summarize_bp.route('', methods=['POST'])
+@summarize_bp.route('/', methods=['POST'])
 def summarize():
-    
-    
+    try:
+        # get transcipt from request
+        data = request.get_json()
+        transcript = data.get("transcript", "")
+
+        #debug
+        if not transcript:
+            return jsonify({"error": "No transcript provided"}), 400
+
+        response = client.chat.completions.create(
+            model="gpt-4",
+            ##prompt=my_prompt,
+            messages=[{"role": "user", "content": transcript}] # send prompt as user input
+        )
+        
+        if response:
+            return jsonify({"summary": response.choices[0].message.content.replace("\n","")})
+        else:
+            return jsonify({"error": "No response generated"}), 500
+    except Exception as e:
+        print(f"Error generating summary: {str(e)}")
+        return jsonify({"error": str(e)}), 500
     
     
     # get transcipt from request

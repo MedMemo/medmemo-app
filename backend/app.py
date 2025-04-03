@@ -5,12 +5,8 @@ import os
 from supabase_client import env_file
 from download import download_bp #Import the download blueprint
 from auth import auth_bp  # Import the auth blueprint
-<<<<<<< HEAD
 from summarize import summarize_bp # Import the summarize blueprint
-=======
-# from summarize import summarize_bp # Import the summarize blueprint
 from chatbot import chatbot_bp
->>>>>>> dbf7e322009d4407967ac00bc964ec20a350cba4
 from upload import upload_bp  # Import the upload blueprint
 from summarize import summarize_bp # Import the summarize blueprint
 from ocr import ocr_bp  # Import the ocr blueprint
@@ -24,19 +20,12 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 app.register_blueprint(download_bp, url_prefix='/download')
 # Register upload routes
 app.register_blueprint(upload_bp, url_prefix='/upload')
-<<<<<<< HEAD
 # Register summarize routes
 app.register_blueprint(summarize_bp, url_prefix='/summarize')
 # Register OCR routes
-=======
-
-# Register summarize route
-# app.register_blueprint(summarize_bp, url_prefix='/summarize')
-
+app.register_blueprint(ocr_bp, url_prefix='/ocr')
 # Register auth chat
 app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
->>>>>>> dbf7e322009d4407967ac00bc964ec20a350cba4
-app.register_blueprint(ocr_bp, url_prefix='/ocr')
 
 # home route that returns below text when root url is accessed
 @app.route("/")

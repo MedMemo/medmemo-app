@@ -17,7 +17,7 @@ data = {"transcript": transcript}
 response = requests.post(url, json=data)
 
 # print the entire response to inspect its structure
-print("response text: ", response.text)
+##print("response text: ", response.text)
 if response.status_code == 200:
     try:
         print("Response JSON:", response.json())
