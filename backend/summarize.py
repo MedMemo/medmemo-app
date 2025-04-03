@@ -49,88 +49,51 @@ def extract_med_entities(transcript):
 
 # create prompt to send to OpenAI API - can change this later after we figure out what prompt structure works best!
 def structure_prompt(transcript):
-    medical_entities = extract_med_entities(transcript)
+    #medical_entities = extract_med_entities(transcript)
 
-    prompt = "Below are notes from a clinical visit. Please summarize the original notes while also preserving the following listed key medical details (symptoms, conditions, and medications).\n\n"
+    prompt = "Below are notes from a clinical visit. Please summarize the original notes in an easy-to-understand manner while also preserving the following listed key medical details (symptoms, conditions, and medications).\n\n"
     
-    if medical_entities["SYMPTOMS"]:
-        prompt += f"Symptoms: {', '.join(medical_entities['SYMPTOMS'])}\n"
-    if medical_entities["CONDITIONS"]:
-        prompt += f"Conditions: {', '.join(medical_entities['CONDITIONS'])}\n"
-    if medical_entities["MEDICATIONS"]:
-        prompt += f"Medications: {', '.join(medical_entities['MEDICATIONS'])}\n"
+    #if medical_entities["SYMPTOMS"]:
+    #    prompt += f"Symptoms: {', '.join(medical_entities['SYMPTOMS'])}\n"
+    #if medical_entities["CONDITIONS"]:
+    #    prompt += f"Conditions: {', '.join(medical_entities['CONDITIONS'])}\n"
+    #if medical_entities["MEDICATIONS"]:
+    #    prompt += f"Medications: {', '.join(medical_entities['MEDICATIONS'])}\n"
     
     # append the original transcript at the end
     prompt += f"\nOriginal Notes:\n{transcript}\n\n"
-    prompt += "Summarize these notes in a clear, concise, and organized way, ensuring you include the specified symptoms, conditions, and medications. Please return a JSON output."
+    prompt += "Summarize these notes in a clearand concise way."
 
     return prompt
 
 # send transcript + prompt to OpenAI API to get the summary
 def generate_summary(transcript):
-    ##my_prompt = structure_prompt(transcript)
+    my_prompt = structure_prompt(transcript)
 
     try:
-        response = client.chat.completions.create(
-            #model="gpt-4",
-            model="gpt-3.5-turbo-1106",
-            ##prompt=my_prompt,
-            prompt=transcript,
-            #message={"role": "user", "content": transcript}, # send prompt as user input
-            response_format={"type": "json_object"}
-        )
-        
-        #return response.choices[0].message.content
-        return response
-    
-        # extract summary from OpenAI response
-        ##summary = response.choices[0].message.content
-        
-        ##print(f"Summary type: {type(summary)}")
-
-        ##if isinstance(summary, str):
-        ##    return jsonify({"response": summary})
-        ##else:
-        ##    return jsonify({"error": "Summary is not a string"}), 500
-    except Exception as e:
-        print(f"Error generating summary: {str(e)}")
-        # Make sure to return a proper error message in the JSON response
-        ##return jsonify({"error": "Failed to generate summary", "details": str(e)}), 500
-    
-@summarize_bp.route('/', methods=['POST'])
-def summarize():
-    try:
-        # get transcipt from request
-        data = request.get_json()
-        transcript = data.get("transcript", "")
-
-        #debug
-        if not transcript:
-            return jsonify({"error": "No transcript provided"}), 400
-
         response = client.chat.completions.create(
             model="gpt-4",
-            ##prompt=my_prompt,
-            messages=[{"role": "user", "content": transcript}] # send prompt as user input
+            messages=[{"role": "user", "content": my_prompt}] # send prompt as user input
         )
-        
+            
         if response:
-            return jsonify({"summary": response.choices[0].message.content.replace("\n","")})
+            return {"summary": response.choices[0].message.content.replace("\n","")}
         else:
-            return jsonify({"error": "No response generated"}), 500
+            return {"error": "No response generated"}
     except Exception as e:
-        print(f"Error generating summary: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-    
-    
+        return {"error": str(e)}
+
+@summarize_bp.route('/', methods=['POST'])
+def summarize():
     # get transcipt from request
-    ##transcript = request.json.get("transcript")
-    ##f not transcript:
-    ##    return jsonify({"error": "No transcript provided"}), 400
+    data = request.get_json()
+    transcript = data.get("transcript", "")
+    #debug
+    if not transcript:
+        return jsonify({"error": "No transcript provided"}), 400
 
     # call generate_summary() to get the summary from OpenAI
-    ##summary = generate_summary(transcript)
-
-    ##print(f"Response Status: 200, Summary: {summary}")
-
-    ##return jsonify({"response": summary}), 200
+    summary = generate_summary(transcript)
+    print(f"Response Status: 200, Summary: {summary}")
+    
+    return jsonify(summary), 200
