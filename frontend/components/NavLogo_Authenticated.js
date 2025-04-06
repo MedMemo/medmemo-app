@@ -78,17 +78,20 @@ const NavLogoAuthenticated = () => {
         {/* Dropdown Menu */}
         <div className="relative">
           <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} 
-          className="px-4 py-2 bg-white text-[#D93D3D] font-bold rounded-lg hover:bg-gray-200 transition">
+          className="px-4 py-2 bg-white text-[#D93D3D] font-bold rounded-lg hover:bg-gray-200 transition ">
             Menu ▼
           </button>
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-40 bg-white font-bold rounded-md shadow-lg">
+            <div className="absolute right-0 mt-2 w-40 bg-white font-bold rounded-md shadow-lg z-20">
               <a href="/home" className={defaultButtonStyle}>Home</a>
               <a href="/about" className={defaultButtonStyle}>About</a>
               <a href="/upload" className={defaultButtonStyle}>Upload (Demo)</a>
               <a href="/display" className={defaultButtonStyle}>Display (Demo)</a>
+              <a href="/calendar" className={defaultButtonStyle}>Calendar (Demo)</a>
+              <a href="/contact-us" className={defaultButtonStyle}>Contact Us (Demo)</a>
+
               <a href="/account" className={defaultButtonStyle}>Account (Demo)</a>
-              
+
               <button onClick={handleDownload} className={defaultButtonStyle}>
                 Download File (Demo)
               </button>
@@ -101,7 +104,6 @@ const NavLogoAuthenticated = () => {
       </div>
     </nav>
   );
-    
 };
 
 export default NavLogoAuthenticated;

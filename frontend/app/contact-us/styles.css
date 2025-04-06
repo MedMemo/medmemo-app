@@ -1,60 +1,88 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: content-box;
-  }
-  
-  body {
-    font-family: 'Arial';
-  }
-  
-  .contact-container {
-    height: 1000px;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-  }
-  
-  .contact-left {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  .contact-left-title h2 {
-    font-weight: 700;
-    color: #433f3f;
-    font-size: 50px;
-  }
-  
-  .contact-left-title hr {
-    width: 200px;
-    height: 7px;
-    background: linear-gradient(270deg, #142de9, #39a7e7);
-  }
-  
-  .contact-inputs {
-    width: 500px;
-    height: 60px;
-    padding-left: 25px;
-    font-weight: 500;
-    color: #000000;
-    background-color: rgb(255, 255, 255);
-  }
-  
-  .contact-left textarea {
-    height: 170px;
-    padding-top: 25px;
-  }
-  
-  
-  .contact-left button {
-    display: flex;
-    align-items: center;
-    padding: 10px 20px;
-    font-size: 18px;
-    color: #fff;
-    border-radius: 50px;
-    background: linear-gradient(270deg, #142de9, #39a7e7);
-    cursor: pointer;
-  }
+body {
+  font-family: 'Arial';
+}
+
+.contact-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 2rem 1rem 2rem 1.5rem;
+  gap: 12rem; 
+  width: 100%;
+}
+
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;  
+  padding: 0rem 0rem 0rem 2rem;
+
+}
+
+.contact-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;  
+  padding: 4rem 2rem 4rem 0;
+  width: 100%; 
+  max-width: 600px;
+
+}
+
+.contact-left-title h2 {
+  font-weight: 700;
+  color: #433f3f;
+  font-size: 55px;
+}
+
+.contact-left-title hr {
+  width: 200px;
+  height: 7px;
+  background: linear-gradient(270deg, #142de9, #39a7e7);
+}
+
+.contact-inputs {
+  width: 100%;
+  max-width: 600px;
+  height: 4rem;
+  padding-left: 1.5rem;
+  font-weight: 500;
+  color: #000000;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid grey;
+  border-radius: 4px; 
+}
+
+.contact-left textarea {
+  height: 10rem;
+  padding-top: 1.5rem;
+}
+
+
+.contact-left button {
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  font-size: 18px;
+  color: #fff;
+  border-radius: 50px;
+  background: linear-gradient(270deg, #142de9, #39a7e7);
+  cursor: pointer;
+}
+
+
+.contact-image {
+  width: 100%;
+  height: auto;
+}
+
+.social-boxes {
+  display: flex;
+  justify-content: center;
+  gap: 2.5rem;
+  flex-wrap: wrap; 
+}
