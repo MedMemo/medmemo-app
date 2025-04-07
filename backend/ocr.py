@@ -22,6 +22,8 @@ ocr_bp = Blueprint('ocr', __name__)
 AZURE_KEY = os.getenv("AZURE_KEY")
 AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
 
+INVALID_KEYWORDS = [ ":selected:", ":unselected:", ""]
+
 def check_file_type(file):
     """
     Check if the file is a valid image or PDF.
@@ -63,23 +65,28 @@ def annotate_bounding_box_on_image(image, annotations):
 
     for anno in annotations:
 
+        if "value" not in anno:
+            continue
+
         key = anno['key']
 
         # Extract the bounding box coordinates
         k_x1, k_y1 = key['boundingRegions'][0]['polygon'][0], key['boundingRegions'][0]['polygon'][1]
         k_x2, k_y2 = key['boundingRegions'][0]['polygon'][4], key['boundingRegions'][0]['polygon'][5]
 
-        # Draw the bounding box for the key
-        draw.rectangle([(k_x1, k_y1), (k_x2, k_y2)], outline="red", width=3)
-
-        if "value" not in anno:
-            continue
-
         value = anno['value']
+
+        if value["content"] in INVALID_KEYWORDS:
+            continue
 
         # Extract the bounding box coordinates for the value
         v_x1, v_y1 = value['boundingRegions'][0]['polygon'][0], value['boundingRegions'][0]['polygon'][1]
         v_x2, v_y2 = value['boundingRegions'][0]['polygon'][4], value['boundingRegions'][0]['polygon'][5]
+
+
+
+        # Draw the bounding box for the key
+        draw.rectangle([(k_x1, k_y1), (k_x2, k_y2)], outline="red", width=3)
 
         # Draw the bounding box for the value
         draw.rectangle([(v_x1, v_y1), (v_x2, v_y2)], outline="blue", width=3)
@@ -142,6 +149,9 @@ def upload():
         byte_arr = io.BytesIO()
         annotated_image.save(byte_arr, format='PNG')
 
+        # save image for testing
+        annotated_image.save("annotated_image.png")
+
         # encode the byte array to base64
         encoded_img = encodebytes(byte_arr.getvalue()).decode('ascii')
 
@@ -156,7 +166,13 @@ def upload():
 
         value = pair['value']
 
+        if value["content"] in INVALID_KEYWORDS:
+            continue
+
         kv_pairs.append((key["content"], value["content"]))
+
+    import pprint
+    pprint.pprint(kv_pairs)
         # boundingBox = key['boundingRegions'][0]['polygon']
 
     #         key_annotation = Rectangle(
