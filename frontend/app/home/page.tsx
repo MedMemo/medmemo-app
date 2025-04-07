@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import NavLogoAuthenticated from "../../components/NavLogo_Authenticated";
 import NavLogoLogoOnly from "../../components/NavLogo_LogoOnly";
+import NavBar from "@/components/Navbar";
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -26,6 +27,7 @@ export default function Home() {
           setError("User is not authenticated. Redirecting...");  // Set error if response is not OK
           router.push("/");  // Redirect if not authenticated
         } else {
+
           const data = await response.json();
           setUser(data.user);  // Store user data in state
           console.log("User data fetched:", data);  // Log the user data
@@ -65,6 +67,7 @@ export default function Home() {
 
       {/* Navbar */}
       <NavLogoAuthenticated />
+      <NavBar />
 
       <div className="flex flex-grow">
         {/* Sidebar */}

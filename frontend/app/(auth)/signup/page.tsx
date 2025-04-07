@@ -75,6 +75,7 @@ export default function SignUp() {
               aria-describedby="helper-text-explanation"
               className="w-full px-4 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black
               placeholder:text-center"
+              onChange={(e) => setEmail(e.target.value)}
               placeholder="email address*"></input>
             </div>
 
@@ -87,8 +88,7 @@ export default function SignUp() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="password*"
-              />
+                placeholder="password*"/>
             </div>
 
             <div className="mb-6">
@@ -110,7 +110,8 @@ export default function SignUp() {
 
             <button
               type="submit"
-              className="w-full py-2 bg-[#D93D3D] text-white font-bold text-lg rounded-lg hover:bg-[#FF5757] transition">
+              className="w-full py-2 bg-black text-white font-bold text-lg rounded-lg
+              hover:bg-[#FF5757] transition">
               Sign Up
             </button>
           </form>
