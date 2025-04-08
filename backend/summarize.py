@@ -46,7 +46,7 @@ def summarize():
     # get transcipt from request
     data = request.get_json()
     transcript = data.get("transcript", "")
-    #debug
+    #debug:
     if not transcript:
         return jsonify({"error": "No transcript provided"}), 400
 
