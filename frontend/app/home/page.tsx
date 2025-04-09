@@ -9,7 +9,7 @@ export default function Home() {
     <div className="min-h-screen bg-gray-100 flex flex-col">
 
       {/* Navbar */}
-      <NavLogoAuthenticated />
+      {/* <NavLogoAuthenticated /> */}
 
       <div className="flex flex-grow">
 
@@ -26,7 +26,7 @@ export default function Home() {
             This is a scrollable sidebar.
           </p>
         </div> */}
-        
+
         {/* Main Content */}
         <main className="flex-1 p-8">
           <div className="text-center">
