@@ -25,7 +25,7 @@ import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button
 export const Thread: FC = () => {
   return (
     <ThreadPrimitive.Root
-      className="bg-background box-border flex h-full flex-col overflow-hidden"
+      className="box-border flex w-full h-full flex-col overflow-hidden"
       style={{
         ["--thread-max-width" as string]: "42rem",
       }}
@@ -112,7 +112,7 @@ const ThreadWelcomeSuggestions: FC = () => {
 
 const Composer: FC = () => {
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full flex-wrap items-end rounded-lg border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
+    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full flex-wrap items-end rounded-lg bg-chat-box-background px-2.5 shadow-sm transition-colors ease-in">
       <ComposerPrimitive.Input
         rows={1}
         autoFocus
