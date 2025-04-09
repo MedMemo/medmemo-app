@@ -106,9 +106,8 @@ export default function FileUpload() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <NavLogo />
       <div className="flex justify-center p-4 mt-8">
         <div className="w-full max-w-md mx-auto bg-white shadow-lg rounded-xl p-6">
           <div className="text-center mb-6">
