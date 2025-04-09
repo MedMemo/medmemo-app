@@ -5,6 +5,8 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { BsPeople } from "react-icons/bs";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 const sidebarItems = [
 
@@ -20,12 +22,44 @@ const sidebarItems = [
     },
 ];
 
+interface userInterface {
+    id: string;
+    email: string;
+}
+
 
 const SideBar = () => {
 
-    const searchParams = useSearchParams();
-    const router = useRouter();
     const pathname = usePathname()
+    const [user, setUser] = useState<userInterface>({
+        id: "",
+        email: "",
+    })
+
+    useEffect(() => {
+        userInfo()
+    }, [])
+
+
+    async function userInfo () {
+
+        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/get_user", {
+            credentials: "include"
+        })
+        .then((res: Response) => {
+            if(!res.ok) throw new Error(res.statusText);
+            else return res.json();
+        })
+        .then((data) => {
+            console.log("User info:", data.user.email);
+            setUser({"id": data.user.id, "email": data.user.email})
+            return data;
+        })
+        .catch((error) => {
+            console.error("Error fetching user info:", error);
+        })
+    }
+
 
     return (
         <>
@@ -36,31 +70,37 @@ const SideBar = () => {
                 </svg>
             </button>
 
-            <aside id="default-sidebar" className="top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
-            <div className="h-full px-3 py-4 overflow-y-auto bg-sidebar-background dark:bg-gray-800">
-                    <ul className="space-y-2 font-medium">
-                        <li>
-                            <a href="#" className="flex items-center p-2 text-sidebar-logo rounded-lg dark:text-white">
-                                <span className="text-4xl ms-3">MedMemo</span>
-                            </a>
-                        </li>
-                        {sidebarItems.map(({ name, href, icon: Icon }) => {
-                            return (
-                            <li  key={name}>
-
-                                <Link
-                                className={`flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-sidebar-hover dark:hover:bg-gray-700 group ${
-                                    pathname === href ? "bg-sidebar-hover" : ""
-                                }`}
-                                href={href}
-                                >
-
-                                    <span className="flex-1 ms-3 whitespace-nowrap">{name}</span>
-                                </Link>
+            <aside id="default-sidebar" className="bg-sidebar-background flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3" aria-label="Sidebar">
+                <div className="flex flex-1 py-4 overflow-y-auto  dark:bg-gray-800 ">
+                        <ul className="w-full space-y-2 font-medium">
+                            <li>
+                                <a href="/home" className="flex items-center p-2 text-sidebar-logo rounded-lg dark:text-white">
+                                    <span className="text-4xl ms-3">MedMemo</span>
+                                </a>
                             </li>
-                            );
-                        })}
-                    </ul>
+                            {sidebarItems.map(({ name, href, icon: Icon }) => {
+                                return (
+                                <li className="w-full"  key={name}>
+
+                                    <Link
+                                    className={`flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-sidebar-hover dark:hover:bg-gray-700 group ${
+                                        pathname === href ? "bg-sidebar-hover" : ""
+                                    }`}
+                                    href={href}
+                                    >
+
+                                        <span className="flex-1 ms-3 whitespace-nowrap">{name}</span>
+                                    </Link>
+                                </li>
+                                );
+                            })}
+                        </ul>
+                </div>
+                <div className="flex text-white  " >
+                    {user
+                        ? <div className="w-full hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
+                        : ""
+                    }
                 </div>
             </aside>
         </>
