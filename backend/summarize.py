@@ -41,6 +41,7 @@ def generate_summary(transcript):
     except Exception as e:
         return {"error": str(e)}
 
+
 @summarize_bp.route('/', methods=['POST'])
 def summarize():
     # get transcipt from request
