@@ -106,34 +106,26 @@ export default function FileUpload() {
 
   return (
 
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Navbar */}
-      <NavLogo />
+    <div className="min-h-screen flex flex-col">
       <div className="flex justify-center p-4 mt-8">
-        <div className="w-full max-w-md mx-auto bg-white shadow-lg rounded-xl p-6">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Upload Files</h2>
-            <p className="text-sm text-gray-500">Supported types: png, pdf, jpg (Max 5MB)</p>
-          </div>
-
+        <div className="w-full max-w-md mx-auto bg-transparent rounded-xl p-6">
           <div
-            className={`border-2 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
+            className={`border-4 border-dashed rounded-lg p-8 mb-4 transition-all duration-300 ${
               isDragging
-                ? "border-blue-500 bg-blue-50 scale-105"
-                : "border-gray-300 hover:border-blue-400"
+                ? "border-sidebar-hover bg-sidebar-background scale-105"
+                : "border-sidebar-hover hover:border-text-light-color"
             } flex flex-col items-center justify-center min-h-[200px]`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <Upload className="w-12 h-12 text-gray-400 mb-4" />
-            <p className="text-gray-700 font-medium mb-2">Drag and drop files here</p>
-            <p className="text-gray-500 mb-4">or</p>
+            <Upload className="w-8 h-8 text-gray-400 mb-8" />
+            <p className="text-text-light-color font-medium mb-2 text-lg">Choose a file or drag & drop it here</p>
+            <p className="text-gray-500 text-center text-base mb-8">JPEG, PNG, PDG, and MP4 formats, up to 5MB</p>
             <button
               onClick={handleBrowseClick}
-              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors flex items-center"
+              className="px-4 py-2 bg-white text-black rounded-xl text-xs hover:bg-blue-600 transition-colors flex items-center"
             >
-              <Upload className="w-4 h-4 mr-2" />
               Browse Files
             </button>
             <input
@@ -227,6 +219,8 @@ export default function FileUpload() {
           )}
         </div>
       </div>
+
+
     </div>
   )
 }
