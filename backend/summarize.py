@@ -14,6 +14,9 @@ summarize_bp = Blueprint('summarize', __name__)
 # Set OpenAI API key
 client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 
+
+### SUMMARY
+
 # Create prompt to send to OpenAI API to get the summary
 def structure_summary_prompt(transcript):
     prompt = "Below are notes from a clinical visit. Please summarize the original notes in an easy-to-understand manner. Include a list that is organized and specifies 'Conditions', 'Symptoms', and 'Medications' if they are provided in the below notes.\n"
@@ -31,8 +34,6 @@ def structure_articles_prompt(transcript):
     prompt += transcript
 
     return prompt
-
-
 
 @summarize_bp.route('/summary', methods=['POST'])
 def summarize():
@@ -73,8 +74,7 @@ def summarize():
         return jsonify({"error": f"{str(e)}"}), 500
 
 
-
-
+### ARTICLES
 
 # Creates a JSON where each key maps to a list of article objects
 def get_articles(keywords):
@@ -123,7 +123,6 @@ def extract_by_article(url):
         'Title': title,
         'URL': url
     }
-
 
 @summarize_bp.route('/articles', methods=['POST'])
 def articles():
