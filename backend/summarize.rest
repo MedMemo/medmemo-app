@@ -5,7 +5,7 @@
 GET http://127.0.0.1:3000/
 
 
-### GET summarize
+### GET summary
 POST http://localhost:3000/summarize/summary
 Content-Type: application/json
 
@@ -13,15 +13,8 @@ Content-Type: application/json
    "transcript": "Patient is a 55-year-old male with a history of hypertension and type 2 diabetes. He complains of headaches for the past week and has been experiencing dizziness. The patient is currently taking Lisinopril for hypertension and Metformin for diabetes. He denies any chest pain or shortness of breath."
 }
 
-### GET articles 
-POST http://localhost:3000/articles
-Content-Type: application/json
 
-{
-   "transcript": "Patient is a 55-year-old male with a history of hypertension and type 2 diabetes. He complains of headaches for the past week and has been experiencing dizziness. The patient is currently taking Lisinopril for hypertension and Metformin for diabetes. He denies any chest pain or shortness of breath."
-}
-
-### GET articles from summary
+### GET articles
 POST http://localhost:3000/summarize/articles
 Content-Type: application/json
 

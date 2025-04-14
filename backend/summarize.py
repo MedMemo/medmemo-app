@@ -36,14 +36,14 @@ def structure_articles_prompt(transcript):
 
 @summarize_bp.route('/summary', methods=['POST'])
 def summarize():
-    # Ensure the rquest contains JSON data
+    # Ensure the request contains JSON data
     if not request.is_json:
         return jsonify({"error:" "Request must be JSON"}), 400
     
     data = request.get_json()
     transcript = data.get("transcript", "")
 
-    # Validate that the transcripty is provided
+    # Validate that the transcript is provided
     if not transcript:
         return jsonify({"error": "No transcript provided"}), 400
     
@@ -87,6 +87,8 @@ def get_articles(keywords):
         articles = []
         url = f'{pubmed_url}+{keyword}'
         all_articles[keyword] = []
+        
+        # Search for related articles using the keyword in pubmed
         response = requests.get(url)
         soup = BeautifulSoup(response.text, "html.parser")
         pmids = soup.find('meta', {'name': 'log_displayeduids'})['content'].split(',')
@@ -98,7 +100,6 @@ def get_articles(keywords):
             article = extract_by_article(article_url)
             if article:
                 articles.append(article)
-            # time.sleep(0.5)  # be nice to PubMed
 
         all_articles[keyword] = articles
 
@@ -126,6 +127,7 @@ def extract_by_article(url):
 
 @summarize_bp.route('/articles', methods=['POST'])
 def articles():
+    # Ensure the request contains JSON data
     if not request.is_json:
         return jsonify({"error:" "Request must be JSON"}), 400
     
