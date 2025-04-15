@@ -21,5 +21,5 @@ export async function middleware(request: NextRequest) {
 }
  
 export const config = {
-  matcher: ['/home', '/upload', '/display']
+  matcher: ['/home/:path*', '/upload', '/display']
 }
