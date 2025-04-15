@@ -52,7 +52,7 @@ export default function CalendarPage() {
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY, 
         clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
         discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/calendar',
+        scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
       }).then(() => {
         const auth = gapi.auth2.getAuthInstance();
         setIsSignedIn(auth.isSignedIn.get());//checks if user is signed-in
@@ -172,7 +172,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+<div className="min-h-screen bg-gray-100 flex flex-col">
       {/* Navbar */}
       <NavLogoAuthenticated />
 
