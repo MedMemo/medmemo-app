@@ -12,12 +12,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "types": [
-      "node",
-      "gapi.client",
-      "gapi.auth2",
-      "gapi.client.calendar"
-    ],
+    "types": ["node", "gapi.client", "gapi.auth2", "gapi.client.calendar"],
     "incremental": true,
     "plugins": [
       {
@@ -28,6 +23,12 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/display"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "app/display"
+  ],
   "exclude": ["node_modules"]
 }
