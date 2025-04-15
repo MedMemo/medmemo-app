@@ -28,7 +28,7 @@ def structure_summary_prompt(transcript):
 
 # Create prompt to send to OpenAI API to get a list of keywords
 def structure_articles_prompt(transcript):
-    prompt = "Below are notes from a clinical visit. Please find keywords relating to the person's condition(s). Structure your response in a very simple way, exactly like this example: 'Flu,Fever,Cough,Influenza A' with no spaces or newline characters between terms."
+    prompt = "Below are notes from a clinical visit. Please find exactly 3 keywords relating to the person's condition(s). Structure your response in a very simple way, exactly like this example: 'Fever,Cough,Influenza A' with no spaces or newline characters between terms."
 
     # Append the original transcript at the end
     prompt += transcript
@@ -94,7 +94,7 @@ def get_articles(keywords):
         pmids = soup.find('meta', {'name': 'log_displayeduids'})['content'].split(',')
         
         for pmid in pmids:
-            if len(articles) >= 2:
+            if len(articles) >= 1: #only 1 article per keyword max (can change this later if we want)
                 break
             article_url = f"{root_pubmed_url}/{pmid}"
             article = extract_by_article(article_url)
@@ -114,13 +114,29 @@ def extract_by_article(url):
     
     soup = BeautifulSoup(response.text, "html.parser")
 
+    # get title
     try:
         title = soup.find('meta',{'name':'citation_title'})['content'].strip('[]')
     except:
         title = 'NO_TITLE'
 
+    # get author(s)
+    try:
+        authors_raw = soup.find_all('meta', {'name': 'citation_author'})
+        authors = ', '.join([a['content'] for a in authors_raw])
+    except:
+        authors = ['NO_AUTHORS']
+
+    # get publication date
+    try:
+        date = soup.find('meta', {'name': 'citation_publication_date'})['content']
+    except:
+        date = 'NO_DATE'
+
     return {
         'Title': title,
+        'Author': authors,
+        'Date': date,
         'URL': url
     }
 
