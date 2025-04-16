@@ -4,6 +4,7 @@ import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -74,6 +75,10 @@ export default function FileUpload() {
     }
   };
 
+  const handleClick = () => {
+    router.push(`/chat-history`);
+  };
+
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-lg bg-sidebar-background rounded-xl p-6 shadow-lg">
@@ -129,6 +134,12 @@ export default function FileUpload() {
         >
           {uploading ? "Uploading..." : "Upload and Process"}
         </button>
+      </div>
+      <div
+        onClick={handleClick}
+        className="mt-10 cursor-pointer border border-gray-300 rounded-2xl p-4 shadow-md hover:shadow-lg hover:bg-gray-100 transition-all"
+        >
+        <h1>History Chat</h1>
       </div>
     </main>
   );
