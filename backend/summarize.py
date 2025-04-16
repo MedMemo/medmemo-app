@@ -122,14 +122,14 @@ def extract_by_article(url):
 
     # get author(s)
     try:
-        authors_raw = soup.find_all('meta', {'name': 'citation_author'})
+        authors_raw = soup.find_all('meta',{'name': 'citation_authors'})
         authors = ', '.join([a['content'] for a in authors_raw])
     except:
-        authors = ['NO_AUTHORS']
+        authors = 'NO_AUTHORS'
 
     # get publication date
     try:
-        date = soup.find('meta', {'name': 'citation_publication_date'})['content']
+        date = soup.find('meta', {'name': 'citation_date'})['content']
     except:
         date = 'NO_DATE'
 

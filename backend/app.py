@@ -34,5 +34,5 @@ def hello_world():
 
 if __name__ == '__main__':
     debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
-    dev_port = int(os.getenv('PORT', 5000))  # Default to 5000 if DEV_PORT is not set
+    dev_port = int(os.getenv('PORT', 8080))  # Default to 5000 if DEV_PORT is not set
     app.run(debug=debug_mode, port=dev_port)
