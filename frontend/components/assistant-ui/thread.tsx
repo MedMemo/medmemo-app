@@ -6,6 +6,7 @@ import {
   ThreadPrimitive,
 } from "@assistant-ui/react";
 import type { FC } from "react";
+import { useRef } from "react";
 import {
   ArrowDownIcon,
   CheckIcon,
@@ -15,6 +16,7 @@ import {
   PencilIcon,
   RefreshCwIcon,
   SendHorizontalIcon,
+  PaperclipIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -87,17 +89,17 @@ const ThreadWelcomeSuggestions: FC = () => {
   return (
     <div className="mt-3 flex w-full items-stretch justify-center gap-4">
       <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
+        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
         prompt="What is the weather in Tokyo?"
         method="replace"
         autoSend
       >
         <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          What is the weather in Tokyo?
+          What is MedMemo?
         </span>
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-lg border p-3 transition-colors ease-in"
+        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
         prompt="What is assistant-ui?"
         method="replace"
         autoSend
@@ -112,46 +114,81 @@ const ThreadWelcomeSuggestions: FC = () => {
 
 const Composer: FC = () => {
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full flex-wrap items-end rounded-lg bg-chat-box-background px-2.5 shadow-sm transition-colors ease-in">
+    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full items-end rounded-2xl border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
+      <ComposerActionAttach /> 
       <ComposerPrimitive.Input
         rows={1}
         autoFocus
         placeholder="Write a message..."
         className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
       />
-      <ComposerAction />
+      <ComposerActionSend /> 
     </ComposerPrimitive.Root>
   );
 };
 
-const ComposerAction: FC = () => {
+
+
+const ComposerActionAttach: FC = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   return (
     <>
+      <input
+        ref={fileInputRef}
+        type="file"
+        hidden
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) {
+            console.log("File selected:", file);
+          }
+        }}
+      />
+      <TooltipIconButton
+        tooltip="Attach file"
+        variant="ghost"
+        className="my-2.5 mr-1 size-8 p-2 text-muted-foreground"
+        onClick={() => fileInputRef.current?.click()}
+      >
+        <PaperclipIcon />
+      </TooltipIconButton>
+    </>
+  );
+};
+
+const ComposerActionSend: FC = () => {
+  return (
+    <div className="flex items-end">
       <ThreadPrimitive.If running={false}>
         <ComposerPrimitive.Send asChild>
           <TooltipIconButton
             tooltip="Send"
-            variant="default"
-            className="my-2.5 size-8 p-2 transition-opacity ease-in"
+            variant="ghost"
+            className="my-2.5 ml-1 size-8 p-2 transition-opacity ease-in"
           >
             <SendHorizontalIcon />
           </TooltipIconButton>
         </ComposerPrimitive.Send>
       </ThreadPrimitive.If>
+
       <ThreadPrimitive.If running>
         <ComposerPrimitive.Cancel asChild>
           <TooltipIconButton
             tooltip="Cancel"
             variant="default"
-            className="my-2.5 size-8 p-2 transition-opacity ease-in"
+            className="my-2.5 ml-1 size-8 p-2 transition-opacity ease-in"
           >
             <CircleStopIcon />
           </TooltipIconButton>
         </ComposerPrimitive.Cancel>
       </ThreadPrimitive.If>
-    </>
+    </div>
   );
 };
+
+
+
 
 const UserMessage: FC = () => {
   return (
@@ -203,7 +240,7 @@ const EditComposer: FC = () => {
 const AssistantMessage: FC = () => {
   return (
     <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-4">
-      <div className="text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
+      <div className="text-white max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
         <MessagePrimitive.Content components={{ Text: MarkdownText }} />
       </div>
 
