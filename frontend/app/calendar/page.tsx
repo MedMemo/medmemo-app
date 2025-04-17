@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import { gapi } from 'gapi-script'; //google api
 import NavLogoAuthenticated from '../../components/NavLogo_Authenticated'; //for users once sign-ed in
 
 //properties of calendar 
@@ -47,21 +46,26 @@ export default function CalendarPage() {
 
   //google api
   useEffect(() => {
-    const initializeGapi = () => {
-      gapi.client.init({
-        apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY, 
-        clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
-        scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
-      }).then(() => {
-        const auth = gapi.auth2.getAuthInstance();
-        setIsSignedIn(auth.isSignedIn.get());//checks if user is signed-in
-        auth.isSignedIn.listen(setIsSignedIn);//rechecks if signed-in changes
+    if (typeof window !== 'undefined') {
+      import('gapi-script').then(({ gapi }) => {
+        const initializeGapi = () => {
+          gapi.client.init({
+            apiKey: process.env.NEXT_PUBLIC_GOOGLE_API_KEY,
+            clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+            discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+            scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
+          }).then(() => {
+            const auth = gapi.auth2.getAuthInstance();
+            setIsSignedIn(auth.isSignedIn.get());
+            auth.isSignedIn.listen(setIsSignedIn);
+          });
+        };
+  
+        gapi.load('client:auth2', initializeGapi);
       });
-    };
-
-    gapi.load('client:auth2', initializeGapi);
+    }
   }, []);
+  
 
   useEffect(() => {
     if (showToast) {
@@ -76,15 +80,18 @@ export default function CalendarPage() {
   //google login function
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      const accessToken = tokenResponse.access_token;//get token
-      gapi.client.setToken({ access_token: accessToken });//set token
+      const accessToken = tokenResponse.access_token;
+      const { gapi } = await import('gapi-script');
+      gapi.client.setToken({ access_token: accessToken });
       setIsSignedIn(true);
     },
     onError: () => {
       setStatus('Logging in has failed');
     },
-    scope: 'https://www.googleapis.com/auth/calendar',
+    scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
   });
+  
+  
 
   //editing reminder
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
