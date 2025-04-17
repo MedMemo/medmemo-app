@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import './styles.css';
-import NavLogoAuthenticated from '../../components/NavLogo_Authenticated'; 
+import NavLogoAuthenticated from '../../components/NavLogo_Authenticated';
 import Image from 'next/image';
 
 export default function ContactPage() {
@@ -21,10 +21,10 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
-        setShowToast(false); 
-        setStatus(''); 
-      }, 9000); 
-      return () => clearTimeout(timer); 
+        setShowToast(false);
+        setStatus('');
+      }, 9000);
+      return () => clearTimeout(timer);
     }
   }, [showToast]);
 
@@ -36,13 +36,13 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
     //Web3Form key
     formData.append("access_key", process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY || "");
-    
-    // convert to JSON 
+
+    // convert to JSON
     const object = Object.fromEntries(formData);
     const json = JSON.stringify(object);
 
     try {
-      // send form to Web3Form 
+      // send form to Web3Form
       const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
@@ -63,8 +63,8 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
       if (result.success) {
         setStatus("Form Sent to Devs!");
-        setShowToast(true); 
-        (e.target as HTMLFormElement).reset();//reset form 
+        setShowToast(true);
+        (e.target as HTMLFormElement).reset();//reset form
       } else {
         setStatus(result.message || "Message failed to send");
         console.error("Err:", result);
@@ -77,23 +77,8 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-    {/* Navbar */}
-    <NavLogoAuthenticated />
 
     <div className="flex flex-grow">
-      {/* Sidebar */}
-      <div
-        className="w-64 text-white p-4 overflow-y-auto h-screen"
-        style={{ backgroundColor: '#E0DFDF' }}
-      >
-        <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
-          Sidebar Title
-        </h2>
-        <p className="mb-4 text-center text-gray-600">
-          This is a scrollable sidebar.
-        </p>
-        
-      </div>
 
     {/* Toast Notif*/}
     {showToast && (
@@ -125,7 +110,7 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
    {/* Contact Us Page */}
    <div className="contact-container flex flex-grow items-start justify-center gap-x-10">
-  
+
      {/* img and boxes */}
    <div className="left-section flex flex-col items-center gap-2">
       {/* Image on the left */}
@@ -149,11 +134,11 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
       <p className="text-gray-800 text-xl font-bold">Instagram</p>
         <p className="text-gray-800 text-xl">@medmemo</p>
         <div className="flex justify-center items-center mt-2">
-          <Image 
-            src="/images/instagram.png" 
-            alt="Instagram Logo" 
-            width={40} 
-            height={40} 
+          <Image
+            src="/images/instagram.png"
+            alt="Instagram Logo"
+            width={40}
+            height={40}
           />
         </div>
       </div>
@@ -161,35 +146,35 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
       {/* Box 2 */}
       <a href="https://x.com" className="block">
-      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"        
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300"
       style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
       >
       <p className="text-gray-800 text-xl font-bold">Twitter</p>
         <p className="text-gray-800 text-xl">@medTweets</p>
         <div className="flex justify-center items-center mt-2">
-          <Image 
-            src="/images/twitter.png" 
-            alt="Instagram Logo" 
-            width={40} 
-            height={40} 
+          <Image
+            src="/images/twitter.png"
+            alt="Instagram Logo"
+            width={40}
+            height={40}
           />
         </div>
       </div>
       </a>
-      
+
       {/* Box 3 */}
       <a href="https://facebook.com" className="block">
-      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300 "        
+      <div className="bg-gray-100 border border-gray-300 rounded-lg shadow-md p-4 w-40 h-40 flex flex-col justify-center items-center hover:scale-105 transition-transform duration-300 "
       style={{ boxShadow: "rgba(19, 111, 240, 0.29) -5px 5px, rgba(66, 159, 230, 0.41) -10px 10px, rgba(85, 164, 229, 0.44) -15px 15px, rgba(35, 131, 255, 0.15) -20px 20px, rgba(105, 193, 237, 0.18) -25px 25px" }}
       >
       <p className="text-gray-800 text-xl font-bold">Facebook</p>
         <p className="text-gray-800 text-xl">@MedMemo</p>
         <div className="flex justify-center items-center mt-2">
-          <Image 
-            src="/images/facebook.png" 
-            alt="Instagram Logo" 
-            width={40} 
-            height={40} 
+          <Image
+            src="/images/facebook.png"
+            alt="Instagram Logo"
+            width={40}
+            height={40}
           />
         </div>
       </div>
@@ -207,7 +192,7 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
 
           <label htmlFor="name" className="text-gray-600 font-semibold text-xl -mb-6">
     Your Name:
-  </label> 
+  </label>
           <input
             type="text"
             name="name"
@@ -238,7 +223,7 @@ const [showToast, setShowToast] = useState<boolean>(false);//toast notif
             Submit
           </button>
         </form>
-      </div>      
+      </div>
     </div>
     </div>
  );

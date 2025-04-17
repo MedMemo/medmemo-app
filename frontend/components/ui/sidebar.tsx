@@ -1,12 +1,10 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useContext } from "react";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { BsPeople } from "react-icons/bs";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+
 
 const sidebarItems = [
 
@@ -28,9 +26,50 @@ interface userInterface {
 }
 
 
+const PopUp = () => {
+    const router = useRouter();
+
+    const handleLogOut = async () => {
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/logout", {
+            method: "POST",
+            credentials: "include",
+            });
+            const data = await response.json ();
+
+            if (!response.ok) {
+            console.error("Logout error:", data.error || "An error occured during logout.");
+            return;
+            }
+
+            router.push("/")
+        } catch (error) {
+            console.error("Error during logout:", error);
+        }
+    };
+
+
+    return (
+        <div className="bottom-[4rem] origin-top-right absolute left-[1rem] mt-2 -mr-1 w-48 rounded-md shadow-lg bg-white z-100">
+          <div className="py-1 rounded-md bg-white shadow-xs relative">
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Settings</a>
+            <Link
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
+                href={"/home/contact-us"}
+                >
+                <span className="flex-1 whitespace-nowrap">Contact Us</span>
+            </Link>
+            <a onClick={handleLogOut} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Sign out</a>
+          </div>
+        </div>
+    );
+}
+
+
 const SideBar = () => {
 
     const pathname = usePathname()
+    const [isPopUpOpen, setIsPopUpOpen] = useState(false);
     const [user, setUser] = useState<userInterface>({
         id: "",
         email: "",
@@ -63,6 +102,10 @@ const SideBar = () => {
 
     return (
         <>
+
+            {isPopUpOpen &&
+                <PopUp />}
+
             <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span className="sr-only">Open sidebar</span>
                 <svg className="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -72,6 +115,8 @@ const SideBar = () => {
 
             <aside id="default-sidebar" className="bg-sidebar-background flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3" aria-label="Sidebar">
                 <div className="flex flex-1 py-4 overflow-y-auto  dark:bg-gray-800 ">
+
+
                         <ul className="w-full space-y-2 font-medium">
                             <li>
                                 <a href="/home" className="flex items-center p-2 text-sidebar-logo rounded-lg dark:text-white">
@@ -96,9 +141,11 @@ const SideBar = () => {
                             })}
                         </ul>
                 </div>
-                <div className="flex text-white  " >
+                <div className="flex text-white ">
                     {user
-                        ? <div className="w-full hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
+                        ? <button className="w-full" onClick={() => setIsPopUpOpen(isPopUpOpen => !isPopUpOpen)}>
+                            <div className="hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
+                        </button>
                         : ""
                     }
                 </div>
