@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Dispatch } from "react";
-import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
+import { Description, Dialog, DialogPanel, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { BsPeople } from "react-icons/bs";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
@@ -32,9 +32,23 @@ const Settings = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: Dispatch<
 
     return (
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
-            <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
-            <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
-                <DialogTitle className="font-bold">Deactivate account</DialogTitle>
+            <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-[rgba(0,0,0,0.36)]">
+            <DialogPanel className="max-w-lg space-y-4 border bg-white p-6 rounded-lg shadow-lg">
+                <DialogTitle className="text-xl font-bold">Settings</DialogTitle>
+
+                <TabGroup>
+                    <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
+                        <Tab className="rounded-full py-1 px-3 text-white text-sm/6 font-semibold  focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 1</Tab>
+                        <Tab className="rounded-full py-1 px-3 text-white  text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 2</Tab>
+                        <Tab className="rounded-full py-1 px-3 text-white text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 3</Tab>
+                    </TabList>
+                    <TabPanels>
+                        <TabPanel>Content 1</TabPanel>
+                        <TabPanel>Content 2</TabPanel>
+                        <TabPanel>Content 3</TabPanel>
+                    </TabPanels>
+                </TabGroup>
+
                 <Description>This will permanently deactivate your account</Description>
                 <p>Are you sure you want to deactivate your account? All of your data will be permanently removed.</p>
                 <div className="flex gap-4">
