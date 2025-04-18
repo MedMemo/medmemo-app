@@ -1,6 +1,7 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, Dispatch } from "react";
+import { Description, Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { BsPeople } from "react-icons/bs";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
@@ -26,8 +27,30 @@ interface userInterface {
 }
 
 
-const PopUp = () => {
+
+const Settings = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: Dispatch<React.SetStateAction<boolean>> }) => {
+
+    return (
+        <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
+            <div className="fixed inset-0 flex w-screen items-center justify-center p-4">
+            <DialogPanel className="max-w-lg space-y-4 border bg-white p-12">
+                <DialogTitle className="font-bold">Deactivate account</DialogTitle>
+                <Description>This will permanently deactivate your account</Description>
+                <p>Are you sure you want to deactivate your account? All of your data will be permanently removed.</p>
+                <div className="flex gap-4">
+                    <button onClick={() => setIsOpen(false)}>Cancel</button>
+                    <button onClick={() => setIsOpen(false)}>Deactivate</button>
+                </div>
+            </DialogPanel>
+            </div>
+        </Dialog>
+    )
+}
+
+
+const PopUp = ({ setIsOpen }: { setIsOpen: Dispatch<React.SetStateAction<boolean>> }) => {
     const router = useRouter();
+    const [isSettingOpen, setIsSettingOpen] = useState(false);
 
     const handleLogOut = async () => {
         try {
@@ -50,18 +73,31 @@ const PopUp = () => {
 
 
     return (
-        <div className="bottom-[4rem] origin-top-right absolute left-[1rem] mt-2 -mr-1 w-48 rounded-md shadow-lg bg-white z-100">
-          <div className="py-1 rounded-md bg-white shadow-xs relative">
-            <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Settings</a>
-            <Link
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
-                href={"/home/contact-us"}
-                >
-                <span className="flex-1 whitespace-nowrap">Contact Us</span>
-            </Link>
-            <a onClick={handleLogOut} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Sign out</a>
-          </div>
-        </div>
+        <>
+            { isSettingOpen &&
+                <Settings isOpen = {isSettingOpen} setIsOpen={setIsSettingOpen}/>}
+
+            <div className="bottom-[4.5rem] origin-top-right absolute left-[1rem] mt-2 -mr-1 rounded-md shadow-lg z-100">
+                <div className="py-1 rounded-md bg-white shadow-xs relative font-semibold">
+                    <a onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsSettingOpen(isSettingOpen => !isSettingOpen);
+                        // setIsOpen(false);
+                    }} className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                        Settings
+                    </a>
+                    <Link
+                        className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
+                        href={"/home/contact-us"}
+                        onClick={() => setIsOpen(false)}
+                        >
+                        <span className="flex-1 whitespace-nowrap">Contact us</span>
+                    </Link>
+                    <a onClick={handleLogOut} className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Log out</a>
+                </div>
+            </div>
+        </>
     );
 }
 
@@ -99,12 +135,11 @@ const SideBar = () => {
         })
     }
 
-
     return (
         <>
 
             {isPopUpOpen &&
-                <PopUp />}
+                <PopUp setIsOpen={setIsPopUpOpen} />}
 
             <button data-drawer-target="default-sidebar" data-drawer-toggle="default-sidebar" aria-controls="default-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                 <span className="sr-only">Open sidebar</span>

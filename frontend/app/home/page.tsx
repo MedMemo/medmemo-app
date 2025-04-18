@@ -1,7 +1,5 @@
 "use client";
 
-import SideBar from "@/components/ui/sidebar";
-
 export default function Home() {
 
   return (
