@@ -3,12 +3,14 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const { theme, updateTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -75,21 +77,34 @@ export default function FileUpload() {
   };
 
   return (
-    <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
-      <div className="w-full max-w-lg bg-sidebar-background rounded-xl p-6 shadow-lg">
+    <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
+      <div className="w-full max-w-xl rounded-xl p-6">
         <div
-          className={`border-4 border-dashed rounded-lg p-8 transition duration-300 ${
-            isDragging ? "border-blue-500 bg-gray-700" : "border-gray-600"
+          className={`border-5 border-dashed rounded-3xl p-6 transition duration-300 ${
+            isDragging ? "border-blue-500 bg-gray-700" : "border-chat-box-background"
           } flex flex-col items-center`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <Upload className="w-10 h-10 text-gray-400 mb-4" />
-          <p className="mb-2 text-lg">Drag & drop or browse to upload</p>
+          <Upload className="w-9 h-9 mb-4"
+          style={{
+            color:theme["main-text-color"]
+          }} />
+          <p className="mb-2 text-lg"
+          style={{
+            color: theme["main-text-color"]
+          }}>
+            Choose a file or drag & drop it here
+          </p>
+          <p className="mb-5 text-base text-text-dark-color">JPEG, PNG, PDF formats, up to 50MB</p>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white"
+            className="px-6 py-2 hover:bg-gray-200 rounded-3xl text-black text-sm"
+            style={{
+              backgroundColor: theme["button-color"],
+              color: theme["main-text-inverse-color"],
+            }}
           >
             Browse Files
           </button>
@@ -110,7 +125,7 @@ export default function FileUpload() {
                   <FileText className="text-blue-400 mr-2" />
                   {file.name}
                 </div>
-                <X className="cursor-pointer text-red-500" onClick={() => setFiles(files.filter(f => f !== file))} />
+                <X className="cursor-pointer text-white" onClick={() => setFiles(files.filter(f => f !== file))} />
               </div>
             ))}
           </div>
@@ -125,7 +140,8 @@ export default function FileUpload() {
         <button
           onClick={uploadFiles}
           disabled={uploading || !files.length}
-          className="mt-4 w-full py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:bg-green-900"
+          className="mt-4 w-full py-2 bg-white hover:bg-green-700 text-black rounded-lg
+          disabled:bg-transparent disabled:border-chat-box-background disabled:text-chat-box-background disabled:border-2"
         >
           {uploading ? "Uploading..." : "Upload and Process"}
         </button>

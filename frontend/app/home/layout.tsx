@@ -1,11 +1,28 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
 import SideBar from "@/components/ui/sidebar";
 
+import { useTheme } from "@/context/ThemeContext";
+
 const HomeLayout = ({ children } : {children: React.ReactNode}) => {
+
+  const { theme, updateTheme } = useTheme();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      updateTheme(storedTheme);
+    }
+  }
+  , []);
+
   return (
     <div className="h-screen flex flex-row justify-start">
         <SideBar />
-        <div className="min-h-screen bg-main-background text-gray-200 flex flex-grow flex-col">
+        <div className="min-h-screen text-gray-200 flex flex-grow flex-col"
+        style={{
+          backgroundColor: theme["main-background"]
+        }}>
             {children}
         </div>
     </div>

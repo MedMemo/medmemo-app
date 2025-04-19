@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import NavLogoAuthenticated from '../../components/NavLogo_Authenticated'; //for users once sign-ed in
+import NavLogoAuthenticated from '../../../components/NavLogo_Authenticated'; //for users once sign-ed in
 
-//properties of calendar 
+//properties of calendar
 interface CalendarPass {
     id: string;
     summary: string;
@@ -19,7 +19,7 @@ interface CalendarPass {
     };
     htmlLink: string;
   }
-  
+
   //if calendar fails, returns error desc
   interface CalendarError {
     error: {
@@ -27,7 +27,7 @@ interface CalendarPass {
       code: number;
     };
   }
-  
+
   //success or failed
   type CalendarResponse = CalendarPass | CalendarError;
 
@@ -60,19 +60,19 @@ export default function CalendarPage() {
             auth.isSignedIn.listen(setIsSignedIn);
           });
         };
-  
+
         gapi.load('client:auth2', initializeGapi);
       });
     }
   }, []);
-  
+
 
   useEffect(() => {
     if (showToast) {
       const timer = setTimeout(() => {
         setShowToast(false);
-        setStatus(''); 
-      }, 9000); 
+        setStatus('');
+      }, 9000);
       return () => clearTimeout(timer);
     }
   }, [showToast]);
@@ -90,8 +90,8 @@ export default function CalendarPage() {
     },
     scope: 'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
   });
-  
-  
+
+
 
   //editing reminder
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -102,7 +102,7 @@ export default function CalendarPage() {
   //adding reminder
   const addReminder = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setStatus('');//clear old status messages 
+    setStatus('');//clear old status messages
 
     if (!isSignedIn) {
       setStatus('Must log in to make a reminder.');
@@ -131,7 +131,7 @@ export default function CalendarPage() {
       description: description,
       start: {
         dateTime: start.toISOString(),
-        timeZone: 'America/Los_Angeles', 
+        timeZone: 'America/Los_Angeles',
       },
       end: {
         dateTime: end.toISOString(),
@@ -155,7 +155,7 @@ export default function CalendarPage() {
           }
         });
       });
-    
+
       //link to go to calendar
       if ('htmlLink' in response) {
         setStatus(`Reminder Added!`);
@@ -163,7 +163,7 @@ export default function CalendarPage() {
         setStatus('Reminder Added.');
       }
       setShowToast(true)
-      
+
       //clears input fields after submission
       setEventData({
         title: '',
@@ -180,39 +180,8 @@ export default function CalendarPage() {
 
   return (
 <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Navbar */}
-      <NavLogoAuthenticated />
-
-{/* Medication Reminder Navbar*/}
-    <div
-        className="relative bg-cover bg-center py-6 shadow-md"
-        style={{
-          backgroundImage: "url('/images/meds.jpeg')", 
-          zIndex: 10,
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-15"></div>
-
-        <div className="relative max-w-[90rem] mx-auto px-4">
-          <h1 className="text-5xl font-bold text-white text-center ">
-            Medical Reminders
-          </h1>
-        </div>
-    </div>
 
       <div className="flex flex-grow">
-        {/* Sidebar */}
-        <div
-          className="w-64 text-white p-4 overflow-y-auto h-screen"
-          style={{ backgroundColor: '#E0DFDF' }}
-        >
-          <h2 className="text-xl font-bold text-center mb-6 text-gray-800">
-            Sidebar Title
-          </h2>
-          <p className="mb-4 text-center text-gray-600">
-            This is a scrollable sidebar.
-          </p>
-        </div>
 
         {/* Calendar Reminder Form */}
         <div className="flex-grow p-6">
