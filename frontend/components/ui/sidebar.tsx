@@ -1,11 +1,10 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Dispatch } from "react";
-import { Description, Dialog, DialogPanel, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { Description, Dialog, DialogPanel, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels, Select } from '@headlessui/react'
 import { BsPeople } from "react-icons/bs";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
-
 
 const sidebarItems = [
 
@@ -19,6 +18,10 @@ const sidebarItems = [
         href: "/home/chat",
         icon: FiMail,
     },
+    {
+        name: "Medical Reminder",
+        href: "/home/calendar",
+    }
 ];
 
 interface userInterface {
@@ -33,28 +36,43 @@ const Settings = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: Dispatch<
     return (
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-[rgba(0,0,0,0.36)]">
-            <DialogPanel className="max-w-lg space-y-4 border bg-white p-6 rounded-lg shadow-lg">
-                <DialogTitle className="text-xl font-bold">Settings</DialogTitle>
+            <DialogPanel className="min-w-lg space-y-4 border bg-white p-6 rounded-2xl shadow-lg">
+                <div className="flex w-full justify-between">
+                    <DialogTitle className="text-xl font-semibold">Settings</DialogTitle>
+                    <button onClick={() => setIsOpen(false)}>Cancel</button>
+                </div>
 
                 <TabGroup>
-                    <TabList className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
-                        <Tab className="rounded-full py-1 px-3 text-white text-sm/6 font-semibold  focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 1</Tab>
-                        <Tab className="rounded-full py-1 px-3 text-white  text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 2</Tab>
-                        <Tab className="rounded-full py-1 px-3 text-white text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 3</Tab>
+                    <TabList className="flex space-x-1 rounded-md bg-gray-500 p-1">
+                        <Tab className="rounded-md py-1 px-3 text-white text-sm/6 font-semibold  focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">General</Tab>
+                        <Tab className="rounded-md py-1 px-3 text-white  text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Profile</Tab>
+                        <Tab className="rounded-md py-1 px-3 text-white text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 3</Tab>
                     </TabList>
-                    <TabPanels>
-                        <TabPanel>Content 1</TabPanel>
-                        <TabPanel>Content 2</TabPanel>
-                        <TabPanel>Content 3</TabPanel>
+                    <TabPanels className="mt-4">
+                        <TabPanel>
+                            <Description>
+                                <div className="flex w-full justify-between">
+                                    <p> Theme </p>
+                                    <Select name="theme" aria-label="Theme">
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                        <option value="system">System</option>
+                                    </Select>
+                                </div>
+                            </Description>
+                        </TabPanel>
+                        <TabPanel>
+                            <Description>
+                                Content 2
+                            </Description>
+                        </TabPanel>
+                        <TabPanel>
+                            <Description>
+                                Content 3
+                            </Description>
+                        </TabPanel>
                     </TabPanels>
                 </TabGroup>
-
-                <Description>This will permanently deactivate your account</Description>
-                <p>Are you sure you want to deactivate your account? All of your data will be permanently removed.</p>
-                <div className="flex gap-4">
-                    <button onClick={() => setIsOpen(false)}>Cancel</button>
-                    <button onClick={() => setIsOpen(false)}>Deactivate</button>
-                </div>
             </DialogPanel>
             </div>
         </Dialog>
