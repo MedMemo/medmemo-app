@@ -35,9 +35,13 @@ export default function FileUpload() {
   };
 
   const validateAndSetFiles = (selectedFiles: File[]) => {
-    const oversizedFiles = selectedFiles.filter(file => file.size > 5 * 1024 * 1024);
+    const oversizedFiles = selectedFiles.filter(
+      (file) => file.size > 5 * 1024 * 1024
+    );
     if (oversizedFiles.length) {
-      setError(`File exceeds 5MB: ${oversizedFiles.map(f => f.name).join(", ")}`);
+      setError(
+        `File exceeds 5MB: ${oversizedFiles.map((f) => f.name).join(", ")}`
+      );
       return;
     }
     setFiles(selectedFiles);
@@ -51,13 +55,32 @@ export default function FileUpload() {
     setError(null);
 
     try {
-      const formData = new FormData();
-      files.forEach(file => formData.append("file", file));
+      // 🔐 Get access token from Flask endpoint
+      const userRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}auth/get_user`,
+        {
+          credentials: "include", // Important to include cookies
+        }
+      );
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/upload`, {
-        method: "POST",
-        body: formData,
-      });
+      const userData = await userRes.json();
+
+      const accessToken = userData.user.id;
+      //console.log(accessToken);
+
+      const formData = new FormData();
+      files.forEach((file) => formData.append("file", file));
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `${accessToken}`,
+          },
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const data = await response.json();
@@ -67,8 +90,7 @@ export default function FileUpload() {
       const data = await response.json();
 
       sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
-      router.push('/home/display');
-
+      router.push("/home/display");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unknown error");
     } finally {
@@ -81,23 +103,31 @@ export default function FileUpload() {
       <div className="w-full max-w-xl rounded-xl p-6">
         <div
           className={`border-5 border-dashed rounded-3xl p-6 transition duration-300 ${
-            isDragging ? "border-blue-500 bg-gray-700" : "border-chat-box-background"
+            isDragging
+              ? "border-blue-500 bg-gray-700"
+              : "border-chat-box-background"
           } flex flex-col items-center`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <Upload className="w-9 h-9 mb-4"
-          style={{
-            color:theme["main-text-color"]
-          }} />
-          <p className="mb-2 text-lg"
-          style={{
-            color: theme["main-text-color"]
-          }}>
+          <Upload
+            className="w-9 h-9 mb-4"
+            style={{
+              color: theme["main-text-color"],
+            }}
+          />
+          <p
+            className="mb-2 text-lg"
+            style={{
+              color: theme["main-text-color"],
+            }}
+          >
             Choose a file or drag & drop it here
           </p>
-          <p className="mb-5 text-base text-text-dark-color">JPEG, PNG, PDF formats, up to 50MB</p>
+          <p className="mb-5 text-base text-text-dark-color">
+            JPEG, PNG, PDF formats, up to 50MB
+          </p>
           <button
             onClick={() => fileInputRef.current?.click()}
             className="px-6 py-2 hover:bg-gray-200 rounded-3xl text-black text-sm"
@@ -120,12 +150,18 @@ export default function FileUpload() {
         {files.length > 0 && (
           <div className="mt-4">
             {files.map((file, idx) => (
-              <div key={idx} className="flex justify-between items-center bg-gray-800 rounded-lg p-3 my-2">
+              <div
+                key={idx}
+                className="flex justify-between items-center bg-gray-800 rounded-lg p-3 my-2"
+              >
                 <div className="flex items-center">
                   <FileText className="text-blue-400 mr-2" />
                   {file.name}
                 </div>
-                <X className="cursor-pointer text-white" onClick={() => setFiles(files.filter(f => f !== file))} />
+                <X
+                  className="cursor-pointer text-white"
+                  onClick={() => setFiles(files.filter((f) => f !== file))}
+                />
               </div>
             ))}
           </div>
