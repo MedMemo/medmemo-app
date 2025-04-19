@@ -1,10 +1,16 @@
 "use client";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Dispatch } from "react";
-import { Description, Dialog, DialogPanel, DialogTitle, Tab, TabGroup, TabList, TabPanel, TabPanels, Select } from '@headlessui/react'
+import { Description, Dialog, DialogPanel, DialogTitle,
+    Tab, TabGroup, TabList, TabPanel, TabPanels,
+    Select, Label, Field, MenuSeparator
+} from '@headlessui/react'
 import { BsPeople } from "react-icons/bs";
+import { VscChromeClose, VscSettingsGear, VscSignOut, VscSend} from "react-icons/vsc";
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
+
+import { useTheme } from "@/context/ThemeContext";
 
 const sidebarItems = [
 
@@ -30,35 +36,44 @@ interface userInterface {
 }
 
 
-
 const Settings = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: Dispatch<React.SetStateAction<boolean>> }) => {
+
+    const { theme, updateTheme } = useTheme();
+
+    const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedTheme = event.target.value;
+        updateTheme(selectedTheme);
+    };
 
     return (
         <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
             <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-[rgba(0,0,0,0.36)]">
-            <DialogPanel className="min-w-lg space-y-4 border bg-white p-6 rounded-2xl shadow-lg">
-                <div className="flex w-full justify-between">
+            <DialogPanel className="min-w-lg space-y-4 border bg-white px-6 pt-4 pb-8 rounded-2xl shadow-lg">
+                <div className="flex w-full justify-between items-center">
                     <DialogTitle className="text-xl font-semibold">Settings</DialogTitle>
-                    <button onClick={() => setIsOpen(false)}>Cancel</button>
+                    <div className="rounded-sm hover:bg-gray-100 p-1">
+                        <VscChromeClose className="text-black" onClick={() => setIsOpen(false)}/>
+                    </div>
                 </div>
 
                 <TabGroup>
-                    <TabList className="flex space-x-1 rounded-md bg-gray-500 p-1">
-                        <Tab className="rounded-md py-1 px-3 text-white text-sm/6 font-semibold  focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">General</Tab>
-                        <Tab className="rounded-md py-1 px-3 text-white  text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Profile</Tab>
-                        <Tab className="rounded-md py-1 px-3 text-white text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white/10 data-[hover]:bg-white/5 data-[selected]:data-[hover]:bg-white/10 data-[focus]:outline-1 data-[focus]:outline-white">Tab 3</Tab>
+                    <TabList className="flex space-x-1 rounded-md bg-gray-100 p-1">
+                        <Tab className="w-full rounded-md py-1 px-3 text-black text-sm/6 font-semibold data-[selected]:shadow-sm  focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">General</Tab>
+                        <MenuSeparator className="my-1 h-px bg-black" />
+                        <Tab className="w-full rounded-md py-1 px-3 text-black text-sm/6 font-semibold data-[selected]:shadow-sm focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">Profile</Tab>
+                        {/* <Tab className="rounded-md py-1 px-3 text-black text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">Tab 3</Tab> */}
                     </TabList>
                     <TabPanels className="mt-4">
                         <TabPanel>
                             <Description>
-                                <div className="flex w-full justify-between">
-                                    <p> Theme </p>
-                                    <Select name="theme" aria-label="Theme">
+                                <Field className="flex w-full justify-between">
+                                    <Label> Theme </Label>
+                                    <Select onChange={handleThemeChange} name="theme" aria-label="Theme">
                                         <option value="light">Light</option>
                                         <option value="dark">Dark</option>
-                                        <option value="system">System</option>
+                                        {/* <option value="system">System</option> */}
                                     </Select>
-                                </div>
+                                </Field>
                             </Description>
                         </TabPanel>
                         <TabPanel>
@@ -110,23 +125,28 @@ const PopUp = ({ setIsOpen }: { setIsOpen: Dispatch<React.SetStateAction<boolean
                 <Settings isOpen = {isSettingOpen} setIsOpen={setIsSettingOpen}/>}
 
             <div className="bottom-[4.5rem] origin-top-right absolute left-[1rem] mt-2 -mr-1 rounded-md shadow-lg z-100">
-                <div className="py-1 rounded-md bg-white shadow-xs relative font-semibold">
+                <div className="py-3 px-2 rounded-md bg-white shadow-xs relative font-semibold">
                     <a onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsSettingOpen(isSettingOpen => !isSettingOpen);
                         // setIsOpen(false);
-                    }} className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                    }} className="flex items-center gap-2 px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                        <VscSettingsGear className="w-5.5 h-5.5"/>
                         Settings
                     </a>
                     <Link
-                        className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
+                        className="flex items-center gap-2 px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150"
                         href={"/home/contact-us"}
                         onClick={() => setIsOpen(false)}
                         >
+                        <VscSend className="w-5.5 h-5.5"/>
                         <span className="flex-1 whitespace-nowrap">Contact us</span>
                     </Link>
-                    <a onClick={handleLogOut} className="block px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">Log out</a>
+                    <a onClick={handleLogOut} className="flex items-center gap-2 px-4 py-2 text-base text-gray-700 hover:bg-gray-100 transition ease-in-out duration-150">
+                        <VscSignOut className="w-5.5 h-5.5"/>
+                        Log out
+                    </a>
                 </div>
             </div>
         </>
@@ -138,10 +158,12 @@ const SideBar = () => {
 
     const pathname = usePathname()
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const { theme, updateTheme } = useTheme();
     const [user, setUser] = useState<userInterface>({
         id: "",
         email: "",
     })
+
 
     useEffect(() => {
         userInfo()
@@ -180,13 +202,20 @@ const SideBar = () => {
                 </svg>
             </button>
 
-            <aside id="default-sidebar" className="bg-sidebar-background flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3" aria-label="Sidebar">
+            <aside id="default-sidebar"
+            className="flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3" aria-label="Sidebar"
+            style={{
+                backgroundColor: theme["sidebar-background"],
+                color: theme["main-text-color"],
+            }}>
                 <div className="flex flex-1 py-4 overflow-y-auto  dark:bg-gray-800 ">
-
 
                         <ul className="w-full space-y-2 font-medium">
                             <li>
-                                <a href="/home" className="flex items-center p-2 text-sidebar-logo rounded-lg dark:text-white">
+                                <a href="/home" className="flex items-center p-2 pb-7 rounded-lg dark:text-white"
+                                style={{
+                                    color:theme["sidebar-logo"],
+                                }}>
                                     <span className="text-4xl ms-3">MedMemo</span>
                                 </a>
                             </li>
@@ -195,9 +224,11 @@ const SideBar = () => {
                                 <li className="w-full"  key={name}>
 
                                     <Link
-                                    className={`flex items-center p-2 text-gray-200 rounded-lg dark:text-white hover:bg-sidebar-hover dark:hover:bg-gray-700 group ${
-                                        pathname === href ? "bg-sidebar-hover" : ""
-                                    }`}
+                                    className={`flex items-center p-2 text-gray-200 rounded-md dark:text-white hover:bg-sidebar-hover dark:hover:bg-gray-700 group`}
+                                    style={{
+                                        backgroundColor: pathname === href ? theme["sidebar-hover"] : "",
+                                        color: theme["main-text-color"]
+                                    }}
                                     href={href}
                                     >
 
