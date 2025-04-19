@@ -18,11 +18,14 @@ import {
   SendHorizontalIcon,
   PaperclipIcon,
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
+
+import { useTheme } from "@/context/ThemeContext";
 
 export const Thread: FC = () => {
   return (
@@ -113,16 +116,22 @@ const ThreadWelcomeSuggestions: FC = () => {
 };
 
 const Composer: FC = () => {
+  const { theme, updateTheme } = useTheme();
+
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full items-end rounded-2xl border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
-      <ComposerActionAttach /> 
+    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full items-end rounded-2xl border px-2.5 shadow-sm transition-colors ease-in"
+      style={{
+        backgroundColor: theme["chat-box-background"],
+        borderColor: theme["sidebar-background"],
+      }}>
+      <ComposerActionAttach />
       <ComposerPrimitive.Input
         rows={1}
         autoFocus
         placeholder="Write a message..."
         className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
       />
-      <ComposerActionSend /> 
+      <ComposerActionSend />
     </ComposerPrimitive.Root>
   );
 };

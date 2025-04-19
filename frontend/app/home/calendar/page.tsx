@@ -181,23 +181,6 @@ export default function CalendarPage() {
   return (
 <div className="min-h-screen bg-gray-100 flex flex-col">
 
-{/* Medication Reminder Navbar*/}
-    <div
-        className="relative bg-cover bg-center py-6 shadow-md"
-        style={{
-          backgroundImage: "url('/images/meds.jpeg')",
-          zIndex: 10,
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-15"></div>
-
-        <div className="relative max-w-[90rem] mx-auto px-4">
-          <h1 className="text-5xl font-bold text-white text-center ">
-            Medical Reminders
-          </h1>
-        </div>
-    </div>
-
       <div className="flex flex-grow">
 
         {/* Calendar Reminder Form */}

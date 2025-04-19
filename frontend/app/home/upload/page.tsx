@@ -3,12 +3,14 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const { theme, updateTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
@@ -85,12 +87,24 @@ export default function FileUpload() {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          <Upload className="w-10 h-10 text-white mb-4" />
-          <p className="mb-2 text-lg">Choose a file or drag & drop it here</p>
-          <p className="mb-5 text-base text-text-dark-color">JPEG, PNG, PDF formats, up to 50 MB</p>
+          <Upload className="w-9 h-9 mb-4"
+          style={{
+            color:theme["main-text-color"]
+          }} />
+          <p className="mb-2 text-lg"
+          style={{
+            color: theme["main-text-color"]
+          }}>
+            Choose a file or drag & drop it here
+          </p>
+          <p className="mb-5 text-base text-text-dark-color">JPEG, PNG, PDF formats, up to 50MB</p>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-6 py-2 bg-white hover:bg-gray-200 rounded-3xl text-black text-sm"
+            className="px-6 py-2 hover:bg-gray-200 rounded-3xl text-black text-sm"
+            style={{
+              backgroundColor: theme["button-color"],
+              color: theme["main-text-inverse-color"],
+            }}
           >
             Browse Files
           </button>

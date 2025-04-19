@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import SideBar from "@/components/ui/sidebar";
 
 import { useTheme } from "@/context/ThemeContext";
@@ -7,6 +7,14 @@ import { useTheme } from "@/context/ThemeContext";
 const HomeLayout = ({ children } : {children: React.ReactNode}) => {
 
   const { theme, updateTheme } = useTheme();
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    if (storedTheme) {
+      updateTheme(storedTheme);
+    }
+  }
+  , []);
 
   return (
     <div className="h-screen flex flex-row justify-start">
