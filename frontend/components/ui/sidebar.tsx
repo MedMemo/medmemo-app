@@ -27,6 +27,10 @@ const sidebarItems = [
     {
         name: "Medical Reminder",
         href: "/home/calendar",
+    },
+        {
+        name: "Uploaded Documents",
+        href: "/home/uploaded-documents",
     }
 ];
 
@@ -61,24 +65,24 @@ const Settings = ({ isOpen, setIsOpen }: { isOpen: boolean, setIsOpen: Dispatch<
 
                 <TabGroup>
                     <TabList className="flex space-x-1 rounded-md bg-gray-100 p-1">
-                        <Tab className="w-full rounded-md py-1 px-3 text-black text-sm/6 font-semibold data-[selected]:shadow-sm  focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">General</Tab>
-                        <MenuSeparator className="my-1 h-px bg-black" />
-                        <Tab className="w-full rounded-md py-1 px-3 text-black text-sm/6 font-semibold data-[selected]:shadow-sm focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">Profile</Tab>
-                        <Tab className="w-full rounded-md py-1 px-3 text-black text-sm/6 font-semibold focus:outline-none data-[selected]:bg-white data-[hover]:bg-white data-[selected]:data-[hover]:bg-white data-[focus]:outline-1 data-[focus]:outline-white">About</Tab>
+                        {['General', 'Profile', 'About'].map((tab, idx) => (
+                            <Tab key={idx} className="w-full rounded-md py-1 px-3 text-black text-sm font-semibold data-[selected]:shadow-sm data-[selected]:bg-white">
+                            {tab}
+                            </Tab>
+                        ))}
                     </TabList>
                     <TabPanels className="mt-4">
                         <TabPanel>
-                            <Description>
-                                <Field className="flex w-full justify-between">
-                                    <Label> Theme </Label>
-                                    <Select onChange={handleThemeChange} name="theme" aria-label="Theme">
-                                        <option value="light">Light</option>
-                                        <option value="dark">Dark</option>
-                                        {/* <option value="system">System</option> */}
-                                    </Select>
-                                </Field>
-                            </Description>
+                            <Field className="flex w-full justify-between">
+                                <Label> Theme </Label>
+                                <Select onChange={handleThemeChange} name="theme" aria-label="Theme">
+                                    <option value="light">Light</option>
+                                    <option value="dark">Dark</option>
+                                    {/* <option value="system">System</option> */}
+                                </Select>
+                            </Field>
                         </TabPanel>
+
                         <TabPanel>
                             <Description>
                                 <div className="space-y-2 font-semibold text-[#0a0a23]">
@@ -110,15 +114,12 @@ const PopUp = ({ setIsOpen }: { setIsOpen: Dispatch<React.SetStateAction<boolean
     const handleLogOut = async () => {
         try {
             const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/logout", {
-            method: "POST",
-            credentials: "include",
+                method: "POST",
+                credentials: "include",
             });
             const data = await response.json ();
 
-            if (!response.ok) {
-            console.error("Logout error:", data.error || "An error occured during logout.");
-            return;
-            }
+            if (!response.ok) throw new Error("Logout failed");
 
             router.push("/")
         } catch (error) {
@@ -137,37 +138,37 @@ const PopUp = ({ setIsOpen }: { setIsOpen: Dispatch<React.SetStateAction<boolean
                 style={{
                     backgroundColor: theme["setting-background"],
                 }}>
-                    <a onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsSettingOpen(isSettingOpen => !isSettingOpen);
-                        // setIsOpen(false);
+                    <button onClick={(e) => {
+                        setIsSettingOpen(true);
+                        // setTimeout(() => setIsOpen(false), 50);
                     }}
-                    className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150"
+                    className="w-full flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150"
                     style={{
                         color: theme["main-text-color"],
                     }}>
                         <VscSettingsGear className="w-5.5 h-5.5"/>
                         Settings
-                    </a>
+                    </button>
+
                     <Link
                         className="flex items-center gap-2 px-4 py-2 text-base rounded-md  hover:bg-gray-100 transition ease-in-out duration-150"
                         href={"/home/contact-us"}
                         onClick={() => setIsOpen(false)}
                         style={{
-                        color: theme["main-text-color"],
-                    }}>
+                            color: theme["main-text-color"],
+                        }}>
                         <VscSend className="w-5.5 h-5.5"/>
-                        <span className="flex-1 whitespace-nowrap">Contact us</span>
+                        Contact us
                     </Link>
-                    <a onClick={handleLogOut}
+
+                    <button onClick={handleLogOut}
                     className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150"
                     style={{
                         color: theme["main-text-color"],
                     }}>
                         <VscSignOut className="w-5.5 h-5.5"/>
                         Log out
-                    </a>
+                    </button>
                 </div>
             </div>
         </>
@@ -179,12 +180,12 @@ const SideBar = () => {
 
     const pathname = usePathname()
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
+    const [isFocused, setFocus] = useState(false);
     const { theme, updateTheme } = useTheme();
     const [user, setUser] = useState<userInterface>({
         id: "",
         email: "",
     })
-
 
     useEffect(() => {
         userInfo()
@@ -229,7 +230,7 @@ const SideBar = () => {
                 backgroundColor: theme["sidebar-background"],
                 color: theme["main-text-color"],
             }}>
-                <div className="flex flex-1 py-4 overflow-y-auto  dark:bg-gray-800 ">
+                <div className="flex flex-1 py-4 overflow-y-auto dark:bg-gray-800">
 
                         <ul className="w-full space-y-2 font-medium">
                             <li>
@@ -243,17 +244,14 @@ const SideBar = () => {
                             {sidebarItems.map(({ name, href, icon: Icon }) => {
                                 return (
                                 <li className="w-full"  key={name}>
-
                                     <Link
-                                    className={`flex items-center p-2 text-gray-200 rounded-md dark:text-white hover:bg-sidebar-hover group`}
+                                    className={`flex items-center p-2 text-gray-200 hover:bg-sidebar-hover rounded-md group`}
                                     style={{
                                         backgroundColor: pathname === href ? theme["sidebar-hover"] : "",
                                         color: theme["main-text-color"]
-
                                     }}
                                     href={href}
                                     >
-
                                         <span className="flex-1 ms-3 whitespace-nowrap">{name}</span>
                                     </Link>
                                 </li>
@@ -261,10 +259,21 @@ const SideBar = () => {
                             })}
                         </ul>
                 </div>
-                <div className="flex text-white ">
+                <div className="flex"
+                onMouseEnter={() => setFocus(true)}
+                onMouseLeave={() => setFocus(false)}
+                style= {{
+                    color: theme["main-text-color"],
+                }}>
                     {user
                         ? <button className="w-full" onClick={() => setIsPopUpOpen(isPopUpOpen => !isPopUpOpen)}>
-                            <div className="hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
+                            <div className="rounded-lg flex p-3"
+                                style={{
+                                    backgroundColor: isFocused ? theme["sidebar-hover"] : "",
+                                }}
+                            >
+                                {user.email}
+                            </div>
                         </button>
                         : ""
                     }

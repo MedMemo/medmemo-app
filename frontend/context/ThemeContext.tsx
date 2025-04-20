@@ -72,14 +72,13 @@ const ThemeContext = createContext<ThemeContextInterface>(InitThemeContext);
 
 export function ThemeProvider({ children } : Props ) {
 
-    const [theme, setTheme] = React.useState<Theme>(themeMap["light"]);
-
-    useEffect(() => {
-        setTheme(themeMap["light"]);
-    }, [])
-
+    const [theme, setTheme] = React.useState<Theme>(() => {
+        const storedTheme = localStorage.getItem("theme");
+        return storedTheme && themeMap[storedTheme] ? themeMap[storedTheme] : themeMap["light"];
+    });
 
     function updateTheme(theme: string) {
+        localStorage.setItem("theme", theme);
         return setTheme(themeMap[theme]);
     }
 
