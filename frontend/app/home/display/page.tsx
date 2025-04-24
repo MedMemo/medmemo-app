@@ -31,6 +31,35 @@ export default function DocumentDisplayPage() {
     setOcrData({ ...ocrData, kv_pairs: updated });
   };
 
+  const handleSaveChanges = async () => {
+    sessionStorage.setItem("ocrData", JSON.stringify(ocrData));
+    const transcript = ocrData.kv_pairs
+      .map(pair => `${pair.key}: ${pair.value}`)
+      .join("\n");
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ transcript }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      sessionStorage.setItem("summaryData", JSON.stringify(data));
+      router.push('/home/summary');
+    } catch (error) {
+      alert(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
@@ -90,7 +119,7 @@ export default function DocumentDisplayPage() {
 
           <div className="mt-8 text-right">
             <button
-              onClick={() => alert('Changes saved!')}
+              onClick={handleSaveChanges}
               className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center justify-center transition"
             >
               <Save className="w-5 h-5 mr-2" />
