@@ -37,8 +37,11 @@ export default function DocumentDisplayPage() {
       .map(pair => `${pair.key}: ${pair.value}`)
       .join("\n");
 
+
+    router.push('/home/summary');
+    /*
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/summary`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -58,6 +61,7 @@ export default function DocumentDisplayPage() {
     } catch (error) {
       alert(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
+    */
   };
 
   return (

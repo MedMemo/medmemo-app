@@ -29,7 +29,7 @@ export default function SummaryPage() {
       .map((pair: { key: string; value: string }) => `${pair.key}: ${pair.value}`)
       .join('\n');
 
-    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/`, {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/summary`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
