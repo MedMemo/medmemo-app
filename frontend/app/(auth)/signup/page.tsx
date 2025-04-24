@@ -75,7 +75,10 @@ export default function SignUp() {
               aria-describedby="helper-text-explanation"
               className="w-full px-4 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 text-black
               placeholder:text-center"
-              placeholder="email address*"></input>
+              placeholder="email address*"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required></input>
             </div>
 
             <div className="mb-4">
