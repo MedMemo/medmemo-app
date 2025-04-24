@@ -9,7 +9,6 @@ from summarize import summarize_bp # Import the summarize blueprint
 from chatbot import chatbot_bp
 from upload import upload_bp  # Import the upload blueprint
 from ocr import ocr_bp  # Import the ocr blueprint
-from articles import articles_bp  # Import the ocr blueprint
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:8080"], supports_credentials=True)  # Enable CORS for frontend communication (middleware)
@@ -26,8 +25,6 @@ app.register_blueprint(summarize_bp, url_prefix='/summarize')
 app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
 # Register OCR routes
 app.register_blueprint(ocr_bp, url_prefix='/ocr')
-# Register suggested articles routes
-app.register_blueprint(articles_bp, url_prefix='/articles')
 
 # home route that returns below text when root url is accessed
 @app.route("/")
@@ -37,5 +34,5 @@ def hello_world():
 
 if __name__ == '__main__':
     debug_mode = os.getenv('DEBUG', 'True').lower() == 'true'
-    dev_port = int(os.getenv('PORT', 5000))  # Default to 5000 if DEV_PORT is not set
+    dev_port = int(os.getenv('PORT', 8080))  # Default to 5000 if DEV_PORT is not set
     app.run(debug=debug_mode, port=dev_port)

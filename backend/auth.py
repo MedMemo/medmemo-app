@@ -78,6 +78,7 @@ def signup():
         return jsonify({"error": str(e)}), 400
 
 
+
 @auth_bp.route('/login', methods=['POST'])
 def login():
     # Ensure the request contains JSON data
@@ -123,7 +124,6 @@ def login():
         # Handle other errors and log them
         print(f"Error during login: {str(e)}")
         return jsonify({"error": f"{str(e)}"}), 500
-
 
 
 
