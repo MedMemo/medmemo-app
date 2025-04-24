@@ -57,10 +57,8 @@ export default function FileUpload() {
     try {
       // 🔐 Get access token from Flask endpoint
       const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}auth/get_user`,
-        {
-          credentials: "include", // Important to include cookies
-        }
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+        { credentials: "include" }
       );
 
       const userData = await userRes.json();
@@ -72,7 +70,7 @@ export default function FileUpload() {
       files.forEach((file) => formData.append("file", file));
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}upload`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/upload`,
         {
           method: "POST",
           headers: {

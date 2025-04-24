@@ -12,7 +12,7 @@ def upload_file():
     if not auth_header:
         return jsonify({"error": "Missing or invalid Authorization header"}), 401
 
-    user_id = auth_header
+    user_id = auth_header.strip()
 
     if 'file' not in request.files:
         return jsonify({"error": "No file provided"}), 400
@@ -23,12 +23,16 @@ def upload_file():
 
     # Guess MIME type
     mime_type, _ = mimetypes.guess_type(file_name)
-    if mime_type is None:
-        mime_type = 'application/octet-stream'
+    mime_type = mime_type or 'application/octet-stream'
 
     file_path = f"{user_id}/{file_name}"
 
     try:
+        # Check if file already exists to avoid overwrites
+        existing_files = supabase.storage.from_(BUCKET_NAME).list(user_id)
+        if any(f['name'] == file_name for f in existing_files):
+            return jsonify({"error": "File with same name already exists"}), 400
+
         response = supabase.storage.from_(BUCKET_NAME).upload(
             file_path,
             file_bytes,
