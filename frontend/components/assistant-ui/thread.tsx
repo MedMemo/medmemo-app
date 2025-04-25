@@ -46,7 +46,7 @@ export const Thread: FC = () => {
           content: [
             //{ type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
             //{ type: "text", text: transcript }
-            { type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
+            //{ type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
             { type: "text", text: "hello chatgpt" }
           ],
         });
