@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
+import { useState, useRef, type DragEvent, type ChangeEvent, useEffect } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";

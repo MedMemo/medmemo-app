@@ -33,35 +33,7 @@ export default function DocumentDisplayPage() {
 
   const handleSaveChanges = async () => {
     sessionStorage.setItem("ocrData", JSON.stringify(ocrData));
-    const transcript = ocrData.kv_pairs
-      .map(pair => `${pair.key}: ${pair.value}`)
-      .join("\n");
-
-
-    router.push('/home/summary');
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/summary`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ transcript }),
-      });
-
-      const data = await response.json();
-
-      if (data.error) {
-        alert(`Error: ${data.error}`);
-        return;
-      }
-
-      sessionStorage.setItem("summaryData", JSON.stringify(data));
-      router.push('/home/summary');
-    } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
-    }
-    */
+    router.push('/home/chat');
   };
 
   return (

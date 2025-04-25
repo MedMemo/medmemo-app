@@ -4,9 +4,10 @@ import {
   ComposerPrimitive,
   MessagePrimitive,
   ThreadPrimitive,
+  useThreadRuntime,
 } from "@assistant-ui/react";
 import type { FC } from "react";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   ArrowDownIcon,
   CheckIcon,
@@ -28,6 +29,32 @@ import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button
 import { useTheme } from "@/context/ThemeContext";
 
 export const Thread: FC = () => {
+
+  
+  const thread = useThreadRuntime();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && thread.getState().messages.length === 0) {
+      const ocrData = sessionStorage.getItem("ocrData");
+      if (ocrData) {
+        const transcript = JSON.parse(ocrData).kv_pairs
+          .map ((pair: any) => `${pair.key}: ${pair.value}`)
+          .join("\n")
+        const imageBase64 = JSON.parse(ocrData).annotated_image
+        thread.append({
+          role: "user",
+          content: [
+            //{ type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
+            //{ type: "text", text: transcript }
+            { type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
+            { type: "text", text: "hello chatgpt" }
+          ],
+        });
+      }
+    }
+  }, [thread]);
+  
+  
   return (
     <ThreadPrimitive.Root
       className="box-border flex w-full h-full flex-col overflow-hidden"
@@ -135,7 +162,6 @@ const Composer: FC = () => {
     </ComposerPrimitive.Root>
   );
 };
-
 
 
 const ComposerActionAttach: FC = () => {
