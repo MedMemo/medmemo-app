@@ -60,11 +60,8 @@ export default function FileUpload() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
         { credentials: "include" }
       );
-
       const userData = await userRes.json();
-
       const accessToken = userData.user.id;
-
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
 
@@ -83,20 +80,14 @@ export default function FileUpload() {
         const data = await response.json();
         throw new Error(data.error || "Upload failed");
       }
-
       const data = await response.json();
-
       sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
-
-      // Store the files in sessionStorage
       const fileMetadata = files.map((file) => ({
         name: file.name,
         type: file.type,
         size: file.size,
       }));
-    // Store the file metadata in sessionStorage
-    sessionStorage.setItem("filesMetadata", JSON.stringify(fileMetadata));
-    
+      sessionStorage.setItem("filesMetadata", JSON.stringify(fileMetadata));
       router.push("/home/display");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unknown error");

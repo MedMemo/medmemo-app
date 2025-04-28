@@ -25,20 +25,18 @@ export default function SummaryPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [ocrData, setOcrData] = useState<any | null>(null);
+  const [filesMetadata, setFilesMetadata] = useState<any[]>(() => {
+    const savedFilesMetadata = sessionStorage.getItem("filesMetadata");
+    return savedFilesMetadata ? JSON.parse(savedFilesMetadata) : []; 
+  });
+  const [ocrData, setOcrData] = useState<any | null>(() => {
+    const savedOcrData = sessionStorage.getItem("ocrData");
+    return savedOcrData ? JSON.parse(savedOcrData) : null; // Parse OCR data from sessionStorage if available
+  });
+
   const router = useRouter();
 
   useEffect(() => {
-    const storedOcrData = sessionStorage.getItem('ocrData');
-
-    if (!storedOcrData) {
-      setError('No data available for summarization.');
-      setLoading(false);
-      return;
-    }
-
-    const parsedData = JSON.parse(storedOcrData);
-    setOcrData(parsedData);
 
     // Safely accessing process.env.NEXT_PUBLIC_BASE_URL and checking if it's defined
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -54,7 +52,7 @@ export default function SummaryPage() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ocr_data: { kv_pairs: parsedData.kv_pairs } }),
+      body: JSON.stringify({ ocr_data: { kv_pairs: ocrData.kv_pairs } }),
     })
       .then((res) => res.json())
       .then((data: SummaryResponse) => {
@@ -82,6 +80,7 @@ export default function SummaryPage() {
             .catch((err) => setError(err.message))
             .finally(() => {
               sessionStorage.removeItem('ocrData');
+              sessionStorage.removeItem('filesMetadata')
               setLoading(false);
             });
         }
@@ -94,9 +93,10 @@ export default function SummaryPage() {
       <div className="max-w-4xl mx-auto w-full">
       <button
           onClick={() => {
-            // Store the ocrData back into sessionStorage before navigation
-            if (ocrData) {
+            // Store the ocrData back into sessionStorage before going back
+            if (ocrData && filesMetadata) {
               sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
+              sessionStorage.setItem('filesMetadata', JSON.stringify(filesMetadata))
             }
             router.push('/home/display');
           }}
@@ -145,8 +145,6 @@ export default function SummaryPage() {
               ) : (
                 <p className="text-white">No articles found.</p>
               )}
-
-
             </div>
           )}
         </div>

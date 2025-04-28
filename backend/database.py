@@ -63,17 +63,22 @@ def remove_file(file_name):
     auth_header = request.headers.get("Authorization")
     if not auth_header:
         return jsonify({"error": "Missing or invalid Authorization header"}), 401
-
     user_id = auth_header.strip()
 
     try:
+
         # Try to delete the file from Supabase storage
         response = supabase.storage.from_(BUCKET_NAME).remove([f"{user_id}/{file_name}"])
 
-        if response.get('status') == 200:
-            return jsonify({"message": f"File {file_name} removed successfully"}), 200
+        # Check if the response is a list and contains results
+        if isinstance(response, list) and len(response) > 0:
+            result = response[0] 
+            if 'status' in result and result['status'] == 200:
+                return jsonify({"message": f"File {file_name} removed successfully"}), 200
+            else:
+                return jsonify({"error": f"Error removing the file: {result.get('error', 'Unknown error')}"})
         else:
-            return jsonify({"error": "Error removing the file"}), 500
+            return jsonify({"error": "Error removing the file: no valid response from Supabase"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

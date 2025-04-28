@@ -47,7 +47,6 @@ export default function DocumentDisplayPage() {
             `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
             { credentials: "include" }
           );
-  
           const userData = await userRes.json();
           const accessToken = userData.user.id;
   
@@ -64,8 +63,10 @@ export default function DocumentDisplayPage() {
             );
   
             const data = await response.json();
+            console.log("response:",response)
             if (response.ok) {
               console.log(`File ${fileName} removed successfully`);
+              sessionStorage.removeItem("filesMetadata")
             } else {
               console.error('Error removing the file:', data.error);
             }
