@@ -30,7 +30,9 @@ def upload_file():
     try:
         # Check if file already exists to avoid overwrites
         existing_files = supabase.storage.from_(BUCKET_NAME).list(user_id)
+        print(file_name, existing_files)
         if any(f['name'] == file_name for f in existing_files):
+            print("file same name")
             return jsonify({"error": "File with same name already exists"}), 400
 
         response = supabase.storage.from_(BUCKET_NAME).upload(

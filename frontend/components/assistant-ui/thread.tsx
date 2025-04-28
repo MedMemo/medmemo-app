@@ -98,7 +98,7 @@ const ThreadWelcomeSuggestions: FC = () => {
         autoSend
       >
         <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          What is MedMemo?
+          Can you explain a medical term or condition?
         </span>
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion
@@ -108,7 +108,7 @@ const ThreadWelcomeSuggestions: FC = () => {
         autoSend
       >
         <span className="line-clamp-2 text-ellipsis text-sm font-semibold">
-          What is assistant-ui?
+          What lifestyle changes are recommended for better health?
         </span>
       </ThreadPrimitive.Suggestion>
     </div>
