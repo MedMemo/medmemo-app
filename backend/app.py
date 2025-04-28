@@ -7,7 +7,7 @@ from download import download_bp #Import the download blueprint
 from auth import auth_bp  # Import the auth blueprint
 from summarize import summarize_bp # Import the summarize blueprint
 from chatbot import chatbot_bp
-from upload import upload_bp  # Import the upload blueprint
+from database import database_bp  # Import the upload blueprint
 from ocr import ocr_bp  # Import the ocr blueprint
 
 app = Flask(__name__)
@@ -18,7 +18,7 @@ app.register_blueprint(auth_bp, url_prefix='/auth')
 # Register download routes
 app.register_blueprint(download_bp, url_prefix='/download')
 # Register upload routes
-app.register_blueprint(upload_bp, url_prefix='/upload')
+app.register_blueprint(database_bp, url_prefix='/database')
 # Register summarize route
 app.register_blueprint(summarize_bp, url_prefix='/summarize')
 # Register auth chat

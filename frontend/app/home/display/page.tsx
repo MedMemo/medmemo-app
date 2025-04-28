@@ -31,37 +31,53 @@ export default function DocumentDisplayPage() {
     setOcrData({ ...ocrData, kv_pairs: updated });
   };
 
-  const handleSaveChanges = async () => {
+  const handleSaveChanges = () => {
     sessionStorage.setItem("ocrData", JSON.stringify(ocrData));
-    const transcript = ocrData.kv_pairs
-      .map(pair => `${pair.key}: ${pair.value}`)
-      .join("\n");
-
-
     router.push('/home/summary');
-    /*
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/summarize/summary`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ transcript }),
-      });
+  };
 
-      const data = await response.json();
+  const handleBackClick = async () => {
+    const savedFilesMetadata = sessionStorage.getItem("filesMetadata");
+    if (savedFilesMetadata) {
+      try {
+        const filesMetadata = JSON.parse(savedFilesMetadata);
+        if (filesMetadata.length > 0) {
+          const fileName = filesMetadata[0].name;
+          const userRes = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+            { credentials: "include" }
+          );
+          const userData = await userRes.json();
+          const accessToken = userData.user.id;
+  
+          try {
 
-      if (data.error) {
-        alert(`Error: ${data.error}`);
-        return;
+            // Call the /remove endpoint to remove the file
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/database/remove/${fileName}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `${accessToken}`,
+                },
+              }
+            );
+  
+            const data = await response.json();
+            if (response.ok) {
+              sessionStorage.removeItem("filesMetadata")
+            } else {
+              console.error('Error removing the file:', data.error);
+            }
+          } catch (error) {
+            console.error('Error during remove request:', error);
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing session data:", error);
       }
-
-      sessionStorage.setItem("summaryData", JSON.stringify(data));
-      router.push('/home/summary');
-    } catch (error) {
-      alert(`Error: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
-    */
+    router.push('/home/upload');
   };
 
   return (
@@ -69,7 +85,7 @@ export default function DocumentDisplayPage() {
       <div className="max-w-4xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => router.push('/home/upload')}
+            onClick={ handleBackClick }
             className="text-blue-400 hover:text-blue-500 text-sm flex items-center"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
