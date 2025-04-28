@@ -1,18 +1,86 @@
 "use client";
 
-import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
-import { Upload, FileText, X, AlertTriangle } from "lucide-react";
+import { useState, useRef, type DragEvent, type ChangeEvent, useEffect } from "react";
+import { Upload, FileText, X, AlertTriangle, Trash, ExternalLink, Download, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+import { createClient } from '@supabase/supabase-js';
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [images, setImages] = useState<{ name: string; url: string }[]>([]);
+  const [activeImageOptions, setActiveImageOptions] = useState<number | null>(null);
   const { theme, updateTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const optionsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const userRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+          { credentials: "include" }
+        );
+        const userData = await userRes.json();
+        const userId = userData.user.id;
+  
+        const { data: files, error: listError } = await supabase.storage
+          .from('documents')
+          .list(userId, { limit: 100 });
+  
+        if (listError) {
+          console.error('Error listing user files:', listError);
+          return;
+        }
+  
+        const validFiles: { name: string; url: string }[] = [];
+  
+        for (const file of files || []) {
+          if (file.name && (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.pdf'))) {
+            const { data: signedUrlData, error: urlError } = await supabase.storage
+              .from('documents')
+              .createSignedUrl(`${userId}/${file.name}`, 60 * 60); // 1 hour
+  
+            if (urlError) {
+              console.error('Error creating signed URL:', urlError);
+              continue;
+            }
+  
+            if (signedUrlData?.signedUrl) {
+              validFiles.push({ name: file.name, url: signedUrlData.signedUrl });
+            }
+          }
+        }
+  
+        setImages(validFiles);
+      } catch (err) {
+        console.error('Error fetching images:', err);
+      }
+    };
+  
+    fetchImages();
+  }, []);
+   
+  useEffect(() => {
+    // Handle clicks outside the dropdown menu
+    const handleClickOutside = (event: MouseEvent) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+        setActiveImageOptions(null);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [optionsRef]);
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -55,7 +123,6 @@ export default function FileUpload() {
     setError(null);
 
     try {
-      // 🔐 Get access token from Flask endpoint
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
         { credentials: "include" }
@@ -64,7 +131,6 @@ export default function FileUpload() {
       const userData = await userRes.json();
 
       const accessToken = userData.user.id;
-      //console.log(accessToken);
 
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
@@ -94,6 +160,51 @@ export default function FileUpload() {
     } finally {
       setUploading(false);
     }
+  };
+
+  const deleteImage = async (imageName: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      const userRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+        { credentials: "include" }
+      );
+      const userData = await userRes.json();
+      const userId = userData.user.id;
+
+      const { error } = await supabase.storage
+        .from('documents')
+        .remove([`${userId}/${imageName}`]);
+
+      if (error) {
+        console.error('Error deleting file:', error);
+        setError(`Failed to delete ${imageName}`);
+        return;
+      }
+
+      // Remove the image from the state
+      setImages(images.filter(img => img.name !== imageName));
+      setActiveImageOptions(null);
+    } catch (err) {
+      console.error('Error deleting image:', err);
+      setError('Failed to delete image');
+    }
+  };
+
+  const openImage = (url: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    window.open(url, '_blank');
+    setActiveImageOptions(null);
+  };
+
+  const toggleImageOptions = (idx: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveImageOptions(activeImageOptions === idx ? null : idx);
   };
 
   return (
@@ -168,6 +279,12 @@ export default function FileUpload() {
         {error && (
           <div className="bg-red-800 p-3 mt-2 rounded-lg flex items-center">
             <AlertTriangle className="mr-2" /> {error}
+            <button 
+              className="ml-auto text-white" 
+              onClick={() => setError(null)}
+            >
+              <X size={16} />
+            </button>
           </div>
         )}
 
@@ -179,6 +296,50 @@ export default function FileUpload() {
         >
           {uploading ? "Uploading..." : "Upload and Process"}
         </button>
+
+        {/* Display uploaded images */}
+        {images.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
+            {images.map((image, idx) => (
+              <div key={idx} className="flex flex-col items-center relative">
+                <div className="group relative">
+                  <img 
+                    src={image.url} 
+                    alt={image.name} 
+                    className="w-32 h-32 object-cover rounded-md mb-2" 
+                  />
+                  <button 
+                    className="absolute top-2 right-2 bg-gray-800 p-1 rounded-full opacity-70 hover:opacity-100"
+                    onClick={(e) => toggleImageOptions(idx, e)}
+                  >
+                    <MoreVertical size={16} />
+                  </button>
+                  
+                  {activeImageOptions === idx && (
+                    <div 
+                      ref={optionsRef}
+                      className="absolute right-0 mt-1 bg-gray-800 rounded-md shadow-lg z-10 w-36"
+                    >
+                      <button 
+                        className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700"
+                        onClick={(e) => openImage(image.url, e)}
+                      >
+                        <ExternalLink size={16} className="mr-2" /> Open
+                      </button>
+                      <button 
+                        className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700 text-red-400"
+                        onClick={(e) => deleteImage(image.name, e)}
+                      >
+                        <Trash size={16} className="mr-2" /> Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm break-all">{image.name}</p>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
