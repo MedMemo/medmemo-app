@@ -51,6 +51,7 @@ export default function DocumentDisplayPage() {
           const accessToken = userData.user.id;
   
           try {
+
             // Call the /remove endpoint to remove the file
             const response = await fetch(
               `${process.env.NEXT_PUBLIC_BASE_URL}/database/remove/${fileName}`,
@@ -63,9 +64,7 @@ export default function DocumentDisplayPage() {
             );
   
             const data = await response.json();
-            console.log("response:",response)
             if (response.ok) {
-              console.log(`File ${fileName} removed successfully`);
               sessionStorage.removeItem("filesMetadata")
             } else {
               console.error('Error removing the file:', data.error);
@@ -86,7 +85,7 @@ export default function DocumentDisplayPage() {
       <div className="max-w-4xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={handleBackClick}
+            onClick={ handleBackClick }
             className="text-blue-400 hover:text-blue-500 text-sm flex items-center"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />

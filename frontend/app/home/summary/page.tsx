@@ -32,9 +32,17 @@ export default function SummaryPage() {
   const [ocrData, setOcrData] = useState<any | null>(() => {
     const savedOcrData = sessionStorage.getItem("ocrData");
     return savedOcrData ? JSON.parse(savedOcrData) : null; // Parse OCR data from sessionStorage if available
-  });
-
+  });  
+  
   const router = useRouter();
+
+  const handleBackClick = () => {
+    if (ocrData && filesMetadata) {
+      sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
+      sessionStorage.setItem('filesMetadata', JSON.stringify(filesMetadata))
+    }
+    router.push('/home/display');
+  }
 
   useEffect(() => {
 
@@ -92,14 +100,7 @@ export default function SummaryPage() {
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
       <button
-          onClick={() => {
-            // Store the ocrData back into sessionStorage before going back
-            if (ocrData && filesMetadata) {
-              sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
-              sessionStorage.setItem('filesMetadata', JSON.stringify(filesMetadata))
-            }
-            router.push('/home/display');
-          }}
+          onClick={ handleBackClick }
           className="text-blue-400 hover:text-blue-500 text-sm flex items-center mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />

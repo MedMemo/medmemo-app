@@ -55,6 +55,7 @@ export default function FileUpload() {
     setError(null);
 
     try {
+
       // Get access token from Flask endpoint
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
