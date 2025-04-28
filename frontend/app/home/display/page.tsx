@@ -36,12 +36,56 @@ export default function DocumentDisplayPage() {
     router.push('/home/summary');
   };
 
+  const handleBackClick = async () => {
+    const savedFilesMetadata = sessionStorage.getItem("filesMetadata");
+    if (savedFilesMetadata) {
+      try {
+        const filesMetadata = JSON.parse(savedFilesMetadata);
+        if (filesMetadata.length > 0) {
+          const fileName = filesMetadata[0].name;
+          const userRes = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+            { credentials: "include" }
+          );
+  
+          const userData = await userRes.json();
+          const accessToken = userData.user.id;
+  
+          try {
+            // Call the /remove endpoint to remove the file
+            const response = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/database/remove/${fileName}`,
+              {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `${accessToken}`,
+                },
+              }
+            );
+  
+            const data = await response.json();
+            if (response.ok) {
+              console.log(`File ${fileName} removed successfully`);
+            } else {
+              console.error('Error removing the file:', data.error);
+            }
+          } catch (error) {
+            console.error('Error during remove request:', error);
+          }
+        }
+      } catch (error) {
+        console.error("Error parsing session data:", error);
+      }
+    }
+    router.push('/home/upload');
+  };
+
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => router.push('/home/upload')}
+            onClick={handleBackClick}
             className="text-blue-400 hover:text-blue-500 text-sm flex items-center"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />

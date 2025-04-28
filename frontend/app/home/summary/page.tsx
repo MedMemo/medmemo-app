@@ -1,6 +1,6 @@
 'use client';
 
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 
@@ -25,18 +25,20 @@ export default function SummaryPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [ocrData, setOcrData] = useState<any | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    const ocrData = sessionStorage.getItem('ocrData');
+    const storedOcrData = sessionStorage.getItem('ocrData');
 
-    if (!ocrData) {
+    if (!storedOcrData) {
       setError('No data available for summarization.');
       setLoading(false);
       return;
     }
 
-    const parsedData = JSON.parse(ocrData);
+    const parsedData = JSON.parse(storedOcrData);
+    setOcrData(parsedData);
 
     // Safely accessing process.env.NEXT_PUBLIC_BASE_URL and checking if it's defined
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
@@ -78,7 +80,10 @@ export default function SummaryPage() {
               }
             })
             .catch((err) => setError(err.message))
-            .finally(() => setLoading(false));
+            .finally(() => {
+              sessionStorage.removeItem('ocrData');
+              setLoading(false);
+            });
         }
       })
       .catch((err) => setError(err.message));
@@ -87,13 +92,19 @@ export default function SummaryPage() {
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
-        <button
-          onClick={() => router.push('/home/display')}
+      <button
+          onClick={() => {
+            // Store the ocrData back into sessionStorage before navigation
+            if (ocrData) {
+              sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
+            }
+            router.push('/home/display');
+          }}
           className="text-blue-400 hover:text-blue-500 text-sm flex items-center mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Document
-        </button>
+      </button>
   
         <div className="bg-sidebar-background rounded-xl shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">📝 Medical Document Summary</h2>

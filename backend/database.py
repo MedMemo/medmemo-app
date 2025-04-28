@@ -3,10 +3,10 @@ from supabase_client import supabase
 import mimetypes, io
 from ocr import perform_ocr, check_file_type
 
-upload_bp = Blueprint('upload', __name__)
+database_bp = Blueprint('database', __name__)
 BUCKET_NAME = "documents"
 
-@upload_bp.route("", methods=['POST'])
+@database_bp.route("/upload", methods=['POST'])
 def upload_file():
     auth_header = request.headers.get("Authorization")
     if not auth_header:
@@ -54,5 +54,48 @@ def upload_file():
         else:
             return jsonify({"error": "Unexpected Supabase response"}), 500
 
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@database_bp.route("/remove/<string:file_name>", methods=['DELETE'])
+def remove_file(file_name):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+
+    user_id = auth_header.strip()
+
+    try:
+        # Try to delete the file from Supabase storage
+        response = supabase.storage.from_(BUCKET_NAME).remove([f"{user_id}/{file_name}"])
+
+        if response.get('status') == 200:
+            return jsonify({"message": f"File {file_name} removed successfully"}), 200
+        else:
+            return jsonify({"error": "Error removing the file"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@database_bp.route("/get/<string:file_name>", methods=['GET'])
+def get_file(file_name):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+    
+    user_id = auth_header.strip()
+
+    try:
+        # Try to retrieve the file from Supabase storage
+        response = supabase.storage.from_(BUCKET_NAME).download(f"{user_id}/{file_name}")
+
+        if response.get('status') == 200:
+            return jsonify({
+                "message": f"File {file_name} retrieved successfully",
+                "file": response['data']
+            }), 200
+        else:
+            return jsonify({"error": "Error retrieving the file"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500

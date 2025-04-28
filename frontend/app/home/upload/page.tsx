@@ -55,7 +55,7 @@ export default function FileUpload() {
     setError(null);
 
     try {
-      // 🔐 Get access token from Flask endpoint
+      // Get access token from Flask endpoint
       const userRes = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
         { credentials: "include" }
@@ -64,13 +64,12 @@ export default function FileUpload() {
       const userData = await userRes.json();
 
       const accessToken = userData.user.id;
-      //console.log(accessToken);
 
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
 
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/upload`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/database/upload`,
         {
           method: "POST",
           headers: {
@@ -88,6 +87,16 @@ export default function FileUpload() {
       const data = await response.json();
 
       sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
+
+      // Store the files in sessionStorage
+      const fileMetadata = files.map((file) => ({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+      }));
+    // Store the file metadata in sessionStorage
+    sessionStorage.setItem("filesMetadata", JSON.stringify(fileMetadata));
+    
       router.push("/home/display");
     } catch (error) {
       setError(error instanceof Error ? error.message : "Unknown error");
