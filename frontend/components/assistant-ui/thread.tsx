@@ -27,32 +27,41 @@ import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
 import { useTheme } from "@/context/ThemeContext";
+import { ComposerAddAttachment, ComposerAttachments, UserMessageAttachments } from "@/components/assistant-ui/attachment";
+
 
 export const Thread: FC = () => {
 
   
   const thread = useThreadRuntime();
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && thread.getState().messages.length === 0) {
-      const ocrData = sessionStorage.getItem("ocrData");
-      if (ocrData) {
-        const transcript = JSON.parse(ocrData).kv_pairs
-          .map ((pair: any) => `${pair.key}: ${pair.value}`)
-          .join("\n")
-        const imageBase64 = JSON.parse(ocrData).annotated_image
-        thread.append({
-          role: "user",
-          content: [
-            //{ type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
-            //{ type: "text", text: transcript }
-            //{ type: "image", image: `data:image/jpeg;base64,${imageBase64}` },
-            { type: "text", text: "hello chatgpt" }
-          ],
-        });
+useEffect(() => {
+  if (typeof window !== "undefined" && thread.getState().messages.length === 0) {
+    const ocrData = sessionStorage.getItem("ocrData");
+    if (ocrData) {
+      const transcript = JSON.parse(ocrData).kv_pairs
+      .map((pair: any) => `${pair.key}: ${pair.value}`)
+      .join("\n");
+      const imageBase64 = JSON.parse(ocrData).annotated_image;
+
+      const byteCharacters = atob(imageBase64);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
       }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: 'image/jpeg' });
+      const file = new File([blob], 'image.jpg', { type: 'image/jpeg' });
+
+      thread.composer.addAttachment(file).then(() => {
+        thread.composer.setText(transcript);
+        thread.composer.send();
+      });
     }
-  }, [thread]);
+  }
+}, [thread]);
+
+
   
   
   return (
@@ -146,22 +155,38 @@ const Composer: FC = () => {
   const { theme, updateTheme } = useTheme();
 
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full items-end rounded-2xl border px-2.5 shadow-sm transition-colors ease-in"
+    <ComposerPrimitive.Root
+      className="focus-within:border-ring/20 flex w-full flex-col items-start rounded-2xl border px-2.5 py-2 shadow-sm transition-colors ease-in"
       style={{
         backgroundColor: theme["chat-box-background"],
         borderColor: theme["sidebar-background"],
-      }}>
-      <ComposerActionAttach />
-      <ComposerPrimitive.Input
-        rows={1}
-        autoFocus
-        placeholder="Write a message..."
-        className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
-      />
-      <ComposerActionSend />
+      }}
+    >
+      {/* Attached Items at the top */}
+      <div className="flex flex-wrap gap-2 w-full mb-2">
+        <ComposerAttachments />
+      </div>
+
+      {/* Attachment Button, Input Field, and Send Button on the same line */}
+      <div className="flex items-center w-full space-x-2">
+        {/* Attachment Button */}
+        <ComposerAddAttachment />
+
+        {/* Input Field */}
+        <ComposerPrimitive.Input
+          rows={1}
+          autoFocus
+          placeholder="Write a message..."
+          className="placeholder:text-muted-foreground max-h-40 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+        />
+
+        {/* Send Button */}
+        <ComposerActionSend />
+      </div>
     </ComposerPrimitive.Root>
   );
 };
+
 
 
 const ComposerActionAttach: FC = () => {
@@ -229,6 +254,8 @@ const UserMessage: FC = () => {
   return (
     <MessagePrimitive.Root className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] gap-y-2 [&:where(>*)]:col-start-2 w-full max-w-[var(--thread-max-width)] py-4">
       <UserActionBar />
+
+      <UserMessageAttachments />
 
       <div className="bg-muted text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-3xl px-5 py-2.5 col-start-2 row-start-2">
         <MessagePrimitive.Content />
