@@ -18,20 +18,20 @@ client = OpenAI(api_key = os.getenv("OPENAI_KEY"))
 ### SUMMARY
 
 # Create prompt to send to OpenAI API to get the summary
-def structure_summary_prompt(transcript):
-    prompt = "Below are notes from a clinical visit. Please summarize the original notes in an easy-to-understand manner. Include a list that is organized and specifies 'Conditions', 'Symptoms', and 'Medications' if they are provided in the below notes.\n"
+def structure_summary_prompt(key_value_pairs):
+    prompt = "Below are structured key-value notes from a clinical visit, uploaded by the patient themself. Please summarize the visit in easy-to-understand language. Don't use the words 'This is a summary for...', and do use 'you' language as you are speaking to the patient themself. Also include a list that specifies 'Conditions', 'Symptoms', and 'Medications' if they are provided in the below notes.\n"
 
-    # append the original transcript at the end
-    prompt += transcript
+    # append key value pairs to the prompt
+    for kv in key_value_pairs:
+        prompt += f"{kv['key']}: {kv['value']}\n"
 
     return prompt
 
 # Create prompt to send to OpenAI API to get a list of keywords
-def structure_articles_prompt(transcript):
-    prompt = "Below are notes from a clinical visit. Please find exactly 3 keywords relating to the person's condition(s). Structure your response in a very simple way, exactly like this example: 'Fever,Cough,Influenza A' with no spaces or newline characters between terms."
+def structure_articles_prompt(summary):
+    prompt = "Below is a summary from a clinical visit. Please find exactly 3 medical keywords relating to the patient's condition(s). Structure your response in a very simple way, exactly like this example: 'Fever,Cough,Influenza A' with no spaces or newline characters between terms."
 
-    # Append the original transcript at the end
-    prompt += transcript
+    prompt += summary
 
     return prompt
 
@@ -42,19 +42,20 @@ def summarize():
         return jsonify({"error:" "Request must be JSON"}), 400
     
     data = request.get_json()
-    transcript = data.get("transcript", "")
+    key_values = data.get("ocr_data", {}).get("kv_pairs")
 
-    # Validate that the transcript is provided
-    if not transcript:
-        return jsonify({"error": "No transcript provided"}), 400
-    
+    if key_values:
+        prompt = structure_summary_prompt(key_values)
+    else:
+        return jsonify({"error": "No key-value pairs provided"}), 400
+
     try:
 
         # Attempt to send the structured prompt to OpenAI
         response = client.chat.completions.create(
             model="gpt-4",
             temperature=0.2,
-            messages=[{"role": "user", "content": structure_summary_prompt(transcript)}]
+            messages=[{"role": "user", "content": prompt}]
         )
 
         # Check if response contains data
@@ -102,7 +103,6 @@ def get_articles(keywords):
                 articles.append(article)
 
         all_articles[keyword] = articles
-
     return all_articles  
 
 # Extract article title by url
@@ -148,11 +148,10 @@ def articles():
     
 
     data = request.get_json()
-    transcript = data.get("transcript", "")
 
-    # Validate that the transcript is provided
-    if not transcript:
-        return jsonify({"error": "No transcript provided"}), 400
+    # Retrieve the 'summary' from the request data
+    summary = data.get('summary')
+    prompt = structure_articles_prompt(summary)
     
     try:
         
@@ -160,7 +159,7 @@ def articles():
         response = client.chat.completions.create(
             model="gpt-4",
             temperature=0.1,
-            messages=[{"role": "user", "content": structure_articles_prompt(transcript)}] 
+            messages=[{"role": "user", "content": prompt }] 
         )
 
         # Check if response contains data
