@@ -28,12 +28,10 @@ def structure_summary_prompt(key_value_pairs):
     return prompt
 
 # Create prompt to send to OpenAI API to get a list of keywords
-def structure_articles_prompt(key_value_pairs):
-    prompt = "Below are structured key-value notes from a clinical visit. Please find exactly 3 medical keywords relating to the patient's condition(s). Structure your response in a very simple way, exactly like this example: 'Fever,Cough,Influenza A' with no spaces or newline characters between terms."
+def structure_articles_prompt(summary):
+    prompt = "Below is a summary from a clinical visit. Please find exactly 3 medical keywords relating to the patient's condition(s). Structure your response in a very simple way, exactly like this example: 'Fever,Cough,Influenza A' with no spaces or newline characters between terms."
 
-    # append key value pairs to the prompt
-    for kv in key_value_pairs:
-        prompt += f"{kv['key']}: {kv['value']}\n"
+    prompt += summary
 
     return prompt
 
@@ -105,7 +103,6 @@ def get_articles(keywords):
                 articles.append(article)
 
         all_articles[keyword] = articles
-
     return all_articles  
 
 # Extract article title by url
@@ -151,12 +148,10 @@ def articles():
     
 
     data = request.get_json()
-    key_values = data.get("ocr_data", {}).get("kv_pairs")
 
-    if key_values:
-        prompt = structure_articles_prompt(key_values)
-    else:
-        return jsonify({"error": "No key-value pairs provided"}), 400
+    # Retrieve the 'summary' from the request data
+    summary = data.get('summary')
+    prompt = structure_articles_prompt(summary)
     
     try:
         
@@ -164,7 +159,7 @@ def articles():
         response = client.chat.completions.create(
             model="gpt-4",
             temperature=0.1,
-            messages=[{"role": "user", "content": prompt}] 
+            messages=[{"role": "user", "content": prompt }] 
         )
 
         # Check if response contains data
