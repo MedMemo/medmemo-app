@@ -14,6 +14,12 @@ interface ArticlesResponse {
   error?: string;
 }
 
+interface Article {
+  Title: string;
+  Author: string | null;
+  URL: string;
+}
+
 export default function SummaryPage() {
   const [summary, setSummary] = useState<string>('');
   const [articles, setArticles] = useState<any[]>([]);
@@ -55,22 +61,20 @@ export default function SummaryPage() {
         } else {
           setSummary(data.summary || 'No summary returned.');
 
-          // Step 2: After the summary, fetch articles using the summary as inputshoul
+          // Step 2: After the summary, fetch articles using the summary
           fetch(`${baseUrl}/summarize/articles`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ summary: data.summary }), // Use the summary here
+            body: JSON.stringify({ summary: data.summary }),
           })
             .then((res) => res.json())
-            .then((data) => {
+            .then((data: ArticlesResponse) => {
               if (data.error) {
                 setError(data.error);
               } else {
-                // Set articles directly from the response
-                setArticles(data.articles);  // This line was changed to access `data.articles`
-                console.log(data);  // Log the response for debugging
+                setArticles(data.articles || []);  
               }
             })
             .catch((err) => setError(err.message))
@@ -108,7 +112,7 @@ export default function SummaryPage() {
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">{condition}</h3>
                     <ul className="list-disc pl-6 space-y-2">
                       {articlesForCondition.length > 0 ? (
-                        articlesForCondition.map((article, index) => (
+                        articlesForCondition.map((article: Article, index: number) => ( 
                           <li key={index}>
                             <a
                               href={article.URL}
