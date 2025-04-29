@@ -4,7 +4,7 @@ import { useState, useRef, type DragEvent, type ChangeEvent, useEffect } from "r
 import { Upload, FileText, X, AlertTriangle, Trash, ExternalLink, Download, MoreVertical } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
-import { createClient } from '@supabase/supabase-js';
+
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
@@ -18,10 +18,6 @@ export default function FileUpload() {
   const optionsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
 
   useEffect(() => {
     const fetchFiles = async () => {
