@@ -77,12 +77,15 @@ export default function FileUpload() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
         { credentials: "include" }
       );
+      if (!userRes.ok) {
+        throw new Error('Failed to fetch user data');
+      }
       const userData = await userRes.json();
       const userId = userData.user.id;
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
 
-      const response = await fetch(
+      const uploadRes = await fetch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/database/upload`,
         {
           method: "POST",
@@ -92,11 +95,11 @@ export default function FileUpload() {
           body: formData,
         }
       );
-      if (!response.ok) {
-        const uploadData = await response.json();
+      if (!uploadRes.ok) {
+        const uploadData = await uploadRes.json();
         throw new Error(uploadData.error || "Upload failed");
       }
-      const data = await response.json();
+      const data = await uploadRes.json();
       sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
       const fileMetadata = files.map((file) => ({
         name: file.name,

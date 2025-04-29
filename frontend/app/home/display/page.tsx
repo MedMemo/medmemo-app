@@ -39,8 +39,11 @@ export default function DocumentDisplayPage() {
             `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
             { credentials: "include" }
           );
+          if (!userRes.ok) {
+            throw new Error('Failed to fetch user data');
+          }
           const userData = await userRes.json();
-          const accessToken = userData.user.id;
+          const userId = userData.user.id;
   
           try {
 
@@ -50,7 +53,7 @@ export default function DocumentDisplayPage() {
               {
                 method: 'DELETE',
                 headers: {
-                  'Authorization': `${accessToken}`,
+                  'Authorization': `${userId}}`,
                 },
               }
             );
