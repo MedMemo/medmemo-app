@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import NavLogoAuthenticated from '../../../components/NavLogo_Authenticated'; //for users once sign-ed in
 
 //properties of calendar
 interface CalendarPass {

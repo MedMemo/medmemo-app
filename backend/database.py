@@ -115,7 +115,7 @@ def list_files():
     user_id = auth_header.strip()
 
     try:
-        files = supabase.storage.from_(BUCKET_NAME).list(user_id, {"limit": 100})
+        files = supabase.storage.from_(BUCKET_NAME).list(user_id, {"limit": 6})
         valid_files = [
             f for f in files if f.get('name') and not f['name'].startswith('.')
         ]
