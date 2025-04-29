@@ -6,6 +6,7 @@ from ocr import perform_ocr, check_file_type
 database_bp = Blueprint('database', __name__)
 BUCKET_NAME = "documents"
 
+
 @database_bp.route("/upload", methods=['POST'])
 def upload_file():
     auth_header = request.headers.get("Authorization")
@@ -85,7 +86,7 @@ def remove_file(file_name):
         return jsonify({"error": str(e)}), 500
 
 
-@database_bp.route("/get/<string:file_name>", methods=['GET'])
+@database_bp.route("/get_file/<string:file_name>", methods=['GET'])
 def get_file(file_name):
     auth_header = request.headers.get("Authorization")
     if not auth_header:
@@ -106,3 +107,51 @@ def get_file(file_name):
             return jsonify({"error": "Error retrieving the file"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@database_bp.route("/list_files", methods=["GET"])
+def list_files():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+
+    user_id = auth_header.strip()
+
+    try:
+        files = supabase.storage.from_(BUCKET_NAME).list(user_id, {"limit": 100})
+
+        valid_files = [
+            f for f in files if f.get('name') and not f['name'].startswith('.')
+        ]
+
+        return jsonify({"files": valid_files}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@database_bp.route("/get_signed_url/<string:file_name>", methods=['GET'])
+def get_signed_url(file_name):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+     
+    user_id = auth_header.strip()
+    
+    try:
+        # Construct the file path
+        file_path = f"{user_id}/{file_name}"
+
+        # Generate the signed URL (valid for 1 hour)
+        signed_url_data = supabase.storage.from_(BUCKET_NAME).create_signed_url(file_path, 60 * 60)
+
+        if signed_url_data and signed_url_data.get('signedUrl'):
+            return jsonify({
+                "message": "Signed URL generated successfully",
+                "signed_url": signed_url_data['signedUrl']
+            }), 200
+        else:
+            return jsonify({"error": "Failed to generate signed URL"}), 500
+
+    except Exception as e:
+        return jsonify({"error": f"Error generating signed URL: {str(e)}"}), 500
+

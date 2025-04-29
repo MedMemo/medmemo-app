@@ -11,7 +11,7 @@ export default function FileUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [images, setImages] = useState<{ name: string; url: string }[]>([]);
+  const [pastFiles, setPastFiles] = useState<{ name: string; url: string }[]>([]);
   const [activeImageOptions, setActiveImageOptions] = useState<number | null>(null);
   const { theme, updateTheme } = useTheme();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -24,50 +24,77 @@ export default function FileUpload() {
   );
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const fetchFiles = async () => {
       try {
+        // Fetch user data
         const userRes = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
           { credentials: "include" }
         );
+        if (!userRes.ok) {
+          throw new Error('Failed to fetch user data');
+        }
         const userData = await userRes.json();
         const userId = userData.user.id;
   
-        const { data: files, error: listError } = await supabase.storage
-          .from('documents')
-          .list(userId, { limit: 100 });
-  
-        if (listError) {
-          console.error('Error listing user files:', listError);
-          return;
+        // Fetch list of files
+        const listFilesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/database/list_files`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `${userId}`,
+            },
+          }
+        );
+        if (!listFilesRes.ok) {
+          throw new Error('Failed to fetch file list');
         }
+        const listFilesData = await listFilesRes.json();
   
         const validFiles: { name: string; url: string }[] = [];
   
-        for (const file of files || []) {
-          if (file.name && (file.name.endsWith('.png') || file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.pdf'))) {
-            const { data: signedUrlData, error: urlError } = await supabase.storage
-              .from('documents')
-              .createSignedUrl(`${userId}/${file.name}`, 60 * 60); // 1 hour
-  
-            if (urlError) {
-              console.error('Error creating signed URL:', urlError);
-              continue;
+        // Fetch signed URLs for each file
+        for (const file of listFilesData.files || []) {
+          if (
+            file.name &&
+            (file.name.endsWith(".png") ||
+              file.name.endsWith(".jpg") ||
+              file.name.endsWith(".jpeg") ||
+              file.name.endsWith(".pdf"))
+          ) {
+            const signedUrlRes = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_signed_url/${file.name}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `${userId}`,
+                },
+              }
+            );
+            if (!signedUrlRes.ok) {
+              console.error(`Error fetching signed URL for ${file.name}:`, await signedUrlRes.json());
+              setError(`Error fetching signed URL for ${file.name}`); 
             }
   
-            if (signedUrlData?.signedUrl) {
-              validFiles.push({ name: file.name, url: signedUrlData.signedUrl });
+            const signedUrlData = await signedUrlRes.json();
+  
+            if (signedUrlData.signed_url) {
+              validFiles.push({ name: file.name, url: signedUrlData.signed_url });
+            } else {
+              console.error(`No signed URL found for ${file.name}`);
+              setError(`No signed URL found for ${file.name}`); 
             }
           }
         }
   
-        setImages(validFiles);
+        setPastFiles(validFiles);
       } catch (err) {
-        console.error('Error fetching images:', err);
+        console.error("Error fetching files:", err);
+        setError("Failed to load filess.");
       }
     };
-  
-    fetchImages();
+    fetchFiles();
   }, []);
    
   useEffect(() => {
@@ -77,10 +104,11 @@ export default function FileUpload() {
         setActiveImageOptions(null);
       }
     };
-    
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [optionsRef]);
+
+
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -116,9 +144,22 @@ export default function FileUpload() {
     setError(null);
   };
 
-  const uploadFiles = async () => {
-    if (!files.length) return;
+  const openImage = (url: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    window.open(url, '_blank');
+    setActiveImageOptions(null);
+  };
 
+  const toggleImageOptions = (idx: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setActiveImageOptions(activeImageOptions === idx ? null : idx);
+  };
+
+  const uploadFile = async () => {
+    if (!files.length) return;
     setUploading(true);
     setError(null);
 
@@ -129,7 +170,7 @@ export default function FileUpload() {
         { credentials: "include" }
       );
       const userData = await userRes.json();
-      const accessToken = userData.user.id;
+      const userId = userData.user.id;
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
 
@@ -138,15 +179,14 @@ export default function FileUpload() {
         {
           method: "POST",
           headers: {
-            Authorization: `${accessToken}`,
+            Authorization: `${userId}`,
           },
           body: formData,
         }
       );
-
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Upload failed");
+        const uploadData = await response.json();
+        throw new Error(uploadData.error || "Upload failed");
       }
       const data = await response.json();
       sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
@@ -164,7 +204,7 @@ export default function FileUpload() {
     }
   };
 
-  const deleteImage = async (imageName: string, e: React.MouseEvent) => {
+  const deleteFile = async (targetFileName: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -173,41 +213,37 @@ export default function FileUpload() {
         `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
         { credentials: "include" }
       );
+      if (!userRes.ok) {
+        throw new Error('Failed to fetch user data');
+      }
       const userData = await userRes.json();
       const userId = userData.user.id;
 
-      const { error } = await supabase.storage
-        .from('documents')
-        .remove([`${userId}/${imageName}`]);
-
-      if (error) {
-        console.error('Error deleting file:', error);
-        setError(`Failed to delete ${imageName}`);
+      const deleteRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/database/remove/${encodeURIComponent(targetFileName)}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `${userId}`,
+          },
+        }
+      );
+      const deleteData = await deleteRes.json();
+      if (!deleteRes.ok) {
+        console.error("Error deleting file:", deleteData);
+        setError(deleteData.error || `Failed to delete ${targetFileName}`);
         return;
       }
 
       // Remove the image from the state
-      setImages(images.filter(img => img.name !== imageName));
+      setPastFiles(pastFiles.filter(file => file.name !== targetFileName));
       setActiveImageOptions(null);
     } catch (err) {
-      console.error('Error deleting image:', err);
-      setError('Failed to delete image');
+      console.error('Error deleting file:', err);
+      setError('Failed to delete file');
     }
   };
 
-  const openImage = (url: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    window.open(url, '_blank');
-    setActiveImageOptions(null);
-  };
-
-  const toggleImageOptions = (idx: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveImageOptions(activeImageOptions === idx ? null : idx);
-  };
 
   return (
     <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
@@ -291,7 +327,7 @@ export default function FileUpload() {
         )}
 
         <button
-          onClick={uploadFiles}
+          onClick={uploadFile}
           disabled={uploading || !files.length}
           className="mt-4 w-full py-2 bg-white hover:bg-green-700 text-black rounded-lg
           disabled:bg-transparent disabled:border-chat-box-background disabled:text-chat-box-background disabled:border-2"
@@ -299,15 +335,15 @@ export default function FileUpload() {
           {uploading ? "Uploading..." : "Upload and Process"}
         </button>
 
-        {/* Display uploaded images */}
-        {images.length > 0 && (
+        {/* Display past files */}
+        {pastFiles.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-            {images.map((image, idx) => (
+            {pastFiles.map((file, idx) => (
               <div key={idx} className="flex flex-col items-center relative">
                 <div className="group relative">
                   <img 
-                    src={image.url} 
-                    alt={image.name} 
+                    src={file.url} 
+                    alt={file.name} 
                     className="w-32 h-32 object-cover rounded-md mb-2" 
                   />
                   <button 
@@ -324,20 +360,20 @@ export default function FileUpload() {
                     >
                       <button 
                         className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700"
-                        onClick={(e) => openImage(image.url, e)}
+                        onClick={(e) => openImage(file.url, e)}
                       >
                         <ExternalLink size={16} className="mr-2" /> Open
                       </button>
                       <button 
                         className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700 text-red-400"
-                        onClick={(e) => deleteImage(image.name, e)}
+                        onClick={(e) => deleteFile(file.name, e)}
                       >
                         <Trash size={16} className="mr-2" /> Delete
                       </button>
                     </div>
                   )}
                 </div>
-                <p className="text-sm break-all">{image.name}</p>
+                <p className="text-sm break-all">{file.name}</p>
               </div>
             ))}
           </div>
