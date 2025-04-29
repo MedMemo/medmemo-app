@@ -1,14 +1,13 @@
-# auth enpoints
 from flask import Blueprint, request, jsonify
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
 from openai import OpenAI
+
 load_dotenv()
-
 chatbot_bp = Blueprint('chatbot', __name__)
+client = OpenAI(api_key=os.getenv("OPENAI_KEY"))  
 
-client = OpenAI(api_key=os.getenv("OPENAI_KEY"))  # New client initialization
 
 @chatbot_bp.route('/chat', methods=['POST'])
 def chat():
@@ -21,10 +20,9 @@ def chat():
             max_tokens = 100
 
         )
-        #get the response
+        # API repsonse
         bot_response = response.choices[0].message.content
         return jsonify({'response': bot_response}), 200
 
     except Exception as e:
-        # Handle errors and return them
         return jsonify({'error': str(e)}), 500

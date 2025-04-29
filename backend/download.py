@@ -5,6 +5,7 @@ from supabase_client import supabase
 download_bp = Blueprint("download", __name__)
 CORS(download_bp, resources={r"/*": {"origins": "http://localhost:3000"}})
 
+
 @download_bp.route("/<visit_id>", methods=["GET"])
 def download_from_supabase(visit_id):
     try:

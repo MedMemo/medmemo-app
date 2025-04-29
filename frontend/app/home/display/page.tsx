@@ -14,16 +14,8 @@ export default function DocumentDisplayPage() {
     kv_pairs: [],
     annotated_image: "",
   });
-
   const router = useRouter();
 
-  useEffect(() => {
-    const storedData = sessionStorage.getItem("ocrData");
-    if (storedData) {
-      setOcrData(JSON.parse(storedData));
-      sessionStorage.removeItem("ocrData");
-    }
-  }, []);
 
   const handleFieldChange = (index: number, field: 'key' | 'value', newText: string) => {
     const updated = [...ocrData.kv_pairs];
@@ -80,6 +72,16 @@ export default function DocumentDisplayPage() {
     router.push('/home/upload');
   };
 
+
+  useEffect(() => {
+    const storedData = sessionStorage.getItem("ocrData");
+    if (storedData) {
+      setOcrData(JSON.parse(storedData));
+      sessionStorage.removeItem("ocrData");
+    }
+  }, []);
+
+  
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">

@@ -93,7 +93,7 @@ const ThreadWelcomeSuggestions: FC = () => {
     <div className="mt-3 flex w-full items-stretch justify-center gap-4">
       <ThreadPrimitive.Suggestion
         className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
-        prompt="What is the weather in Tokyo?"
+        prompt="Can you explain a medical term or condition?"
         method="replace"
         autoSend
       >
@@ -103,7 +103,7 @@ const ThreadWelcomeSuggestions: FC = () => {
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion
         className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
-        prompt="What is assistant-ui?"
+        prompt="What lifestyle changes are recommended for better health??"
         method="replace"
         autoSend
       >

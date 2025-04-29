@@ -5,7 +5,6 @@ import { Upload, FileText, X, AlertTriangle, Trash, ExternalLink, Download, More
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
-
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
@@ -17,93 +16,6 @@ export default function FileUpload() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-
-
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        // Fetch user data
-        const userRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-          { credentials: "include" }
-        );
-        if (!userRes.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const userData = await userRes.json();
-        const userId = userData.user.id;
-  
-        // Fetch list of files
-        const listFilesRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/database/list_files`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `${userId}`,
-            },
-          }
-        );
-        if (!listFilesRes.ok) {
-          throw new Error('Failed to fetch file list');
-        }
-        const listFilesData = await listFilesRes.json();
-  
-        const validFiles: { name: string; url: string }[] = [];
-  
-        // Fetch signed URLs for each file
-        for (const file of listFilesData.files || []) {
-          if (
-            file.name &&
-            (file.name.endsWith(".png") ||
-              file.name.endsWith(".jpg") ||
-              file.name.endsWith(".jpeg") ||
-              file.name.endsWith(".pdf"))
-          ) {
-            const signedUrlRes = await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_signed_url/${file.name}`,
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `${userId}`,
-                },
-              }
-            );
-            if (!signedUrlRes.ok) {
-              console.error(`Error fetching signed URL for ${file.name}:`, await signedUrlRes.json());
-              setError(`Error fetching signed URL for ${file.name}`); 
-            }
-  
-            const signedUrlData = await signedUrlRes.json();
-  
-            if (signedUrlData.signed_url) {
-              validFiles.push({ name: file.name, url: signedUrlData.signed_url });
-            } else {
-              console.error(`No signed URL found for ${file.name}`);
-              setError(`No signed URL found for ${file.name}`); 
-            }
-          }
-        }
-  
-        setPastFiles(validFiles);
-      } catch (err) {
-        console.error("Error fetching files:", err);
-        setError("Failed to load filess.");
-      }
-    };
-    fetchFiles();
-  }, []);
-   
-  useEffect(() => {
-    // Handle clicks outside the dropdown menu
-    const handleClickOutside = (event: MouseEvent) => {
-      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
-        setActiveImageOptions(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [optionsRef]);
-
 
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -241,6 +153,92 @@ export default function FileUpload() {
   };
 
 
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        // Fetch user data
+        const userRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+          { credentials: "include" }
+        );
+        if (!userRes.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+        const userData = await userRes.json();
+        const userId = userData.user.id;
+  
+        // Fetch list of files
+        const listFilesRes = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/database/list_files`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `${userId}`,
+            },
+          }
+        );
+        if (!listFilesRes.ok) {
+          throw new Error('Failed to fetch file list');
+        }
+        const listFilesData = await listFilesRes.json();
+  
+        const validFiles: { name: string; url: string }[] = [];
+  
+        // Fetch signed URLs for each file
+        for (const file of listFilesData.files || []) {
+          if (
+            file.name &&
+            (file.name.endsWith(".png") ||
+              file.name.endsWith(".jpg") ||
+              file.name.endsWith(".jpeg") ||
+              file.name.endsWith(".pdf"))
+          ) {
+            const signedUrlRes = await fetch(
+              `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_signed_url/${file.name}`,
+              {
+                method: "GET",
+                headers: {
+                  Authorization: `${userId}`,
+                },
+              }
+            );
+            if (!signedUrlRes.ok) {
+              console.error(`Error fetching signed URL for ${file.name}:`, await signedUrlRes.json());
+              setError(`Error fetching signed URL for ${file.name}`); 
+            }
+  
+            const signedUrlData = await signedUrlRes.json();
+  
+            if (signedUrlData.signed_url) {
+              validFiles.push({ name: file.name, url: signedUrlData.signed_url });
+            } else {
+              console.error(`No signed URL found for ${file.name}`);
+              setError(`No signed URL found for ${file.name}`); 
+            }
+          }
+        }
+  
+        setPastFiles(validFiles);
+      } catch (err) {
+        console.error("Error fetching files:", err);
+        setError("Failed to load filess.");
+      }
+    };
+    fetchFiles();
+  }, []);
+   
+  useEffect(() => {
+    // Handle clicks outside the dropdown menu
+    const handleClickOutside = (event: MouseEvent) => {
+      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
+        setActiveImageOptions(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [optionsRef]);
+
+  
   return (
     <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-xl rounded-xl p-6">

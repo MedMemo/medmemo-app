@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import NavLogo from "../components/NavLogo_LandingPage"
 import NavBar from "@/components/Navbar";
 import landing_page_image from "../public/images/landing_page_image.svg";
 
