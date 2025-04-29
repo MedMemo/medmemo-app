@@ -186,7 +186,6 @@ export default function CalendarPage() {
         <div className="flex-grow p-6">
           <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-center text-black">Add Reminder to Calendar</h2>
-            <p className="text-gray-800">if a medmemo dev want to test this, send me your gmail address</p>
 
             {!isSignedIn ? (
               <button
