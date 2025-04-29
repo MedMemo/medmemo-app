@@ -21,7 +21,7 @@ app.register_blueprint(download_bp, url_prefix='/download')
 app.register_blueprint(database_bp, url_prefix='/database')
 # Register summarize route
 app.register_blueprint(summarize_bp, url_prefix='/summarize')
-# Register auth chat
+# Register chat route
 app.register_blueprint(chatbot_bp, url_prefix='/chatbot')
 # Register OCR routes
 app.register_blueprint(ocr_bp, url_prefix='/ocr')

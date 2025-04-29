@@ -1,10 +1,8 @@
-# auth enpoints
 from flask import Blueprint, request, jsonify
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
-
-from supabase_client import supabase  # Import the Supabase client
+from supabase_client import supabase  
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -78,7 +76,6 @@ def signup():
         return jsonify({"error": str(e)}), 400
 
 
-
 @auth_bp.route('/login', methods=['POST'])
 def login():
     # Ensure the request contains JSON data
@@ -126,7 +123,6 @@ def login():
         return jsonify({"error": f"{str(e)}"}), 500
 
 
-
 @auth_bp.route('/logout', methods=['POST'])
 def logout():
     try:
@@ -138,7 +134,7 @@ def logout():
         # Handle any errors that occur during the sign-out process
         return jsonify({"error": str(e)}), 400
 
-# get user session
+
 @auth_bp.route('/get_user', methods=['GET'])
 def get_user():
     try:

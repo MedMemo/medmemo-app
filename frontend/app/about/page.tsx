@@ -1,7 +1,5 @@
 "use client";
 
-import NavLogo from "../../components/NavLogo_Authenticated";
-
 const features = [
   {
     icon: "fas fa-upload",
@@ -44,8 +42,6 @@ const features = [
 export default function About() {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Navbar */}
-      <NavLogo />
 
       <div className="flex flex-grow items-center justify-center p-8">
         <main className="w-full max-w-3xl text-center">

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import './styles.css';
-import NavLogoAuthenticated from '../../components/NavLogo_Authenticated';
 import Image from 'next/image';
 
 export default function ContactPage() {

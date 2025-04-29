@@ -33,9 +33,9 @@ export default function SummaryPage() {
     const savedOcrData = sessionStorage.getItem("ocrData");
     return savedOcrData ? JSON.parse(savedOcrData) : null; // Parse OCR data from sessionStorage if available
   });  
-  
   const router = useRouter();
 
+  
   const handleBackClick = () => {
     if (ocrData && filesMetadata) {
       sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
@@ -43,6 +43,7 @@ export default function SummaryPage() {
     }
     router.push('/home/display');
   }
+
 
   useEffect(() => {
 
@@ -95,6 +96,7 @@ export default function SummaryPage() {
       })
       .catch((err) => setError(err.message));
   }, []);
+
 
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">

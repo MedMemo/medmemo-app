@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
-import NavLogoAuthenticated from '../../../components/NavLogo_Authenticated'; //for users once sign-ed in
 
 //properties of calendar
 interface CalendarPass {
@@ -131,11 +130,11 @@ export default function CalendarPage() {
       description: description,
       start: {
         dateTime: start.toISOString(),
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'America/New_York', 
       },
       end: {
         dateTime: end.toISOString(),
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'America/New_York', 
       },
     };
 

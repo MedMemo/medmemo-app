@@ -8,16 +8,13 @@ from PIL import Image, ImageDraw
 from base64 import encodebytes
 import io, os
 
-# Load environment variables
 load_dotenv()
-
 ocr_bp = Blueprint('ocr', __name__)
-
 AZURE_KEY = os.getenv("AZURE_KEY")
 AZURE_ENDPOINT = os.getenv("AZURE_ENDPOINT")
-
 credential = AzureKeyCredential(AZURE_KEY)
 document_client = DocumentIntelligenceClient(AZURE_ENDPOINT, credential)
+
 
 def check_file_type(file):
     try:
@@ -75,26 +72,3 @@ def perform_ocr(file_bytes, file_type):
         "kv_pairs": kv_pairs,
         "annotated_image": annotated_img_base64
     }
-
-@ocr_bp.route('/upload', methods=['POST'])
-def upload():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file uploaded"}), 400
-
-    file = request.files['file']
-    file.seek(0)
-    file_bytes = file.read()
-
-    file_type = check_file_type(io.BytesIO(file_bytes))
-    if not file_type:
-        return jsonify({"error": "Unsupported file format"}), 400
-
-    ocr_results = perform_ocr(file_bytes, file_type)
-
-    if "error" in ocr_results:
-        return jsonify({"error": ocr_results["error"]}), 400
-
-    return jsonify({
-        "message": "OCR successful",
-        "ocr_data": ocr_results
-    }), 200
