@@ -224,7 +224,7 @@ export default function FileUpload() {
         setPastFiles(validFiles);
       } catch (err) {
         console.error("Error fetching files:", err);
-        setError("Failed to load filess.");
+        setError("Failed to load files.");
       }
     };
     fetchFiles();
@@ -338,18 +338,33 @@ export default function FileUpload() {
             {pastFiles.map((file, idx) => (
               <div key={idx} className="flex flex-col items-center relative">
                 <div className="group relative">
-                  <img 
-                    src={file.url} 
-                    alt={file.name} 
-                    className="w-32 h-32 object-cover rounded-md mb-2" 
-                  />
+                  {file.name.toLowerCase().endsWith('.pdf') ? (
+                    <iframe
+                      src={file.url}
+                      className="w-32 h-32 rounded-md mb-2"
+                      title={file.name}
+                      style={{
+                        border: 'none',
+                        overflowY: 'auto', 
+                        overflowX: 'hidden', 
+                        maxWidth: '100%',     
+                        maxHeight: '100%',    
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={file.url}
+                      alt={file.name}
+                      className="w-32 h-32 object-cover rounded-md mb-2"
+                    />
+                  )}
                   <button 
                     className="absolute top-2 right-2 bg-gray-800 p-1 rounded-full opacity-70 hover:opacity-100"
                     onClick={(e) => toggleImageOptions(idx, e)}
                   >
                     <MoreVertical size={16} />
                   </button>
-                  
+
                   {activeImageOptions === idx && (
                     <div 
                       ref={optionsRef}
