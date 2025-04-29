@@ -131,11 +131,11 @@ export default function CalendarPage() {
       description: description,
       start: {
         dateTime: start.toISOString(),
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'America/New_York', 
       },
       end: {
         dateTime: end.toISOString(),
-        timeZone: 'America/Los_Angeles',
+        timeZone: 'America/New_York', 
       },
     };
 
