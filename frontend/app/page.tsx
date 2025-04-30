@@ -1,3 +1,4 @@
+"use client";
 
 import { useRouter } from "next/navigation";
 import landing_page_image from "../public/images/landing_page_image.svg";
