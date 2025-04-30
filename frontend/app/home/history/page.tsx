@@ -261,12 +261,28 @@ export default function HistoryPage() {
                 </div>
               </div>
               <div className="flex-1 flex flex-col overflow-y-auto">
-                {selectedFile.summary && (
-                  <div className="mb-6">
-                    <h3 className="text-lg font-medium text-gray-800 mb-2">Summary</h3>
-                    <p className="text-gray-600">{selectedFile.summary}</p>
-                  </div>
-                )}
+              {selectedFile.summary && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-medium text-gray-800 mb-2">Summary</h3>
+                  <p className="text-gray-600 whitespace-pre-wrap">{selectedFile.summary}</p>
+
+                  {/* Download Summary Button */}
+                  <button
+                    onClick={() => {
+                      const blob = new Blob([selectedFile.summary || ""], { type: "text/plain;charset=utf-8" });
+                      const url = URL.createObjectURL(blob);
+                      const link = document.createElement("a");
+                      link.href = url;
+                      link.download = `${selectedFile.file_name}_summary.txt`;
+                      link.click();
+                      URL.revokeObjectURL(url);
+                    }}
+                    className="mt-4 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg"
+                  >
+                    Download Summary
+                  </button>
+                </div>
+              )}
 
                 {selectedFile.articles && Object.keys(selectedFile.articles).length > 0 ? (
                   <div className="mb-4">
