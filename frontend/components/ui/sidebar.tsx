@@ -135,7 +135,7 @@ const PopUp = ({ setIsOpen, user }: { setIsOpen: Dispatch<React.SetStateAction<b
                 console.error("Logout error:", data.error || "An error occured during logout.");
                 return;
             }
-
+            sessionStorage.clear()
             router.push("/");
         } catch (error) {
             console.error("Error during logout:", error);
@@ -186,24 +186,22 @@ const SideBar = () => {
         userInfo()
     }, [])
 
-    async function userInfo () {
-
-        const response = await fetch(process.env.NEXT_PUBLIC_BASE_URL + "/auth/get_user", {
-            credentials: "include"
-        })
-        .then((res: Response) => {
-            if(!res.ok) throw new Error(res.statusText);
-            else return res.json();
-        })
-        .then((data) => {
-            console.log("User info:", data.user.email);
-            setUser({ id: data.user.id, email: data.user.email, createdAt: data.user.created_at });
-            return data;
-        })
-        .catch((error) => {
-            console.error("Error fetching user info:", error);
-        })
+    function userInfo() {
+        const userData = JSON.parse(sessionStorage.getItem("userData") || "{}");
+        console.log(userData, userData.id, userData.email, userData.created_at)
+    
+        if (userData && userData.id) {
+            console.log("User info:", userData.email);
+            setUser({
+                id: userData.id,
+                email: userData.email,
+                createdAt: userData.created_at,
+            });
+        } else {
+            console.error("User data not found in sessionStorage");
+        }
     }
+    
 
     return (
         <>

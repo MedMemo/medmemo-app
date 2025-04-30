@@ -29,36 +29,22 @@ export default function HistoryPage() {
   const [signedUrls, setSignedUrls] = useState<{ [fileName: string]: string }>({}); 
   const [modalOpen, setModalOpen] = useState(false); 
   const [selectedFile, setSelectedFile] = useState<HistoryItem | null>(null);
-  const userIdRef = useRef<string>('')
-  const optionsRef = useRef<HTMLDivElement>(null);
 
-  const router = useRouter();
 
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        // Fetch user data
-        const userRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-          { credentials: "include" }
-        );
-        if (!userRes.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const userData = await userRes.json();
-        const userId = userData.user.id;
-        
-        userIdRef.current = userId;
-        
 
-        // Store user ID in the ref
-        userIdRef.current = userId
+        const userData = JSON.parse(sessionStorage.getItem("userData") || "{}")
+        const userId = userData.id
 
         // Fetch history (documents) from the Supabase database
         const { data: historyData, error: historyError } = await supabase
           .from('DOCUMENTS')
           .select('*')
           .eq('user_id', userId);
+
+        console.log(historyData, historyError)
 
         if (historyError) {
           throw new Error(historyError.message);
@@ -111,11 +97,8 @@ export default function HistoryPage() {
     e.stopPropagation();
   
     try {
-      const userId = userIdRef.current;
-      if (!userId) {
-        setError('User ID not available.');
-        return;
-      }
+      const userData = JSON.parse(sessionStorage.getItem("userData") || "{}")
+      const userId = userData.id
   
       // 1. Delete the file from Supabase Storage
       const { data: removedFiles, error: storageError } = await supabase

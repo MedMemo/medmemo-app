@@ -56,15 +56,8 @@ export default function FileUpload() {
 
     try {
 
-      const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-        { credentials: "include" }
-      );
-      if (!userRes.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      const userData = await userRes.json();
-      const userId = userData.user.id;
+      const userData = JSON.parse(sessionStorage.getItem("userData") || "{}")
+      const userId = userData.id
       const formData = new FormData();
       files.forEach((file) => formData.append("file", file));
 
