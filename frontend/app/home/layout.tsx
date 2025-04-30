@@ -13,8 +13,7 @@ const HomeLayout = ({ children } : {children: React.ReactNode}) => {
     if (storedTheme) {
       updateTheme(storedTheme);
     }
-  }
-  , []);
+  }, []);
 
   return (
     <div className="h-screen flex flex-row justify-start">
