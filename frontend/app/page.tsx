@@ -1,7 +1,5 @@
-"use client";
 
 import { useRouter } from "next/navigation";
-import NavBar from "@/components/Navbar";
 import landing_page_image from "../public/images/landing_page_image.svg";
 
 export default function Home() {
@@ -21,9 +19,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#FFECE5] flex-col text-black">
-      {/* Navbar */}
-      <NavBar/>
-      {/* <NavLogo /> */}
 
       <main className="flex flex-col-reverse md:flex-row md:justify-center md:items-center flex-grow align-middle pt-12">
 

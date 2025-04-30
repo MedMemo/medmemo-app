@@ -10,7 +10,7 @@ import { VscChromeClose, VscSettingsGear, VscSignOut, VscSend } from "react-icon
 import { FiMail } from "react-icons/fi";
 import Link from "next/link"
 
-import { useTheme } from "@/context/ThemeContext";
+import { useTheme } from "next-themes";
 
 const sidebarItems = [
 
@@ -42,13 +42,14 @@ interface userInterface {
 
 const Settings = ({ isOpen, setIsOpen, user }: { isOpen: boolean, setIsOpen: Dispatch<React.SetStateAction<boolean>>, user: userInterface }) => {
 
-    const { theme, updateTheme } = useTheme();
+    const { systemTheme, theme, setTheme } = useTheme();
 
     const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedTheme = event.target.value;
-        updateTheme(selectedTheme);
+        setTheme(selectedTheme);
         localStorage.setItem("theme", selectedTheme);
     };
+
 
     // Compute formatted dates
     const createdDate = user.createdAt ? new Date(user.createdAt) : new Date();
@@ -56,62 +57,76 @@ const Settings = ({ isOpen, setIsOpen, user }: { isOpen: boolean, setIsOpen: Dis
     const accountAgeInDays = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
 
     return (
-        <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
-          <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/40">
-            <DialogPanel className="min-w-lg w-[28rem] space-y-4 bg-white border px-6 pt-4 pb-8 rounded-2xl shadow-lg">
-              <div className="flex w-full justify-between items-center">
-                <DialogTitle className="text-xl font-semibold">Settings</DialogTitle>
-                <button onClick={() => setIsOpen(false)} className="rounded-sm hover:bg-gray-100 p-1">
-                  <VscChromeClose className="text-black" />
-                </button>
-              </div>
-      
-              <TabGroup>
-                <TabList className="flex space-x-2 rounded-md bg-gray-100 p-1">
-                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">General</Tab>
-                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">Profile</Tab>
-                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">About</Tab>
-                </TabList>
-      
-                <TabPanels className="mt-4 text-sm text-gray-700">
-                  <TabPanel>
-                    <Description>
-                      <Field className="flex justify-between items-center">
-                        <Label>Theme</Label>
-                        <Select onChange={handleThemeChange} name="theme" aria-label="Theme">
-                          <option value="light">Light</option>
-                          <option value="dark">Dark</option>
-                        </Select>
-                      </Field>
-                    </Description>
-                  </TabPanel>
-      
-                  <TabPanel>
-                    <Description>
-                      <div className="space-y-2">
-                        <p><strong>Email:</strong> {user.email}</p>
-                        <p><strong>Created At:</strong> {createdAtString}</p>
-                        <p><strong>Account Age:</strong> {accountAgeInDays} days</p>
-                      </div>
-                    </Description>
-                  </TabPanel>
-      
-                  <TabPanel>
-                    <Description className="space-y-4">
-                      <h2 className="text-lg font-semibold">About Us</h2>
-                      <p>MedMemo helps you upload, scan, summarize and export your medical documents—all in one secure place.</p>
-                      <ul className="list-disc list-inside space-y-1">
-                        <li>Upload: PDF, DOCX, TXT securely</li>
-                        <li>Scan: 90%+ accuracy, auto-resubmit blurry scans</li>
-                        <li>Summarize: Key visit details in 1 min</li>
-                        <li>Export: PDF/text or email summaries</li>
-                        <li>Chatbot: Health Q&A based on your history</li>
-                        <li>Articles: Curated reading based on summaries</li>
-                      </ul>
-                    </Description>
-                  </TabPanel>
-                </TabPanels>
-              </TabGroup>
+
+        <Dialog open={isOpen} onClose={() => setIsOpen(false)}
+        className="relative z-[200]"
+        >
+            <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-[rgba(0,0,0,0.36)]">
+            <DialogPanel
+            className="
+            bg-setting-background text-main-text-color
+            min-w-lg space-y-4 border border-main-background  px-6 pt-4 pb-8 rounded-2xl shadow-lg">
+                <div className="flex w-full justify-between items-center">
+                    <DialogTitle className="text-xl font-semibold">Settings</DialogTitle>
+                    <div className="rounded-sm hover:bg-gray-100 p-1">
+                        <VscChromeClose className="text-main-text-color"
+                        onClick={() => setIsOpen(false)} />
+                    </div>
+                </div>
+
+                <TabGroup>
+                    <TabList
+                    className="bg-setting-pill-background text-main-text-color flex space-x-1 rounded-md p-1">
+                        <Tab className="w-full rounded-md py-1 px-3 text-sm font-semibold cursor-pointer data-[selected]:shadow-sm focus:outline-none data-[selected]:bg-setting-pill-selected data-[selected]:text-main-text-inverse-color">General</Tab>
+                        <Tab className="w-full rounded-md py-1 px-3 text-sm font-semibold cursor-pointer data-[selected]:shadow-sm focus:outline-none data-[selected]:bg-setting-pill-selected data-[selected]:text-main-text-inverse-color">Profile</Tab>
+                        <Tab className="w-full rounded-md py-1 px-3 text-sm font-semibold cursor-pointer data-[selected]:shadow-sm focus:outline-none data-[selected]:bg-setting-pill-selected data-[selected]:text-main-text-inverse-color">About</Tab>
+                    </TabList>
+                    <TabPanels className="mt-4">
+                        <TabPanel>
+                            <Description>
+                                <Field className="flex w-full justify-between">
+                                    <Label>Theme</Label>
+                                    <Select onChange={handleThemeChange} name="theme" aria-label="Theme" defaultValue={theme}>
+                                        <option value="light">Light</option>
+                                        <option value="dark">Dark</option>
+                                    </Select>
+                                </Field>
+                            </Description>
+                        </TabPanel>
+                        <TabPanel>
+                            <Description
+                            className="text-main-text-color"
+                            >
+                                <div className="space-y-2 font-semibold">
+                                    <p><strong>Email:</strong> {user.email}</p>
+                                    <p><strong>Created At:</strong> {createdAtString}</p>
+                                    <p><strong>Account Age:</strong> {accountAgeInDays} days</p>
+                                </div>
+                            </Description>
+                        </TabPanel>
+                        <TabPanel>
+                            <Description className="space-y-4 text-main-text-color">
+                                {/* Logo */}
+                                <div className="flex justify-center">
+                                </div>
+                                {/* About text */}
+                                <h2 className="text-lg font-semibold">About Us</h2>
+                                <p className="text-sm font-semibold">
+                                    MedMemo helps you upload, scan, summarize and export your medical documents—all in one secure place.
+                                </p>
+                                {/* Features list */}
+                                <ul className="list-disc list-inside text-sm space-y-1 font-semibold">
+                                    <li><i className="fas fa-upload" /> Upload: PDF, DOCX, TXT securely</li>
+                                    <li><i className="fas fa-camera" /> Scan: 90%+ accuracy, auto-resubmit blurry scans</li>
+                                    <li><i className="fas fa-clipboard" /> Summarize: Key visit details in 1 min</li>
+                                    <li><i className="fas fa-download" /> Export: PDF/text or email summaries</li>
+                                    <li><i className="fas fa-comments" /> Chatbot: Health Q&A based on your history</li>
+                                    <li><i className="fas fa-book" /> Articles: Curated reading based on summaries</li>
+                                </ul>
+                            </Description>
+                        </TabPanel>
+                    </TabPanels>
+                </TabGroup>
             </DialogPanel>
           </div>
         </Dialog>
@@ -121,7 +136,6 @@ const Settings = ({ isOpen, setIsOpen, user }: { isOpen: boolean, setIsOpen: Dis
 const PopUp = ({ setIsOpen, user }: { setIsOpen: Dispatch<React.SetStateAction<boolean>>, user: userInterface }) => {
     const router = useRouter();
     const [isSettingOpen, setIsSettingOpen] = useState(false);
-    const { theme } = useTheme();
 
     const handleLogOut = async () => {
         try {
@@ -148,20 +162,21 @@ const PopUp = ({ setIsOpen, user }: { setIsOpen: Dispatch<React.SetStateAction<b
                 <Settings isOpen={isSettingOpen} setIsOpen={setIsSettingOpen} user={user} />}
 
             <div className="bottom-[4.5rem] origin-top-right absolute left-[1rem] mt-2 -mr-1 rounded-md shadow-lg z-100">
-                <div className="py-3 px-2 rounded-md shadow-xs relative font-semibold" style={{ backgroundColor: theme["setting-background"] }}>
+                <div className="py-3 px-2 rounded-md shadow-xs relative font-semibold bg-setting-background ">
                     <a onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         setIsSettingOpen(open => !open);
-                    }} className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150" style={{ color: theme["main-text-color"] }}>
+                    }} className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-setting-hover transition ease-in-out duration-150 text-main-text-color">
                         <VscSettingsGear className="w-5.5 h-5.5" />
                         Settings
                     </a>
-                    <Link href="/home/contact-us" className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150" onClick={() => setIsOpen(false)} style={{ color: theme["main-text-color"] }}>
+                    <Link href="/home/contact-us" className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-setting-hover transition ease-in-out duration-150 text-main-text-color" onClick={() => setIsOpen(false)}>
                         <VscSend className="w-5.5 h-5.5" />
                         <span className="flex-1 whitespace-nowrap">Contact us</span>
                     </Link>
-                    <a onClick={handleLogOut} className="flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-gray-100 transition ease-in-out duration-150" style={{ color: theme["main-text-color"] }}>
+                    <a onClick={handleLogOut}
+                    className="text-main-text-color flex items-center gap-2 px-4 py-2 text-base rounded-md hover:bg-setting-hover transition ease-in-out duration-150">
                         <VscSignOut className="w-5.5 h-5.5" />
                         Log out
                     </a>
@@ -175,7 +190,6 @@ const SideBar = () => {
 
     const pathname = usePathname()
     const [isPopUpOpen, setIsPopUpOpen] = useState(false);
-    const { theme } = useTheme();
     const [user, setUser] = useState<userInterface>({
         id: "",
         email: "",
@@ -215,14 +229,12 @@ const SideBar = () => {
                 </svg>
             </button>
 
-            <aside id="default-sidebar" className="flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3" aria-label="Sidebar" style={{ backgroundColor: theme["sidebar-background"], color: theme["main-text-color"] }}>
-                <div className="flex flex-1 py-4 overflow-y-auto  dark:bg-gray-800 ">
+            <aside id="default-sidebar" className="flex flex-col top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 p-3 text-main-text-color bg-sidebar-background" aria-label="Sidebar">
+                <div className="flex flex-1 py-4 overflow-y-auto">
 
                         <ul className="w-full space-y-2 font-medium">
                             <li>
-                                <a href="/home" className="flex items-center p-2 pb-7 rounded-lg dark:text-white" style={{
-                                    color:theme["sidebar-logo"],
-                                }}>
+                                <a href="/home" className="text-sidebar-logo flex items-center p-2 pb-7 rounded-lg ">
                                     <span className="text-4xl ms-3">MedMemo</span>
                                 </a>
                             </li>
@@ -231,12 +243,7 @@ const SideBar = () => {
                                 <li className="w-full"  key={name}>
 
                                     <Link
-                                    className={`flex items-center p-2 text-gray-200 rounded-md dark:text-white hover:bg-sidebar-hover group`}
-                                    style={{
-                                        backgroundColor: pathname === href ? theme["sidebar-hover"] : "",
-                                        color: theme["main-text-color"]
-
-                                    }}
+                                    className={`text-main-text-color flex items-center p-2  rounded-md hover:bg-sidebar-hover group ${pathname === href ? 'bg-sidebar-hover' : ''}`}
                                     href={href}
                                     >
 
@@ -250,7 +257,10 @@ const SideBar = () => {
                 <div className="flex text-white ">
                     {user
                         ? <button className="w-full" onClick={() => setIsPopUpOpen(isPopUpOpen => !isPopUpOpen)}>
-                            <div className="hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
+                            <div
+                            className="
+                            text-main-text-color
+                            hover:bg-sidebar-hover rounded-lg flex p-3">{user.email}</div>
                         </button>
                         : ""
                     }

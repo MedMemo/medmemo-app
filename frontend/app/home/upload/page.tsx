@@ -1,19 +1,16 @@
 "use client";
-
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "@/context/ThemeContext";
 
 export default function FileUpload() {
   const [isDragging, setIsDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const { theme, updateTheme } = useTheme();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -89,8 +86,8 @@ export default function FileUpload() {
       setUploading(false);
     }
   };
-   
-  
+
+
   return (
     <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
       <div className="w-full max-w-xl rounded-xl p-6">
@@ -105,16 +102,10 @@ export default function FileUpload() {
           onDrop={handleDrop}
         >
           <Upload
-            className="w-9 h-9 mb-4"
-            style={{
-              color: theme["main-text-color"],
-            }}
+            className="text-main-text-color w-9 h-9 mb-4"
           />
           <p
-            className="mb-2 text-lg"
-            style={{
-              color: theme["main-text-color"],
-            }}
+            className="text-main-text-color mb-2 text-lg"
           >
             Choose a file or drag & drop it here
           </p>
@@ -123,11 +114,8 @@ export default function FileUpload() {
           </p>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-6 py-2 hover:bg-gray-200 rounded-3xl text-black text-sm"
-            style={{
-              backgroundColor: theme["button-color"],
-              color: theme["main-text-inverse-color"],
-            }}
+            className="bg-button-color hover:bg-button-hover
+          text-main-text-inverse-color hover:text-main-text-color px-6 py-2 rounded-3xl text-sm"
           >
             Browse Files
           </button>
@@ -163,8 +151,8 @@ export default function FileUpload() {
         {error && (
           <div className="bg-red-800 p-3 mt-2 rounded-lg flex items-center">
             <AlertTriangle className="mr-2" /> {error}
-            <button 
-              className="ml-auto text-white" 
+            <button
+              className="ml-auto text-white"
               onClick={() => setError(null)}
             >
               <X size={16} />
@@ -175,7 +163,10 @@ export default function FileUpload() {
         <button
           onClick={uploadFile}
           disabled={uploading || !files.length}
-          className="mt-4 w-full py-2 bg-white hover:bg-green-700 text-black rounded-lg
+          className="mt-4 w-full py-2
+          bg-button-color hover:bg-button-hover
+          text-main-text-inverse-color hover:text-main-text-color
+          rounded-lg
           disabled:bg-transparent disabled:border-chat-box-background disabled:text-chat-box-background disabled:border-2"
         >
           {uploading ? "Uploading..." : "Upload and Process"}
