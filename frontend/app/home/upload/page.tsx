@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
 import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -9,9 +8,6 @@ export default function FileUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-
-  const [pastFiles, setPastFiles] = useState<{ name: string; url: string }[]>([]);
-  const [activeImageOptions, setActiveImageOptions] = useState<number | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -48,20 +44,6 @@ export default function FileUpload() {
     }
     setFiles(selectedFiles);
     setError(null);
-  };
-
-  const openImage = (url: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    window.open(url, '_blank');
-    setActiveImageOptions(null);
-  };
-
-  const toggleImageOptions = (idx: number, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setActiveImageOptions(activeImageOptions === idx ? null : idx);
   };
 
   const uploadFile = async () => {
@@ -112,131 +94,6 @@ export default function FileUpload() {
     }
   };
 
-  const deleteFile = async (targetFileName: string, e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    try {
-      const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-        { credentials: "include" }
-      );
-      if (!userRes.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      const userData = await userRes.json();
-      const userId = userData.user.id;
-
-      const deleteRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/database/remove/${encodeURIComponent(targetFileName)}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `${userId}`,
-          },
-        }
-      );
-      const deleteData = await deleteRes.json();
-      if (!deleteRes.ok) {
-        console.error("Error deleting file:", deleteData);
-        setError(deleteData.error || `Failed to delete ${targetFileName}`);
-        return;
-      }
-
-      // Remove the image from the state
-      setPastFiles(pastFiles.filter(file => file.name !== targetFileName));
-      setActiveImageOptions(null);
-    } catch (err) {
-      console.error('Error deleting file:', err);
-      setError('Failed to delete file');
-    }
-  };
-
-
-  useEffect(() => {
-    const fetchFiles = async () => {
-      try {
-        // Fetch user data
-        const userRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-          { credentials: "include" }
-        );
-        if (!userRes.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const userData = await userRes.json();
-        const userId = userData.user.id;
-
-        // Fetch list of files
-        const listFilesRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/database/list_files`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `${userId}`,
-            },
-          }
-        );
-        if (!listFilesRes.ok) {
-          throw new Error('Failed to fetch file list');
-        }
-        const listFilesData = await listFilesRes.json();
-
-        const validFiles: { name: string; url: string }[] = [];
-
-        // Fetch signed URLs for each file
-        for (const file of listFilesData.files || []) {
-          if (
-            file.name &&
-            (file.name.endsWith(".png") ||
-              file.name.endsWith(".jpg") ||
-              file.name.endsWith(".jpeg") ||
-              file.name.endsWith(".pdf"))
-          ) {
-            const signedUrlRes = await fetch(
-              `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_signed_url/${file.name}`,
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `${userId}`,
-                },
-              }
-            );
-            if (!signedUrlRes.ok) {
-              console.error(`Error fetching signed URL for ${file.name}:`, await signedUrlRes.json());
-              setError(`Error fetching signed URL for ${file.name}`);
-            }
-
-            const signedUrlData = await signedUrlRes.json();
-
-            if (signedUrlData.signed_url) {
-              validFiles.push({ name: file.name, url: signedUrlData.signed_url });
-            } else {
-              console.error(`No signed URL found for ${file.name}`);
-              setError(`No signed URL found for ${file.name}`);
-            }
-          }
-        }
-
-        setPastFiles(validFiles);
-      } catch (err) {
-        console.error("Error fetching files:", err);
-        setError("Failed to load files.");
-      }
-    };
-    fetchFiles();
-  }, []);
-
-  useEffect(() => {
-    // Handle clicks outside the dropdown menu
-    const handleClickOutside = (event: MouseEvent) => {
-      if (optionsRef.current && !optionsRef.current.contains(event.target as Node)) {
-        setActiveImageOptions(null);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [optionsRef]);
 
   return (
     <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">
@@ -264,7 +121,8 @@ export default function FileUpload() {
           </p>
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="bg-button-color text-main-text-inverse-color px-6 py-2 hover:bg-gray-200 rounded-3xl text-sm"
+            className="bg-button-color hover:bg-button-hover
+          text-main-text-inverse-color hover:text-main-text-color px-6 py-2 rounded-3xl text-sm"
           >
             Browse Files
           </button>
@@ -312,70 +170,14 @@ export default function FileUpload() {
         <button
           onClick={uploadFile}
           disabled={uploading || !files.length}
-          className="mt-4 w-full py-2 bg-white hover:bg-green-700 text-black rounded-lg
+          className="mt-4 w-full py-2
+          bg-button-color hover:bg-button-hover
+          text-main-text-inverse-color hover:text-main-text-color
+          rounded-lg
           disabled:bg-transparent disabled:border-chat-box-background disabled:text-chat-box-background disabled:border-2"
         >
           {uploading ? "Uploading..." : "Upload and Process"}
         </button>
-
-        {/* Display past files */}
-        {pastFiles.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-6">
-            {pastFiles.map((file, idx) => (
-              <div key={idx} className="flex flex-col items-center relative">
-                <div className="group relative">
-                  {file.name.toLowerCase().endsWith('.pdf') ? (
-                    <iframe
-                      src={file.url}
-                      className="w-32 h-32 rounded-md mb-2"
-                      title={file.name}
-                      style={{
-                        border: 'none',
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                        maxWidth: '100%',
-                        maxHeight: '100%',
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={file.url}
-                      alt={file.name}
-                      className="w-32 h-32 object-cover rounded-md mb-2"
-                    />
-                  )}
-                  <button
-                    className="absolute top-2 right-2 bg-gray-800 p-1 rounded-full opacity-70 hover:opacity-100"
-                    onClick={(e) => toggleImageOptions(idx, e)}
-                  >
-                    <MoreVertical size={16} />
-                  </button>
-
-                  {activeImageOptions === idx && (
-                    <div
-                      ref={optionsRef}
-                      className="absolute right-0 mt-1 bg-gray-800 rounded-md shadow-lg z-10 w-36"
-                    >
-                      <button
-                        className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700"
-                        onClick={(e) => openImage(file.url, e)}
-                      >
-                        <ExternalLink size={16} className="mr-2" /> Open
-                      </button>
-                      <button
-                        className="w-full flex items-center px-4 py-2 text-left hover:bg-gray-700 text-red-400"
-                        onClick={(e) => deleteFile(file.name, e)}
-                      >
-                        <Trash size={16} className="mr-2" /> Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-                <p className="text-sm break-all">{file.name}</p>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </main>
   );

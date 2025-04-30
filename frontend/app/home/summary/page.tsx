@@ -66,10 +66,10 @@ export default function SummaryPage() {
         const updateTableData = await updateTableRes.json();
         throw new Error(updateTableData.error || "Update table failed");
       }
-    
+
 
       sessionStorage.removeItem('ocrData');
-      sessionStorage.removeItem('filesMetadata') 
+      sessionStorage.removeItem('filesMetadata')
       router.push("/home/history")
     } catch (err) {
       console.error('Error updating table:', err);
@@ -167,6 +167,7 @@ export default function SummaryPage() {
                     <ul className="list-disc pl-6 space-y-2">
                       {articlesForCondition.length > 0 ? (
                         articlesForCondition.map((article: Article, index: number) => (
+              
                           <li key={index}>
                             <a
                               href={article.URL}
@@ -191,7 +192,10 @@ export default function SummaryPage() {
               <div className="mt-8 text-right">
                 <button
                   onClick={handleSaveSummary}
-                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center justify-center transition"
+                  className="px-6 py-2
+                bg-button-color hover:bg-button-hover
+                text-main-text-inverse-color hover:text-main-text-color
+                font-medium rounded-md flex items-center justify-center transition"
                 >
                   <Save className="w-5 h-5 mr-2" />
                   Save Summary
