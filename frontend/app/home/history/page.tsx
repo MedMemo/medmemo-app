@@ -3,6 +3,7 @@
 import { ExternalLink, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createClient } from '@supabase/supabase-js';
 
 interface HistoryItem {
   file_name: string;
@@ -16,6 +17,11 @@ interface Article {
   Author?: string;
 }
 
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_KEY!
+  );
+
 export default function HistoryPage() {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -23,76 +29,62 @@ export default function HistoryPage() {
   const [signedUrls, setSignedUrls] = useState<{ [fileName: string]: string }>({}); 
   const [modalOpen, setModalOpen] = useState(false); 
   const [selectedFile, setSelectedFile] = useState<HistoryItem | null>(null);
-  const [userId, setUserId] = useState<string>('');
+  const userIdRef = useRef<string>('')
   const optionsRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
 
   useEffect(() => {
-
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-    if (!baseUrl) {
-      setError('Base URL is not defined.');
-      setIsLoading(false);
-      return;
-    }
-
     const fetchHistory = async () => {
       try {
+        // Fetch user data
         const userRes = await fetch(
-          `${baseUrl}/auth/get_user`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
           { credentials: "include" }
         );
         if (!userRes.ok) {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userRes.json();
-        setUserId(userData.user.id);
+        const userId = userData.user.id;
+        
+        userIdRef.current = userId;
+        
 
-        const historyRes = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_history`, 
-          {
-            method: "GET",
-            headers: {
-              Authorization: `${userId}`
-            }
-          });
-        if (!historyRes.ok) {
-          const historyData = await historyRes.json();
-          throw new Error(historyData.error || "get history failed");
+        // Store user ID in the ref
+        userIdRef.current = userId
+
+        // Fetch history (documents) from the Supabase database
+        const { data: historyData, error: historyError } = await supabase
+          .from('DOCUMENTS')
+          .select('*')
+          .eq('user_id', userId);
+
+        if (historyError) {
+          throw new Error(historyError.message);
         }
 
-        const historyData = await historyRes.json();
-        setHistory(historyData.history)
+        setHistory(historyData || []);
+
+        // Fetch public URLs for each file
+        const fileUrls: { [fileName: string]: string } = {};
+
+        for (const item of historyData || []) {
+          const fileName = item.file_name;
         
-        const fetchSignedUrls = async () => {
-          const fileUrls: { [fileName: string]: string } = {};
-          for (const item of historyData.history) {
-            const fileName = item.file_name;
-
-            // Fetch signed URL for each file
-            const signedUrlRes = await fetch(
-              `${baseUrl}/database/get_signed_url/${fileName}`,
-              {
-                method: "GET",
-                headers: {
-                  Authorization: `${userId}`,
-                },
-              }
-            );
-            if (!signedUrlRes.ok) {
-              throw new Error(`Failed to fetch signed URL for ${fileName}`);
-            }
-
-            const signedUrlData = await signedUrlRes.json();
-            if (signedUrlData.signed_url) {
-              fileUrls[fileName] = signedUrlData.signed_url;
-            }
+          const { data, error } = await supabase.storage
+            .from('documents')
+            .createSignedUrl(`${userId}/${fileName}`, 60 * 60); // Expires in 1 hour
+        
+          if (error) {
+            console.error(`Error creating signed URL for ${fileName}:`, error.message);
+            continue;
           }
-          setSignedUrls(fileUrls);
-        };
+        
+          fileUrls[fileName] = data.signedUrl || '';
+        }
 
-        await fetchSignedUrls();
+        setSignedUrls(fileUrls);
       } catch (err) {
         console.error("Error updating table:", err);
         setError("Failed to update table");
@@ -117,40 +109,43 @@ export default function HistoryPage() {
   const deleteFile = async (fileName: string, e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-
+  
     try {
-
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
-      if (!baseUrl) {
-        setError('Base URL is not defined.');
-        setIsLoading(false);
+      const userId = userIdRef.current;
+      if (!userId) {
+        setError('User ID not available.');
         return;
       }
-
-      const deleteRes = await fetch(
-        `${baseUrl}/database/remove/${encodeURIComponent(
-          fileName
-        )}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `${userId}`,
-          },
-        }
-      );
-      if (!deleteRes.ok) {
-        const deleteData = await deleteRes.json();
-        setError(deleteData.error || `Failed to delete ${fileName}`);
+  
+      // 1. Delete the file from Supabase Storage
+      const { data: removedFiles, error: storageError } = await supabase
+        .storage
+        .from('documents')
+        .remove([`${userId}/${fileName}`]);
+  
+      if (storageError) {
+        setError(`Failed to delete file from storage: ${storageError.message}`);
         return;
       }
-
-      // Remove the file from the history
-      setHistory((prevHistory) =>
-        prevHistory.filter((item) => item.file_name !== fileName)
-      );
+  
+      // 2. Delete the file metadata from Supabase Database
+      const { error: dbError } = await supabase
+        .from('DOCUMENTS')
+        .delete()
+        .eq('user_id', userId)
+        .eq('file_name', fileName);
+  
+      if (dbError) {
+        setError(`Failed to delete database entry: ${dbError.message}`);
+        return;
+      }
+  
+      // 3. Update local state
+      setHistory((prev) => prev.filter((item) => item.file_name !== fileName));
+  
     } catch (err) {
-      console.error("Error deleting file:", err);
-      setError("Failed to delete file");
+      console.error("Unexpected error deleting file:", err);
+      setError("Unexpected error occurred while deleting the file.");
     }
   };
   
