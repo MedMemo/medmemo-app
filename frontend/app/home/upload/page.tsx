@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, type DragEvent, type ChangeEvent, useEffect } from "react";
-import { Upload, FileText, X, AlertTriangle, Trash, ExternalLink, Download, MoreVertical } from "lucide-react";
+import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
+import { Upload, FileText, X, AlertTriangle } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function FileUpload() {
@@ -9,10 +9,11 @@ export default function FileUpload() {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+
   const [pastFiles, setPastFiles] = useState<{ name: string; url: string }[]>([]);
   const [activeImageOptions, setActiveImageOptions] = useState<number | null>(null);
+
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const optionsRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
@@ -90,14 +91,13 @@ export default function FileUpload() {
             Authorization: `${userId}`,
           },
           body: formData,
-        }
-      );
+        });
       if (!uploadRes.ok) {
         const uploadData = await uploadRes.json();
         throw new Error(uploadData.error || "Upload failed");
       }
-      const data = await uploadRes.json();
-      sessionStorage.setItem("ocrData", JSON.stringify(data.ocr_data));
+      const uploadData = await uploadRes.json();
+      sessionStorage.setItem("ocrData", JSON.stringify(uploadData.ocr_data));
       const fileMetadata = files.map((file) => ({
         name: file.name,
         type: file.type,
@@ -237,7 +237,6 @@ export default function FileUpload() {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [optionsRef]);
-
 
   return (
     <main className="min-h-screen bg-transparent text-gray-200 flex-grow flex flex-col items-center justify-center p-8">

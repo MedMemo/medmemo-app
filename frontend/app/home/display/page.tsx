@@ -23,7 +23,7 @@ export default function DocumentDisplayPage() {
     setOcrData({ ...ocrData, kv_pairs: updated });
   };
 
-  const handleSaveChanges = () => {
+  const handleSubmit= () => {
     sessionStorage.setItem("ocrData", JSON.stringify(ocrData));
     router.push('/home/summary');
   };
@@ -144,14 +144,14 @@ export default function DocumentDisplayPage() {
 
           <div className="mt-8 text-right">
             <button
-              onClick={handleSaveChanges}
               className="px-6 py-2 \
               bg-button-color hover:bg-button-hover
               text-main-text-inverse-color hover:text-main-text-color
               font-medium rounded-md flex items-center justify-center transition"
+              onClick={handleSubmit}
             >
               <Save className="w-5 h-5 mr-2" />
-              Save Changes
+              Submit
             </button>
           </div>
         </div>

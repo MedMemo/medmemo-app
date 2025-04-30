@@ -72,3 +72,5 @@ def perform_ocr(file_bytes, file_type):
         "kv_pairs": kv_pairs,
         "annotated_image": annotated_img_base64
     }
+
+

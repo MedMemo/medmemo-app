@@ -14,8 +14,7 @@ const HomeLayout = ({ children } : {children: React.ReactNode}) => {
     if (storedTheme) {
       setTheme(storedTheme);
     }
-  }
-  , []);
+  }, []);
 
   return (
     <div className="h-screen flex flex-row justify-start">

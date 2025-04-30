@@ -25,6 +25,10 @@ const sidebarItems = [
         icon: FiMail,
     },
     {
+        name: "History",
+        href: "/home/history",
+    },
+    {
         name: "Medical Reminder",
         href: "/home/calendar",
     }
@@ -53,6 +57,7 @@ const Settings = ({ isOpen, setIsOpen, user }: { isOpen: boolean, setIsOpen: Dis
     const accountAgeInDays = Math.floor((Date.now() - createdDate.getTime()) / (1000 * 60 * 60 * 24));
 
     return (
+
         <Dialog open={isOpen} onClose={() => setIsOpen(false)}
         className="relative z-[200]"
         >
@@ -122,8 +127,66 @@ const Settings = ({ isOpen, setIsOpen, user }: { isOpen: boolean, setIsOpen: Dis
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>
+
+        <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-[200]">
+          <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/40">
+            <DialogPanel className="min-w-lg w-[28rem] space-y-4 bg-white border px-6 pt-4 pb-8 rounded-2xl shadow-lg">
+              <div className="flex w-full justify-between items-center">
+                <DialogTitle className="text-xl font-semibold">Settings</DialogTitle>
+                <button onClick={() => setIsOpen(false)} className="rounded-sm hover:bg-gray-100 p-1">
+                  <VscChromeClose className="text-black" />
+                </button>
+              </div>
+      
+              <TabGroup>
+                <TabList className="flex space-x-2 rounded-md bg-gray-100 p-1">
+                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">General</Tab>
+                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">Profile</Tab>
+                  <Tab className="w-full rounded-md py-1 px-3 text-sm font-medium text-gray-700 data-[selected]:bg-white data-[selected]:shadow-sm focus:outline-none">About</Tab>
+                </TabList>
+      
+                <TabPanels className="mt-4 text-sm text-gray-700">
+                  <TabPanel>
+                    <Description>
+                      <Field className="flex justify-between items-center">
+                        <Label>Theme</Label>
+                        <Select onChange={handleThemeChange} name="theme" aria-label="Theme">
+                          <option value="light">Light</option>
+                          <option value="dark">Dark</option>
+                        </Select>
+                      </Field>
+                    </Description>
+                  </TabPanel>
+      
+                  <TabPanel>
+                    <Description>
+                      <div className="space-y-2">
+                        <p><strong>Email:</strong> {user.email}</p>
+                        <p><strong>Created At:</strong> {createdAtString}</p>
+                        <p><strong>Account Age:</strong> {accountAgeInDays} days</p>
+                      </div>
+                    </Description>
+                  </TabPanel>
+      
+                  <TabPanel>
+                    <Description className="space-y-4">
+                      <h2 className="text-lg font-semibold">About Us</h2>
+                      <p>MedMemo helps you upload, scan, summarize and export your medical documents—all in one secure place.</p>
+                      <ul className="list-disc list-inside space-y-1">
+                        <li>Upload: PDF, DOCX, TXT securely</li>
+                        <li>Scan: 90%+ accuracy, auto-resubmit blurry scans</li>
+                        <li>Summarize: Key visit details in 1 min</li>
+                        <li>Export: PDF/text or email summaries</li>
+                        <li>Chatbot: Health Q&A based on your history</li>
+                        <li>Articles: Curated reading based on summaries</li>
+                      </ul>
+                    </Description>
+                  </TabPanel>
+                </TabPanels>
+              </TabGroup>
+
             </DialogPanel>
-            </div>
+          </div>
         </Dialog>
     );
 };
