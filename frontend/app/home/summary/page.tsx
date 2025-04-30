@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js'
 
 interface SummaryResponse {
   summary?: string;
@@ -19,6 +20,11 @@ interface Article {
   Author: string | null;
   URL: string;
 }
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_KEY!
+)
 
 export default function SummaryPage() {
   const [summary, setSummary] = useState<string>('');
@@ -37,36 +43,22 @@ export default function SummaryPage() {
 
   const handleSaveSummary = async () => {
     try {
-      const userRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-        { credentials: "include" }
-      );
+      
+      const userData = JSON.parse(sessionStorage.getItem("userData") || "{}")
+      const userId = userData.id
 
-      if (!userRes.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-      const userData = await userRes.json();
-      const userId = userData.user.id;
-
-      const updateTableRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/database/update_table`,
-        {
-          method: "POST",
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${userId}`,
-          },
-          body: JSON.stringify({
-            file_name: filesMetadata[0]?.name,
-            summary: summary,
-            articles: articles
-          }),
-        });
-      if (!updateTableRes.ok) {
-        const updateTableData = await updateTableRes.json();
-        throw new Error(updateTableData.error || "Update table failed");
-      }
-
+      const { error } = await supabase
+      .from('DOCUMENTS')
+      .update({
+        summary: summary,
+        articles: articles,
+      })
+      .eq('user_id', userId)
+      .eq('file_name', filesMetadata[0]?.name)
+  
+    if (error) {
+      throw new Error(error.message || 'Update table failed')
+    }
 
       sessionStorage.removeItem('ocrData');
       sessionStorage.removeItem('filesMetadata')

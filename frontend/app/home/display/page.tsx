@@ -35,16 +35,9 @@ export default function DocumentDisplayPage() {
         const filesMetadata = JSON.parse(savedFilesMetadata);
         if (filesMetadata.length > 0) {
           const fileName = filesMetadata[0].name;
-          const userRes = await fetch(
-            `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
-            { credentials: "include" }
-          );
-          if (!userRes.ok) {
-            throw new Error('Failed to fetch user data');
-          }
-          const userData = await userRes.json();
-          const userId = userData.user.id;
-
+          const userData = JSON.parse(sessionStorage.getItem("userData") || "{}")
+          const userId = userData.id
+        
           try {
 
             // Call the /remove endpoint to remove the file

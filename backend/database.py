@@ -83,7 +83,6 @@ def remove_file(file_name):
                     .eq("user_id", user_id) \
                     .eq("file_name", file_name) \
                     .execute()
-                print("delete_response:", delete_response)
                 if delete_response:  # This checks if the update operation returned any data (success)
                     return jsonify({"message": "Document removed successfully"}), 200
                 else:
@@ -211,10 +210,10 @@ def get_history():
         response = supabase.table("DOCUMENTS").select("*").eq("user_id", user_id).execute()
 
         # Check if we received valid data
-        if response.data:
+        if response.data is not None:
             return jsonify({"history": response.data}), 200
         else:
-            return jsonify({"error": "No history found"}), 404  # No records found for the user
+            return jsonify({"history": []}), 200  
 
     except Exception as e:
         # Handle any other exceptions

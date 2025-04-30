@@ -31,6 +31,7 @@ export default function Login() {
       } else {
         setSuccess("Login successful!");
         console.log("Logged in:", data);
+        sessionStorage.setItem("userData", JSON.stringify(data.user))
         router.push("/home"); // Redirect to home page or wherever after successful login
       }
 
