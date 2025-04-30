@@ -31,9 +31,7 @@ def upload_file():
     try:
         # Check if file already exists to avoid overwrites
         existing_files = supabase.storage.from_(BUCKET_NAME).list(user_id)
-        print(file_name, existing_files)
         if any(f['name'] == file_name for f in existing_files):
-            print("file same name")
             return jsonify({"error": "File with same name already exists"}), 400
         response = supabase.storage.from_(BUCKET_NAME).upload(
             file_path,
@@ -41,6 +39,13 @@ def upload_file():
             {"content-type": mime_type}
         )
         if hasattr(response, 'path'):
+            new_document = {
+                "user_id": user_id,  
+                "file_name": file_name
+            }
+
+            supabase.table("DOCUMENTS").insert([new_document]).execute()
+
             file_type = check_file_type(io.BytesIO(file_bytes))
             ocr_results = perform_ocr(file_bytes, file_type)
 
@@ -72,7 +77,17 @@ def remove_file(file_name):
         # Check if the response is a list and contains results
         if isinstance(response, list) and len(response) > 0:
             result = response[0] 
-            if 'status' in result and result['status'] == 200:
+            if result.get("metadata", {}).get("httpStatusCode") == 200:
+                delete_response = supabase.table("DOCUMENTS") \
+                    .delete() \
+                    .eq("user_id", user_id) \
+                    .eq("file_name", file_name) \
+                    .execute()
+                print("delete_response:", delete_response)
+                if delete_response:  # This checks if the update operation returned any data (success)
+                    return jsonify({"message": "Document removed successfully"}), 200
+                else:
+                    return jsonify({"error": "Failed to remove document"}), 400  # If no data returned, update failed
                 return jsonify({"message": f"File {file_name} removed successfully"}), 200
             else:
                 return jsonify({"error": f"Error removing the file: {result.get('error', 'Unknown error')}"})
@@ -149,3 +164,58 @@ def get_signed_url(file_name):
     except Exception as e:
         return jsonify({"error": f"Error generating signed URL: {str(e)}"}), 500
 
+@database_bp.route("/update_table", methods=['POST'])
+def update_table():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+
+    user_id = auth_header.strip()
+
+    data = request.get_json()
+    file_name = data.get("file_name")
+    summary = data.get("summary")
+    articles = data.get("articles")
+
+
+    if not file_name or not summary or not articles:
+        return jsonify({"error": "Missing required fields"}), 400
+
+    try:
+
+        response = supabase.table("DOCUMENTS").update({
+            "summary": summary,
+            "articles": articles
+        }).eq("user_id", user_id).eq("file_name", file_name).execute()
+
+        if response.data:  # This checks if the update operation returned any data (success)
+            return jsonify({"message": "Document updated successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to update document"}), 400  # If no data returned, update failed
+
+    except Exception as e:
+        # Handle any other exceptions that occur during the update process
+        return jsonify({"error": str(e)}), 500
+
+
+@database_bp.route("/get_history", methods=["GET"])
+def get_history():
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        return jsonify({"error": "Missing or invalid Authorization header"}), 401
+
+    user_id = auth_header.strip()
+
+    try:
+        # Fetch history (documents) from the database where user_id matches
+        response = supabase.table("DOCUMENTS").select("*").eq("user_id", user_id).execute()
+
+        # Check if we received valid data
+        if response.data:
+            return jsonify({"history": response.data}), 200
+        else:
+            return jsonify({"error": "No history found"}), 404  # No records found for the user
+
+    except Exception as e:
+        # Handle any other exceptions
+        return jsonify({"error": str(e)}), 500

@@ -25,6 +25,10 @@ const sidebarItems = [
         icon: FiMail,
     },
     {
+        name: "History",
+        href: "/home/history",
+    },
+    {
         name: "Medical Reminder",
         href: "/home/calendar",
     }

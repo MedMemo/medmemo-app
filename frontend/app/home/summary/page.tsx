@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Save } from 'lucide-react';
 
 interface SummaryResponse {
   summary?: string;
@@ -35,6 +35,47 @@ export default function SummaryPage() {
   });  
   const router = useRouter();
 
+  const handleSaveSummary = async () => {
+    try {
+      const userRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/auth/get_user`,
+        { credentials: "include" }
+      );
+
+      if (!userRes.ok) {
+        throw new Error('Failed to fetch user data');
+      }
+      const userData = await userRes.json();
+      const userId = userData.user.id;
+
+      const updateTableRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/database/update_table`,
+        {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${userId}`,
+          },
+          body: JSON.stringify({
+            file_name: filesMetadata[0]?.name,
+            summary: summary,
+            articles: articles
+          }),
+        });
+      if (!updateTableRes.ok) {
+        const updateTableData = await updateTableRes.json();
+        throw new Error(updateTableData.error || "Update table failed");
+      }
+    
+
+      sessionStorage.removeItem('ocrData');
+      sessionStorage.removeItem('filesMetadata') 
+      router.push("/home/history")
+    } catch (err) {
+      console.error('Error updating table:', err);
+      setError('Failed to update table');
+    }
+  };
   
   const handleBackClick = () => {
     if (ocrData && filesMetadata) {
@@ -83,13 +124,11 @@ export default function SummaryPage() {
               if (data.error) {
                 setError(data.error);
               } else {
-                setArticles(data.articles || []);  
+                setArticles(data.articles || []);
               }
             })
             .catch((err) => setError(err.message))
             .finally(() => {
-              sessionStorage.removeItem('ocrData');
-              sessionStorage.removeItem('filesMetadata')
               setLoading(false);
             });
         }
@@ -101,13 +140,13 @@ export default function SummaryPage() {
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
-      <button
-          onClick={ handleBackClick }
+        <button
+          onClick={handleBackClick}
           className="text-blue-400 hover:text-blue-500 text-sm flex items-center mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Document
-      </button>
+        </button>
   
         <div className="bg-sidebar-background rounded-xl shadow-lg p-6">
           <h2 className="text-2xl font-bold mb-4 text-white">📝 Medical Document Summary</h2>
@@ -126,7 +165,7 @@ export default function SummaryPage() {
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">{condition}</h3>
                     <ul className="list-disc pl-6 space-y-2">
                       {articlesForCondition.length > 0 ? (
-                        articlesForCondition.map((article: Article, index: number) => ( 
+                        articlesForCondition.map((article: Article, index: number) => (
                           <li key={index}>
                             <a
                               href={article.URL}
@@ -148,11 +187,22 @@ export default function SummaryPage() {
               ) : (
                 <p className="text-white">No articles found.</p>
               )}
+              <div className="mt-8 text-right">
+                <button
+                  onClick={handleSaveSummary}
+                  className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-md flex items-center justify-center transition"
+                >
+                  <Save className="w-5 h-5 mr-2" />
+                  Save Summary
+                </button>
+              </div>
             </div>
           )}
         </div>
       </div>
     </main>
   );
+  
+  
   
 }
