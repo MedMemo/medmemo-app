@@ -31,6 +31,7 @@ interface CalendarPass {
   type CalendarResponse = CalendarPass | CalendarError;
 
 export default function CalendarPage() {
+
   const [isSignedIn, setIsSignedIn] = useState(false); //user sign-in set to false init
 
   //user fields for creating reminder
@@ -130,11 +131,11 @@ export default function CalendarPage() {
       description: description,
       start: {
         dateTime: start.toISOString(),
-        timeZone: 'America/New_York', 
+        timeZone: 'America/New_York',
       },
       end: {
         dateTime: end.toISOString(),
-        timeZone: 'America/New_York', 
+        timeZone: 'America/New_York',
       },
     };
 
@@ -178,27 +179,26 @@ export default function CalendarPage() {
   };
 
   return (
-<div className="min-h-screen bg-gray-100 flex flex-col">
+<div className="text-main-text-color min-h-screen bg-transparent flex items-center justify-center">
 
       <div className="flex flex-grow">
 
         {/* Calendar Reminder Form */}
         <div className="flex-grow p-6">
-          <div className="max-w-xl mx-auto bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold mb-4 text-center text-black">Add Reminder to Calendar</h2>
+          <div className="bg-chat-box-background max-w-xl mx-auto p-6 rounded-lg ">
+            <h2 className="text-2xl font-bold mb-4 text-center">Add Reminder to Calendar</h2>
 
             {!isSignedIn ? (
               <button
                 onClick={() => login()}
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-              >
+                className="bg-button-color border border-text-light-color text-main-text-inverse-color w-full px-4 py-2 rounded-lg transition">
                 Sign in with Google
               </button>
             ) : (
               <form onSubmit={addReminder} className="space-y-4">
                 <div>
-                  <label htmlFor="title" className="block text-gray-700 font-medium">
-                  <b>Medication </b>
+                  <label htmlFor="title" className="block font-medium pb-2">
+                    <b>Medication </b>
                   </label>
                   <input
                     type="text"
@@ -206,28 +206,28 @@ export default function CalendarPage() {
                     name="title"
                     value={eventData.title}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="w-full px-3 py-2 border border-text-dark-color rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 "
                     placeholder="Input Reminder Title"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="description" className="block text-gray-700 font-medium">
-                  <b>Dosage</b>
+                  <label htmlFor="description" className="block font-medium pb-2">
+                    <b>Dosage</b>
                   </label>
                   <textarea
                     id="description"
                     name="description"
                     value={eventData.description}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="w-full px-3 py-2 border border-text-dark-color rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 "
                     placeholder="Input Reminder Details"
                     rows={3}
                   />
                 </div>
                 <div>
-                  <label htmlFor="startDateTime" className="block text-gray-700 font-medium">
-                  <b>Start Date & Time </b>
+                  <label htmlFor="startDateTime" className="block font-medium pb-2">
+                    <b>Start Date & Time </b>
                   </label>
                   <input
                     type="datetime-local"
@@ -235,13 +235,13 @@ export default function CalendarPage() {
                     name="startDateTime"
                     value={eventData.startDateTime}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="text-text-dark-color w-full px-3 py-2 border border-text-dark-color rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 "
                     required
                   />
                 </div>
-                <div>
-                  <label htmlFor="endDateTime" className="block text-gray-700 font-medium">
-                  <b>End Date & Time</b>
+                <div className='mb-8'>
+                  <label htmlFor="endDateTime" className="block font-medium pb-2">
+                    <b>End Date & Time</b>
                   </label>
                   <input
                     type="datetime-local"
@@ -249,13 +249,15 @@ export default function CalendarPage() {
                     name="endDateTime"
                     value={eventData.endDateTime}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                    className="text-text-dark-color w-full px-3 py-2 border border-text-dark-color rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 "
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full px-4 py-2 bg-red-700 text-white rounded-lg hover:bg-red-800 transition"
+                  className="bg-button-color text-main-text-inverse-color border border-text-light-color w-full px-4 py-2 rounded-lg
+
+                  hover:bg-red-800 transition"
                 >
                   Add to Calendar
                 </button>
@@ -269,7 +271,7 @@ export default function CalendarPage() {
       {showToast && (
         <div
           id="toast-simple"
-          className="fixed bottom-4 right-4 flex items-center min-w-[400px] max-w-[600px] min-h-[80px] px-10 py-6 text-gray-500 bg-white rounded-lg shadow-lg dark:text-gray-400 dark:bg-gray-800 text-xl"
+          className="fixed bottom-4 right-4 flex items-center min-w-[400px] max-w-[600px] min-h-[80px] px-10 py-6 rounded-lg shadow-lg text-xl"
           role="alert"
         >
           <div className="flex items-center justify-center gap-4 w-full">

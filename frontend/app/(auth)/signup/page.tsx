@@ -60,9 +60,6 @@ export default function SignUp() {
 
     <div className="min-h-screen bg-[#ffffff] flex flex-col">
 
-      {/* Navbar */}
-      <NavBar />
-
       <div className="min-h-screen flex items-center justify-center">
         <div className="p-8 rounded-lg w-fit">
 

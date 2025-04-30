@@ -27,12 +27,12 @@ export default function SummaryPage() {
   const [error, setError] = useState<string | null>(null);
   const [filesMetadata, setFilesMetadata] = useState<any[]>(() => {
     const savedFilesMetadata = sessionStorage.getItem("filesMetadata");
-    return savedFilesMetadata ? JSON.parse(savedFilesMetadata) : []; 
+    return savedFilesMetadata ? JSON.parse(savedFilesMetadata) : [];
   });
   const [ocrData, setOcrData] = useState<any | null>(() => {
     const savedOcrData = sessionStorage.getItem("ocrData");
     return savedOcrData ? JSON.parse(savedOcrData) : null; // Parse OCR data from sessionStorage if available
-  });  
+  });
   const router = useRouter();
 
   const handleSaveSummary = async () => {
@@ -76,7 +76,7 @@ export default function SummaryPage() {
       setError('Failed to update table');
     }
   };
-  
+
   const handleBackClick = () => {
     if (ocrData && filesMetadata) {
       sessionStorage.setItem('ocrData', JSON.stringify(ocrData));
@@ -140,28 +140,29 @@ export default function SummaryPage() {
   return (
     <main className="min-h-screen bg-main-background text-gray-200 flex-grow flex flex-col p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full">
-        <button
-          onClick={handleBackClick}
-          className="text-blue-400 hover:text-blue-500 text-sm flex items-center mb-6"
+
+      <button
+          onClick={ handleBackClick }
+          className="text-main-text-color cursor-pointer text-sm flex items-center mb-6"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
           Back to Document
-        </button>
-  
+      </button>
+
         <div className="bg-sidebar-background rounded-xl shadow-lg p-6">
-          <h2 className="text-2xl font-bold mb-4 text-white">📝 Medical Document Summary</h2>
-  
-          {loading && <p className="text-white">Generating summary...</p>}
-  
+          <h2 className="text-2xl font-bold mb-4 text-main-text-color">📝 Medical Document Summary</h2>
+
+          {loading && <p className="text-main-text-color">Generating summary...</p>}
+
           {error && <p className="text-red-400">Error: {error}</p>}
-  
+
           {!loading && !error && (
-            <div className="text-gray-300 whitespace-pre-line">
+            <div className="text-main-text-color whitespace-pre-line">
               <div className="mb-6">{summary}</div>
-  
+
               {articles && Object.keys(articles).length > 0 ? (
                 Object.entries(articles).map(([condition, articlesForCondition]) => (
-                  <div key={condition} className="bg-gray-50 p-6 rounded-xl shadow border border-gray-200 mb-6">
+                  <div key={condition} className="p-6 rounded-xl shadow border border-gray-200 mb-6">
                     <h3 className="text-lg font-semibold mb-3 text-gray-800">{condition}</h3>
                     <ul className="list-disc pl-6 space-y-2">
                       {articlesForCondition.length > 0 ? (
@@ -202,7 +203,4 @@ export default function SummaryPage() {
       </div>
     </main>
   );
-  
-  
-  
 }

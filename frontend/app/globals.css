@@ -1,8 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -112,20 +110,48 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@theme {
+  --color-sidebar-background: #FFF9F9;
+  --color-sidebar-logo: #000000;
+  --color-sidebar-hover: #FEDBDC;
+  --color-main-background: #FFFFFF;
+  --color-button-color: #000000;
+  --color-button-hover: #FFFFFF;
+  --color-main-text-color: #000000;
+  --color-main-text-inverse-color: #FFFFFF;
+  --color-text-light-color: #CFCFCF;
+  --color-text-dark-color: #A39A9A;
+  --color-chat-box-background: #F3ECEC;
+  --color-setting-background: #FFFFFF;
+  --color-setting-hover: #f3f4f6;
+  --color-setting-pill-background: #f9fafb;
+  --color-setting-pill-selected: #000;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
-}
-@theme {
-  --color-sidebar-background: #272121;
-  --color-sidebar-logo: #D4ABAB;
-  --color-sidebar-hover: #4F3E3E;
-  --color-main-background: #2D2929;
-  --color-text-light-color: #CFCFCF;
-  --color-text-dark-color: #A39A9A;
-  --color-chat-box-background: #473A3A;
+
+  .dark {
+    --color-sidebar-background: #272121;
+    --color-sidebar-logo: #D4ABAB;
+    --color-sidebar-hover: #4F3E3E;
+    --color-main-background: #2D2929;
+    --color-button-color: #FFFFFF;
+    --color-button-hover: #000000;
+    --color-main-text-color: #FFFFFF;
+    --color-main-text-inverse-color: #000000;
+    --color-text-light-color: #CFCFCF;
+    --color-text-dark-color: #A39A9A;
+    --color-chat-box-background: #473A3A;
+    --color-setting-background: #463a3a;
+    --color-setting-hover: #625555;
+    --color-setting-pill-background: #6c5d5d;
+    --color-setting-pill-selected: #7e7070;
+  }
 }
