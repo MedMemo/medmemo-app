@@ -25,7 +25,6 @@ import { Button } from "@/components/ui/button";
 import { MarkdownText } from "@/components/assistant-ui/markdown-text";
 import { TooltipIconButton } from "@/components/assistant-ui/tooltip-icon-button";
 
-import { useTheme } from "@/context/ThemeContext";
 
 export const Thread: FC = () => {
   return (
@@ -74,11 +73,12 @@ const ThreadScrollToBottom: FC = () => {
 };
 
 const ThreadWelcome: FC = () => {
+
   return (
     <ThreadPrimitive.Empty>
       <div className="flex w-full max-w-[var(--thread-max-width)] flex-grow flex-col">
         <div className="flex w-full flex-grow flex-col items-center justify-center">
-          <p className="mt-4 font-medium">
+          <p className="mt-4 font-medium text-main-text-color">
             How can I help you today?
           </p>
         </div>
@@ -89,10 +89,11 @@ const ThreadWelcome: FC = () => {
 };
 
 const ThreadWelcomeSuggestions: FC = () => {
+
   return (
     <div className="mt-3 flex w-full items-stretch justify-center gap-4">
       <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
+        className="text-text-dark-color border-text-dark-color hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
         prompt="Can you explain a medical term or condition?"
         method="replace"
         autoSend
@@ -102,7 +103,7 @@ const ThreadWelcomeSuggestions: FC = () => {
         </span>
       </ThreadPrimitive.Suggestion>
       <ThreadPrimitive.Suggestion
-        className="hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
+        className="text-text-dark-color border-text-dark-color hover:bg-muted/80 flex max-w-sm grow basis-0 flex-col items-center justify-center rounded-2xl border p-3 transition-colors ease-in"
         prompt="What lifestyle changes are recommended for better health??"
         method="replace"
         autoSend
@@ -116,14 +117,9 @@ const ThreadWelcomeSuggestions: FC = () => {
 };
 
 const Composer: FC = () => {
-  const { theme, updateTheme } = useTheme();
 
   return (
-    <ComposerPrimitive.Root className="focus-within:border-ring/20 flex w-full items-end rounded-2xl border px-2.5 shadow-sm transition-colors ease-in"
-      style={{
-        backgroundColor: theme["chat-box-background"],
-        borderColor: theme["sidebar-background"],
-      }}>
+    <ComposerPrimitive.Root className="bg-chat-box-background text-text-dark-color border-sidebar-background focus-within:border-ring/20 flex w-full items-end rounded-2xl border px-2.5 shadow-sm transition-colors ease-in">
       <ComposerActionAttach />
       <ComposerPrimitive.Input
         rows={1}
@@ -204,7 +200,7 @@ const UserMessage: FC = () => {
     <MessagePrimitive.Root className="grid auto-rows-auto grid-cols-[minmax(72px,1fr)_auto] gap-y-2 [&:where(>*)]:col-start-2 w-full max-w-[var(--thread-max-width)] py-4">
       <UserActionBar />
 
-      <div className="bg-muted text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-3xl px-5 py-2.5 col-start-2 row-start-2">
+      <div className=" bg-muted text-foreground max-w-[calc(var(--thread-max-width)*0.8)] break-words rounded-3xl px-5 py-2.5 col-start-2 row-start-2">
         <MessagePrimitive.Content />
       </div>
 
@@ -247,9 +243,13 @@ const EditComposer: FC = () => {
 };
 
 const AssistantMessage: FC = () => {
+
+
   return (
     <MessagePrimitive.Root className="grid grid-cols-[auto_auto_1fr] grid-rows-[auto_1fr] relative w-full max-w-[var(--thread-max-width)] py-4">
-      <div className="text-white max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
+      <div
+      className="text-main-text-color max-w-[calc(var(--thread-max-width)*0.8)] break-words leading-7 col-span-2 col-start-2 row-start-1 my-1.5">
+
         <MessagePrimitive.Content components={{ Text: MarkdownText }} />
       </div>
 
