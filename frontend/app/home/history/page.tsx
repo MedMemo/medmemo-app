@@ -23,6 +23,7 @@ export default function HistoryPage() {
   const [signedUrls, setSignedUrls] = useState<{ [fileName: string]: string }>({}); 
   const [modalOpen, setModalOpen] = useState(false); 
   const [selectedFile, setSelectedFile] = useState<HistoryItem | null>(null);
+  const [userId, setUserId] = useState<string>('');
   const optionsRef = useRef<HTMLDivElement>(null);
 
   const router = useRouter();
@@ -46,7 +47,7 @@ export default function HistoryPage() {
           throw new Error('Failed to fetch user data');
         }
         const userData = await userRes.json();
-        const userId = userData.user.id;
+        setUserId(userData.user.id);
 
         const historyRes = await fetch(
           `${process.env.NEXT_PUBLIC_BASE_URL}/database/get_history`, 
@@ -58,7 +59,7 @@ export default function HistoryPage() {
           });
         if (!historyRes.ok) {
           const historyData = await historyRes.json();
-          throw new Error(historyData.error || "Update table failed");
+          throw new Error(historyData.error || "get history failed");
         }
 
         const historyData = await historyRes.json();
@@ -125,17 +126,6 @@ export default function HistoryPage() {
         setIsLoading(false);
         return;
       }
-
-      // Fetch user data
-      const userRes = await fetch(
-        `${baseUrl}/auth/get_user`,
-        { credentials: "include" }
-      );
-      if (!userRes.ok) {
-        throw new Error("Failed to fetch user data");
-      }
-      const userData = await userRes.json();
-      const userId = userData.user.id;
 
       const deleteRes = await fetch(
         `${baseUrl}/database/remove/${encodeURIComponent(
