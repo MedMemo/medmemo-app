@@ -67,6 +67,33 @@ npm run dev
 ## or use: yarn dev / pnpm dev / bun dev
 Open http://localhost:3000 to view the application.
 
+
+## 🔐 Environment Variables
+Before running the app, set up environment variables as follows:
+
+.env.dev (Backend)
+```
+PORT=3000
+AZURE_KEY=
+AZURE_ENDPOINT=
+OPENAI_KEY=
+SUPABASE_URL=
+SUPABASE_KEY=
+DEBUG=True
+NEXT_PUBLIC_BASE_URL=
+```
+
+.env.local (Frontend)
+```
+NEXT_PUBLIC_BASE_URL=
+NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+OPENAI_API_KEY=
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_KEY=
+```
+
 ## 🤝 Contributing
 
 We welcome contributions to MedMemo! Here's how you can help:
