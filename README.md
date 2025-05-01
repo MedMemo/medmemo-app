@@ -36,35 +36,35 @@ Powered by a **deep learning model** and a **large language model (LLM)**, MedMe
 
 ## 🔧 Installation Guide
 
-## 📂 Backend Setup
-# Step 1: Navigate to backend directory
+# 📂 Backend Setup
+## Step 1: Navigate to backend directory
 cd backend
 
-# Step 2: Create & activate virtual environment
-# Mac/Linux
+## Step 2: Create & activate virtual environment
+## Mac/Linux
 python3 -m venv .venv && source .venv/bin/activate
-# Windows
+## Windows
 py -3 -m venv .venv && .venv\Scripts\activate
 
-# Step 3: Install dependencies
+## Step 3: Install dependencies
 pip install -r requirements.txt
 
-# Step 4: Run the Flask app
-# Mac/Linux
+## Step 4: Run the Flask app
+## Mac/Linux
 python3 app.py
-# Windows
+## Windows
 py app.py
 
-## 🌐 Frontend Setup
-# Step 1: Navigate to frontend directory
+# 🌐 Frontend Setup
+## Step 1: Navigate to frontend directory
 cd frontend
 
-# Step 2: Install dependencies
+## Step 2: Install dependencies
 npm install
 
-# Step 3: Start development server
+## Step 3: Start development server
 npm run dev
-# or use: yarn dev / pnpm dev / bun dev
+## or use: yarn dev / pnpm dev / bun dev
 Open http://localhost:3000 to view the application.
 
 ## 🤝 Contributing
